@@ -44,6 +44,7 @@ public partial class MainController : Control
 
     public override void _EnterTree()
     {
+        if (!Directory.Exists(Directories.MainDirectory)) Directory.CreateDirectory(Directories.MainDirectory);
         Singleton = this;
         GDLogger.Init();
         OS.AddLogger(GDLogger.Logger);

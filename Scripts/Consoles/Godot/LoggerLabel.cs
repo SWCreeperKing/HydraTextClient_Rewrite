@@ -10,10 +10,11 @@ public partial class LoggerLabel : RichTextLabel
 {
     [Export] public bool RefreshUI;
     public AppLogger Logger;
-    public StreamWriter LoggerWriter = File.CreateText($"{Directories.MainDirectory}/GodotLog.log");
+    public StreamWriter LoggerWriter;
 
     public void Init()
     {
+        LoggerWriter = File.CreateText($"{Directories.MainDirectory}/GodotLog.log");
         MainController.OnExit += () => LoggerWriter.Close();
         Logger = new AppLogger(this);
         Logger._LogMessage("Logger Init", false);
