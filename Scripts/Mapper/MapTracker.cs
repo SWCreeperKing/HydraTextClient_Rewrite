@@ -13,8 +13,10 @@ public partial class MapTracker : HSplitContainer
 {
     [Export] private Control MapContainer;
     [Export] private Control ButtonContainer;
-    [Export] private PackedScene MapScene;
+    [Export] public PackedScene MapScene;
     [Export] private PackedScene PackImporterPopup;
+    [Export] private PackedScene PackEditorPopup;
+    public Dictionary<string, string> FullNameMapPaths = [];
     private Dictionary<string, string> MapPaths = [];
     private Dictionary<string, string> ClientGames = [];
     private Dictionary<string, ButtonAnimation> Buttons = [];
@@ -55,6 +57,7 @@ public partial class MapTracker : HSplitContainer
         var map = MapScene.Instantiate<MapLoader>();
         map.Client = client;
         map.Name = tabName;
+        map.ExitEvent = _ => CallDeferred("UnloadMap", trackerName);
         map.CallDeferred("Setup", MapPaths[game], trackerName, this);
         MapContainer.CallDeferred("add_child", map);
         Loaders[trackerName] = map;
@@ -73,10 +76,18 @@ public partial class MapTracker : HSplitContainer
     public void Reload()
     {
         MapPaths.Clear();
+        FullNameMapPaths.Clear();
         foreach (var game in Directory.GetDirectories(Directories.MapPacks))
         {
-            var gameName = Path.GetFileName(game);
-            MapPaths[gameName.ToLower().Replace(":", "")] = game;
+            var gameName = Path.GetFileName(game).ToLower().Replace(":", "");
+            MapPaths[gameName] = game;
+            FullNameMapPaths[Path.GetFileName(game)] = game;
+        }
+
+        foreach (var (client, game) in ClientGames)
+        {
+            var button = Buttons[client];
+            button.Disabled = !MapPaths.ContainsKey(game);
         }
     }
 
@@ -84,6 +95,17 @@ public partial class MapTracker : HSplitContainer
     private void PopupImporter()
     {
         var popup = PackImporterPopup.Instantiate<PoptrackerImporter>();
+        popup.CloseCalled += Reload;
+        AddChild(popup);
+        popup.Show();
+    }
+
+    public void CallOpenPackEditor() => CallDeferred("OpenPackEditor");
+    public void OpenPackEditor()
+    {
+        Reload();
+        var popup = PackEditorPopup.Instantiate<MapEditorPopup>();
+        popup.Tracker = this;
         popup.CloseCalled += Reload;
         AddChild(popup);
         popup.Show();

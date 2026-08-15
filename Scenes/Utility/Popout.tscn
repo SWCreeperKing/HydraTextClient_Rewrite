@@ -28,7 +28,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
 
-[node name="Popout" type="Control" unique_id=763240208]
+[node name="Popout" type="Control" unique_id=763240208 node_paths=PackedStringArray("PopoutButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,6 +39,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 1
 script = ExtResource("1_kdg8i")
+PopoutButton = NodePath("Button")
 
 [node name="Label" type="Label" parent="." unique_id=1477835798]
 visible = false

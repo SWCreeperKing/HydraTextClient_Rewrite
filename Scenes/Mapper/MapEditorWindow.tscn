@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://brl2lxca8asui"]
+
+[ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="1_s2onp"]
+[ext_resource type="Script" uid="uid://dbtscwsxii243" path="res://Scripts/Mapper/MapEditorPopup.cs" id="2_5fwok"]
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_2rc1m"]
+
+[node name="MapEditorWindow" type="Window" unique_id=2124240976 node_paths=PackedStringArray("TabContainer", "ButtonContainer")]
+oversampling_override = 1.0
+title = "Map Editor"
+size = Vector2i(600, 400)
+theme = ExtResource("1_s2onp")
+script = ExtResource("2_5fwok")
+TabContainer = NodePath("Panel/TabContainer")
+ButtonContainer = NodePath("Panel/TabContainer/ChoseToEdit")
+
+[node name="Panel" type="Panel" parent="." unique_id=1461021148]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="Panel" unique_id=478018950]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+tabs_visible = false
+
+[node name="ChoseToEdit" type="VBoxContainer" parent="Panel/TabContainer" unique_id=723967636]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Label2" type="Label" parent="Panel/TabContainer/ChoseToEdit" unique_id=525953893]
+layout_mode = 2
+text = "Make a New Map"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/TabContainer/ChoseToEdit" unique_id=261982980]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="Panel/TabContainer/ChoseToEdit/HBoxContainer" unique_id=786877536]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "New Map Name"
+
+[node name="Button" type="Button" parent="Panel/TabContainer/ChoseToEdit/HBoxContainer" unique_id=524897467]
+layout_mode = 2
+text = "Create"
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/TabContainer/ChoseToEdit" unique_id=748823217]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/TabContainer/ChoseToEdit" unique_id=1192196843]
+layout_mode = 2
+text = "Edit a Map"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/TabContainer/ChoseToEdit" unique_id=1411049229]
+layout_mode = 2
+
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_2rc1m")]
+Prefix = "window_nodes"
+Controls = {
+"map_editor": NodePath("..")
+}

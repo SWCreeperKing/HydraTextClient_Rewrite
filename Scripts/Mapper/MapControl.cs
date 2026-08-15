@@ -39,6 +39,7 @@ public partial class MapControl : Control
 
     public override void _PhysicsProcess(double delta)
     {
+        if (!IsVisibleInTree()) return;
         var leftButton = Input.IsMouseButtonPressed(MouseButton.Left);
         switch (leftButton)
         {
@@ -59,8 +60,9 @@ public partial class MapControl : Control
         if (posDelta.Y != 0) ScrollContainer.ScrollVertical += (int)posDelta.Y;
     }
 
-    public override void _Input(InputEvent @event)
+    public override void _UnhandledInput(InputEvent @event)
     {
+        if (!IsVisibleInTree()) return;
         if (@event is not InputEventMouseButton mouse) return;
         switch (mouse.ButtonIndex)
         {

@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://0xx1eerb6jki" path="res://Scenes/Mapper/GameMap.tscn" id="3_yrvkc"]
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="4_dgvn7"]
 [ext_resource type="PackedScene" uid="uid://c8kp7fmxpn1tr" path="res://Scenes/Mapper/PackImporter.tscn" id="4_so8ey"]
+[ext_resource type="PackedScene" uid="uid://brl2lxca8asui" path="res://Scenes/Mapper/MapEditorWindow.tscn" id="5_t3xfa"]
 
 [node name="Map Tracker" type="HSplitContainer" unique_id=1830903005 node_paths=PackedStringArray("MapContainer", "ButtonContainer")]
 offset_right = 1152.0
@@ -17,6 +18,7 @@ MapContainer = NodePath("TabContainer")
 ButtonContainer = NodePath("MarginContainer/VBoxContainer/ScrollContainer/Container")
 MapScene = ExtResource("3_yrvkc")
 PackImporterPopup = ExtResource("4_so8ey")
+PackEditorPopup = ExtResource("5_t3xfa")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=470804883]
 layout_mode = 2
@@ -61,3 +63,4 @@ Controls = {
 }
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Button" to="." method="CallPopupImporter"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Button2" to="." method="CallOpenPackEditor"]

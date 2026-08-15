@@ -8,6 +8,7 @@ public partial class PopoutWindow : Control
 	[Export] public string Title;
 	[Export] private Control Child;
 	[Export] private bool RestoreSize = true;
+	[Export] private ButtonAnimation PopoutButton;
 	
 	[Signal] public delegate void PoppedOutEventHandler();
 	[Signal] public delegate void PoppedInEventHandler();
@@ -70,4 +71,7 @@ public partial class PopoutWindow : Control
 		if (Window.Visible) Window.Close();
 		else Popout();
 	}
+
+	public void HideButton() => PopoutButton.Visible = false;
+	public void ShowButton() => PopoutButton.Visible = false;
 }

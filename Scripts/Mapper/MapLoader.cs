@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using Archipelago.MultiClient.Net.Models;
 using CreepyUtil.Archipelago.ApClient;
@@ -17,8 +16,11 @@ public partial class MapLoader : Control
 {
     [Export] public Control Container;
     [Export] public ItemList List;
+    [Export] public PopupPanel LocationPanel;
+    [Export] public RichTextLabel LocationPanelText;
     [Export] public PackedScene MapLocation;
     [Export] public PackedScene MapContainer;
+    [Export] public PopoutWindow PopoutWindow;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -26,9 +28,11 @@ public partial class MapLoader : Control
     public Dictionary<int, MapLocation> MapLocationMap = [];
     public Dictionary<int, MapNavigator> MapNavMap = [];
     public List<LocationGroup> LocationGroups = [];
-    public ApClient Client;
-    public TrackerPage Page;
-    public MapTracker Parent;
+    public Action<MapLoader> ExitEvent;
+    public ApClient? Client;
+    public TrackerPage? Page;
+    public Control Parent;
+    public bool IsInEditMode;
     private string TrackerName;
     private HashSet<int> SelectedLocation = [];
     private HashSet<int> HoveredLocation = [];
@@ -36,9 +40,11 @@ public partial class MapLoader : Control
     private bool UpdateItemList;
     private EmptyRichLabelInteractor LocationPopupList;
 
-    public void Setup(string path, string trackerName, MapTracker parent)
+
+    public void Setup(string path, string trackerName, Control parent)
     {
-        Client.HintsTrackedEvent += UpdateNodes;
+        IsInEditMode = parent is not MapTracker;
+        Client?.HintsTrackedEvent += UpdateNodes;
 
         TrackerName = trackerName;
         Parent = parent;
@@ -48,14 +54,15 @@ public partial class MapLoader : Control
             File.ReadAllText($"{path}/locationgroups.json")
         );
 
-        if (!CircleTracker.Singleton.Pages.TryGetValue(trackerName, out Page))
+        if (!IsInEditMode && !CircleTracker.Singleton.Pages.TryGetValue(trackerName, out Page))
         {
-            parent.UnloadMap(trackerName);
+            ((MapTracker)parent).UnloadMap(trackerName);
             return;
         }
+        if (IsInEditMode) PopoutWindow.HideButton();
 
         ItemImageLoader = new MapItemImageLoader(path);
-        Page.OnLogicUpdated += UpdateNodes;
+        Page?.OnLogicUpdated += UpdateNodes;
         foreach (var group in LocationGroups) LocationGroupingMap[group.GroupName] = group;
 
         Queue<TabStructure> structures = [];
@@ -122,7 +129,6 @@ public partial class MapLoader : Control
         var id = nodeId;
         var node = MapLocation.Instantiate<MapLocation>();
         node.Locations = loc.Locations;
-        node.Name = loc.Name;
         node.LocationGroup = loc.LocationGroup;
         var nodeSize = new Vector2(Math.Abs(loc.W), Math.Abs(loc.H));
 
@@ -139,18 +145,35 @@ public partial class MapLoader : Control
                 node.SetImage(mapId, nodeId, path, "", nodeSize, this);
                 GD.PrintErr($"Location Icon not found for: [{group.MappedIcon}]");
             }
-        } else node.SetImage(mapId, nodeId, path, "", nodeSize, this);
+        }
+        else node.SetImage(mapId, nodeId, path, "", nodeSize, this);
+        var popupId = $"{mapId}-{nodeId}";
 
         node.OnEntered += () =>
         {
-            HoveredLocation.Add(id);
-            UpdateItemList = true;
+            StringBuilder sb = new();
+            foreach (var loc in node.Locations.Where(l => Client is null || Client.Locations.Any(kv => kv.Key == l)))
+            {
+                if (sb.Length != 0) sb.Append('\n');
+                sb.Append(loc);
+            }
+
+            if (sb.Length == 0) return;
+
+            LocationPanel.Title = popupId;
+            LocationPanel.Position = Vector2I.Zero;
+            var rect = node.GetGlobalRect();
+            LocationPanel.Popup(
+                new Rect2I(new Vector2I((int)rect.Position.X, (int)(rect.Position.Y + rect.Size.Y)), Vector2I.Zero)
+            );
+
+            LocationPanelText.Text = sb.ToString();
         };
         node.OnExited += () =>
         {
-            HoveredLocation.Remove(id);
-            UpdateItemList = true;
+            if (LocationPanel.Title == popupId) LocationPanel.Hide();
         };
+
         node.OnSelected += () =>
         {
             SelectedLocation.Add(id);
@@ -182,10 +205,10 @@ public partial class MapLoader : Control
                                || !LocationGroupingMap.TryGetValue(node.LocationGroup, out var tGroup) ? null : tGroup;
         foreach (var loc in node.Locations)
         {
-            // if (Client.Locations.All(kv => kv.Key != loc)) continue;
+            if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
             var i = List.AddItem(loc);
             if (group is null) continue;
-            var icon = Client.MissingLocations.Contains(loc) ? group!.Value.AvailableIcon : group!.Value.CollectedIcon;
+            var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.Value.AvailableIcon : group!.Value.CollectedIcon;
             if (icon is "" || !ItemImageLoader.TryGet(icon, out var img))
             {
                 if (icon is not "") GD.PrintErr($"Missing icon for [{icon}]");
@@ -209,7 +232,7 @@ public partial class MapLoader : Control
         foreach (var node in MapLocationMap.Values) node.QueueUpdate = true;
     }
 
-    public void StopAndClose() => Parent.CallDeferred("UnloadMap", TrackerName);
+    public void StopAndClose() => ExitEvent?.Invoke(this);
 
     public void ResetZoom()
     {

@@ -56,19 +56,21 @@ public partial class MapLocation : TextureRect
     private void LocationUpdate()
     {
         QueueUpdate = false;
-        var applicableHints = Loader.Client.Hints
-                                    .Where(hint => hint.FindingPlayer == Loader.Client.PlayerSlot && !hint.Found
-                                         && hint.Status is HintStatus.Priority
-                                     )
-                                    .Select(hint => hint.LocationName)
-                                    .ToArray();
+        var applicableHints = Loader.Client is null ? []
+            : Loader.Client.Hints
+                    .Where(hint => hint.FindingPlayer
+                         == Loader.Client.PlayerSlot && !hint.Found
+                                                     && hint.Status is HintStatus.Priority
+                     )
+                    .Select(hint => hint.LocationName)
+                    .ToArray();
 
         var color = 4;
         foreach (var loc in Locations.ToArray())
         {
-            if (!Loader.Client.MissingLocations.Contains(loc)) continue;
+            if (Loader.Client is not null && !Loader.Client.MissingLocations.Contains(loc)) continue;
             var locColor = 3;
-            if (Loader.Page.LocationNamesInLogic.Contains(loc)) locColor = 1;
+            if (Loader.Page is not null && Loader.Page.LocationNamesInLogic.Contains(loc)) locColor = 1;
             if (applicableHints.Contains(loc)) locColor -= 1;
             color = Math.Min(color, locColor);
             if (color is 0) break;

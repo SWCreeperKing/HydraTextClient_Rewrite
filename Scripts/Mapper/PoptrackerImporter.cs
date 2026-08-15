@@ -206,7 +206,7 @@ public partial class PoptrackerImporter : WindowSetter
                         var posHash = HashCode.Combine(mapLoc.X, mapLoc.Y);
                         if (!possibleNodes.TryGetValue(posHash, out var node))
                         {
-                            possibleNodes[posHash] = node = new MapNode(loc.Name, x, y, size, size);
+                            possibleNodes[posHash] = node = new MapNode(x, y, size, size);
 
                             if (!maps.ContainsKey(mapName))
                             {
@@ -218,11 +218,7 @@ public partial class PoptrackerImporter : WindowSetter
                             maps[mapName].Nodes.Add(node);
                         }
 
-                        if (loc.Sections is null)
-                        {
-                            node.Locations.Add(loc.Name);
-                            continue;
-                        }
+                        node.Locations.Add(loc.Name);
                         foreach (var section in loc.Sections) node.Locations.Add(section.Name);
                     }
                 }
@@ -292,7 +288,7 @@ public partial class PoptrackerImporter : WindowSetter
                     mapData[layout.Title] = new Maps(layout.Title, mapImage, parent);
                     MapIdNameToMapName[layout.Maps[0]] = layout.Title;
                     break;
-                
+
                 default:
                     if (layout.Content is null || layout.Content.Length < 1) continue;
                     var map = layout.Content[0];

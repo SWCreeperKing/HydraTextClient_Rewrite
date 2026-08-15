@@ -23,11 +23,10 @@ public struct Maps(string mapName, string imageName, string tab = "", params Lis
     public List<MapNode> Nodes = nodes;
 }
 
-public struct MapNode(string name, float x, float y, float w, float h, string group = "",
+public struct MapNode(float x, float y, float w, float h, string group = "",
     params List<string> locationChecks)
 {
     public string LocationGroup = group;
-    public string Name = name;
     public List<string> Locations = locationChecks;
     public float X = x;
     public float Y = y;
@@ -35,8 +34,7 @@ public struct MapNode(string name, float x, float y, float w, float h, string gr
     public float H = h;
 }
 
-public struct LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "",
-    params List<string> locations)
+public struct LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
 {
     public string GroupName = name;
     public string MappedIcon = mapIcon;
