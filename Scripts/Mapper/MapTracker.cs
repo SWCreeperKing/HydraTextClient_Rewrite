@@ -1,9 +1,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using Archipelago.MultiClient.Net.Enums;
 using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using HydraTextClient.Scripts.Clients.CircleTracker;
+using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Utility.Loaders;
 using HydraTextClient.Scripts.Utility.UIHelpers;
 
@@ -92,6 +94,7 @@ public partial class MapTracker : HSplitContainer
     }
 
     public void CallPopupImporter() => CallDeferred("PopupImporter");
+
     private void PopupImporter()
     {
         var popup = PackImporterPopup.Instantiate<PoptrackerImporter>();
@@ -101,6 +104,7 @@ public partial class MapTracker : HSplitContainer
     }
 
     public void CallOpenPackEditor() => CallDeferred("OpenPackEditor");
+
     public void OpenPackEditor()
     {
         Reload();

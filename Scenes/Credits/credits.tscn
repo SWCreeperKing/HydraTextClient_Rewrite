@@ -34,7 +34,7 @@ layout_mode = 2
 
 [node name="Code" type="Button" parent="ScrollContainer/VBoxContainer" unique_id=1934789333]
 layout_mode = 2
-text = "Source Code/Repo Link"
+text = "Source Code / Repo Link"
 script = ExtResource("2_22rij")
 Link = "https://github.com/SWCreeperKing/HydraTextClient_Rewrite"
 
@@ -56,9 +56,9 @@ vertical_alignment = 1
 
 [node name="Godot" type="Button" parent="ScrollContainer/VBoxContainer" unique_id=471164744]
 layout_mode = 2
-text = "Godot 4.8 (dev 1)"
+text = "Godot 4.8 (dev 2)"
 script = ExtResource("2_22rij")
-Link = "https://godotengine.org/article/dev-snapshot-godot-4-8-dev-1/"
+Link = "https://godotengine.org/article/dev-snapshot-godot-4-8-dev-2/"
 
 [node name="MultiCLient" type="Button" parent="ScrollContainer/VBoxContainer" unique_id=1727853997]
 layout_mode = 2

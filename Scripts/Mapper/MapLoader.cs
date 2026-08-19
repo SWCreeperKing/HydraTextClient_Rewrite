@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using CreepyUtil.Archipelago.ApClient;
 using Godot;
@@ -14,6 +15,7 @@ namespace HydraTextClient.Scripts.Mapper;
 
 public partial class MapLoader : Control
 {
+    [Export] public ButtonAnimation SaveMap;
     [Export] public Control Container;
     [Export] public ItemList List;
     [Export] public PopupPanel LocationPanel;
@@ -21,12 +23,14 @@ public partial class MapLoader : Control
     [Export] public PackedScene MapLocation;
     [Export] public PackedScene MapContainer;
     [Export] public PopoutWindow PopoutWindow;
+    [Export] public CheckBox AutoTab;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
     public Dictionary<string, TabContainer> MapTabs = [];
     public Dictionary<int, MapLocation> MapLocationMap = [];
     public Dictionary<int, MapNavigator> MapNavMap = [];
+    public Dictionary<string, MapNavigator> MapAutoTabbing = [];
     public List<LocationGroup> LocationGroups = [];
     public Action<MapLoader> ExitEvent;
     public ApClient? Client;
@@ -39,12 +43,16 @@ public partial class MapLoader : Control
     private Dictionary<string, LocationGroup> LocationGroupingMap = [];
     private bool UpdateItemList;
     private EmptyRichLabelInteractor LocationPopupList;
-
+    private string MapPath;
 
     public void Setup(string path, string trackerName, Control parent)
     {
+        MapPath = path;
         IsInEditMode = parent is not MapTracker;
         Client?.HintsTrackedEvent += UpdateNodes;
+        Client?.AddDataStorageListener(
+            "Current Map", (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
+        );
 
         TrackerName = trackerName;
         Parent = parent;
@@ -60,6 +68,7 @@ public partial class MapLoader : Control
             return;
         }
         if (IsInEditMode) PopoutWindow.HideButton();
+        SaveMap.Visible = IsInEditMode;
 
         ItemImageLoader = new MapItemImageLoader(path);
         Page?.OnLogicUpdated += UpdateNodes;
@@ -77,7 +86,7 @@ public partial class MapLoader : Control
             var container = MapTabs[tab.Name] = new TabContainer();
             container.SizeFlagsVertical = SizeFlags.ExpandFill;
 
-            if (tab.Name is "")
+            if (tab.Name is "" or null)
             {
                 Container.AddChild(container);
                 continue;
@@ -112,7 +121,7 @@ public partial class MapLoader : Control
     {
         var container = MapTabs.GetValueOrDefault(map.Tab, MapTabs[""]);
 
-        var mapContainer = MapNavMap[mapId] = MapContainer.Instantiate<MapNavigator>();
+        var mapContainer = MapAutoTabbing[map.GetId] = MapNavMap[mapId] = MapContainer.Instantiate<MapNavigator>();
         mapContainer.Name = map.MapName is "" ? "Default Map" : map.MapName;
         var image = ImageTexture.CreateFromImage(Image.LoadFromFile($"{path}/maps/{MapsList[mapId].ImageName}"));
         mapContainer.SetImage(image);
@@ -208,13 +217,28 @@ public partial class MapLoader : Control
             if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
             var i = List.AddItem(loc);
             if (group is null) continue;
-            var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.Value.AvailableIcon : group!.Value.CollectedIcon;
+            var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.Value.AvailableIcon
+                : group!.Value.CollectedIcon;
             if (icon is "" || !ItemImageLoader.TryGet(icon, out var img))
             {
                 if (icon is not "") GD.PrintErr($"Missing icon for [{icon}]");
                 return;
             }
             List.SetItemIcon(i, img);
+        }
+    }
+
+    public void SelectMap(string mapId)
+    {
+        if (!AutoTab.ButtonPressed) return;
+        if (!MapAutoTabbing.TryGetValue(mapId, out var map)) return;
+        var container = (Control)map.GetParent();
+        map.Visible = true;
+        Control parent;
+        while ((parent = (Control)container.GetParent()) is TabContainer)
+        {
+            container.Visible = true;
+            container = parent;
         }
     }
 
@@ -250,9 +274,18 @@ public partial class MapLoader : Control
         }
     }
 
+    public void SaveMapData()
+    {
+        File.WriteAllText($"{MapPath}/atlas.json", JsonConvert.SerializeObject(MapsList));
+        File.WriteAllText($"{MapPath}/tabs.json", JsonConvert.SerializeObject(Structure));
+        File.WriteAllText($"{MapPath}/locationgroups.json", JsonConvert.SerializeObject(LocationGroups));
+    }
+
     protected override void Dispose(bool disposing)
     {
+        if (IsInEditMode) SaveMapData();
         Client?.HintsTrackedEvent -= UpdateNodes;
+        Client?.RemoveDataStorageListeners("Current Map", Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;
     }
 }

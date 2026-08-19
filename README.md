@@ -166,7 +166,12 @@
 
 ## Map Tracker/Maker
 
+- Importing from poptracker packs
+  - There any be alot of errors problems when importing, make sure to check the console
+  - You might need to clean up the locations in the map editor since poptracker locations don't often match ap ones
 - For devs implementing auto tabbing
+  - Update the slot data storage "Current Map" with the map id when the player moves from one map to another
+  - map id by default is the name, can override, maps with multiple ids will not work
 - For those who don't want to use the UI
   - The folder of the pack should be named the game's name as it appears in ap
-  - 
+  - You can use other maps as a template on how to write the 3 json files 

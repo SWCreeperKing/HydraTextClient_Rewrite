@@ -15,12 +15,15 @@ public struct TabStructure(string name = "", params List<TabStructure> subTabs)
     public override int GetHashCode() => HashCode.Combine(Name, SubTabs);
 }
 
-public struct Maps(string mapName, string imageName, string tab = "", params List<MapNode> nodes)
+public struct Maps(string mapName, string imageName, string tab = "", string mapId = "", params List<MapNode> nodes)
 {
     public string MapName = mapName;
+    public string MapId = mapId;
     public string ImageName = imageName;
     public string Tab = tab;
     public List<MapNode> Nodes = nodes;
+
+    [JsonIgnore] public string GetId => MapId is "" or null ? MapName is null ? "" : MapName : MapId;
 }
 
 public struct MapNode(float x, float y, float w, float h, string group = "",

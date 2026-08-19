@@ -56,6 +56,11 @@ text = "Reset Zoom"
 layout_mode = 2
 text = "Reset Selected Node"
 
+[node name="CheckBox" type="CheckBox" parent="HSplitContainer/VBoxContainer/HBoxContainer" unique_id=545184037]
+layout_mode = 2
+button_pressed = true
+text = "Auto Tab"
+
 [node name="VSeparator" type="VSeparator" parent="HSplitContainer/VBoxContainer/HBoxContainer" unique_id=574984010]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
@@ -104,7 +109,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 5.0
+offset_right = 4.0
 offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
