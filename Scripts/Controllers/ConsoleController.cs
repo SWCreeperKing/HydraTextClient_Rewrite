@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using HydraTextClient.Scripts.Consoles;
-using HydraTextClient.Scripts.Settings;
-using HydraTextClient.Scripts.Utility.Loaders;
 
 namespace HydraTextClient.Scripts.Controllers;
 

@@ -6,7 +6,6 @@ using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using Godot;
 using HydraTextClient.Scripts.Clients.CircleTracker;
-using HydraTextClient.Scripts.Clients.TextClient.MessageTypes;
 using HydraTextClient.Scripts.Clients.TextClient.ParserEffects;
 using HydraTextClient.Scripts.Connection.Slots;
 using HydraTextClient.Scripts.Controllers;

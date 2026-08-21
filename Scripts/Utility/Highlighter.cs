@@ -25,6 +25,7 @@ public partial class Highlighter : ColorRect
             HigherPower.MouseEntered += Enter;
             HigherPower.MouseExited += Exit;
             HigherPower.GuiInput += OnGuiInput;
+            MouseFilter = MouseFilterEnum.Pass;
             return;
         }
         MouseEntered += Enter;

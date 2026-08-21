@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://c2vh78otyyus1" path="res://Scripts/Mapper/MapTracker.cs" id="2_so8ey"]
 [ext_resource type="PackedScene" uid="uid://0xx1eerb6jki" path="res://Scenes/Mapper/GameMap.tscn" id="3_yrvkc"]
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="4_dgvn7"]
-[ext_resource type="PackedScene" uid="uid://c8kp7fmxpn1tr" path="res://Scenes/Mapper/PackImporter.tscn" id="4_so8ey"]
-[ext_resource type="PackedScene" uid="uid://brl2lxca8asui" path="res://Scenes/Mapper/MapEditorWindow.tscn" id="5_t3xfa"]
+[ext_resource type="PackedScene" uid="uid://c8kp7fmxpn1tr" path="res://Scenes/Mapper/Popups/PackImporter.tscn" id="4_so8ey"]
+[ext_resource type="PackedScene" uid="uid://brl2lxca8asui" path="res://Scenes/Mapper/Popups/MapEditorWindow.tscn" id="5_t3xfa"]
 
 [node name="Map Tracker" type="HSplitContainer" unique_id=1830903005 node_paths=PackedStringArray("MapContainer", "ButtonContainer")]
 offset_right = 1152.0

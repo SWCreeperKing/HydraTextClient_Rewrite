@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Archipelago.MultiClient.Net.Enums;
 using CreepyUtil.Archipelago.ApClient;
 using HydraTextClient.Scripts.Controllers;
 using Newtonsoft.Json;

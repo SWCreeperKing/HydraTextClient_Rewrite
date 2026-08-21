@@ -9,17 +9,15 @@ namespace HydraTextClient.Scripts.Mapper;
 
 public partial class MapLocation : TextureRect
 {
-    public static Dictionary<string, Texture2D> TextureCache = [];
-
     [Export] public Texture2D BaseCheckImage;
-    public Vector2? SetSize;
-    public List<string> Locations;
+    public Vector2 Pos = Vector2.Zero;
     public bool QueueUpdate;
-    public MapLoader Loader;
-    public int MapId;
-    public int NodeId;
+    public MapNavigator Map;
     public bool HasCustomImage;
-    public string LocationGroup;
+    public MapNode RawNodeData;
+    
+    public List<string> Locations => RawNodeData.Locations;
+    public string LocationGroup => RawNodeData.LocationGroup;
 
     [Signal] public delegate void OnSelectedEventHandler();
 
@@ -30,36 +28,49 @@ public partial class MapLocation : TextureRect
     [Signal] public delegate void OnExitedEventHandler();
 
     [Signal] public delegate void OnUnSelectHighlighterEventHandler();
+    
+    public void SetData(MapNavigator map) => Map = map;
 
-    public void SetImage(int mapId, int nodeId, string path, string image, Vector2 size, MapLoader loader)
+    public void SetImage(string image)
     {
-        MapId = mapId;
-        NodeId = nodeId;
-        Loader = loader;
-        SetSize = size;
         QueueUpdate = true;
-        if (image is not "") return;
-        Texture = BaseCheckImage;
+        Texture = image is not "" ? Map.Loader.ItemImageLoader.GetImage(image) : BaseCheckImage;
+        QueueRedraw();
+    }
+
+    public void SetPos(Vector2 pos)
+    {
+        Pos = pos;
+        var mapSize = Map.GetMapSize;
+        Position = new Vector2(
+            Math.Clamp(pos.X, Size.X / 2f, mapSize.X - Size.X / 2f),
+            Math.Clamp(pos.Y, Size.Y / 2f, mapSize.Y - Size.Y / 2f)
+        );
+    }
+
+    public void SetNodeSize(Vector2 size)
+    {
+        QueueUpdate = true;
+        Size = size;
         QueueRedraw();
     }
 
     public override void _Process(double delta)
     {
-        if (Loader is null) return;
+        if (Map is null) return;
         if (QueueUpdate) LocationUpdate();
-        if (SetSize is null) return;
-        Size = SetSize!.Value;
-        SetSize = null;
     }
 
     // 0: in logic (hinted) <- 1: in logic <- 2: not logic (hinted) <- 3: not in logic <- 4: nothing, location checked
     private void LocationUpdate()
     {
         QueueUpdate = false;
-        var applicableHints = Loader.Client is null ? []
-            : Loader.Client.Hints
+        var client = Map.Loader.Client;
+        var page = Map.Loader.Page;
+        var applicableHints = client is null ? []
+            : client.Hints
                     .Where(hint => hint.FindingPlayer
-                         == Loader.Client.PlayerSlot && !hint.Found
+                         == client.PlayerSlot && !hint.Found
                                                      && hint.Status is HintStatus.Priority
                      )
                     .Select(hint => hint.LocationName)
@@ -68,9 +79,9 @@ public partial class MapLocation : TextureRect
         var color = 4;
         foreach (var loc in Locations.ToArray())
         {
-            if (Loader.Client is not null && !Loader.Client.MissingLocations.Contains(loc)) continue;
+            if (client is not null && !client.MissingLocations.Contains(loc)) continue;
             var locColor = 3;
-            if (Loader.Page is not null && Loader.Page.LocationNamesInLogic.Contains(loc)) locColor = 1;
+            if (page is not null && page.LocationNamesInLogic.Contains(loc)) locColor = 1;
             if (applicableHints.Contains(loc)) locColor -= 1;
             color = Math.Min(color, locColor);
             if (color is 0) break;

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c8kp7fmxpn1tr"]
 
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="1_ful1g"]
-[ext_resource type="Script" uid="uid://lfo6qrsuql3a" path="res://Scripts/Mapper/PoptrackerImporter.cs" id="2_ful1g"]
+[ext_resource type="Script" uid="uid://lfo6qrsuql3a" path="res://Scripts/Mapper/Popups/PoptrackerImporter.cs" id="2_ful1g"]
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_pwhwc"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="3_xksft"]
 

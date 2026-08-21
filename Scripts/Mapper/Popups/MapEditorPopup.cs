@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Godot;
+using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Utility.Popups;
 using HydraTextClient.Scripts.Utility.UIHelpers;
 
-namespace HydraTextClient.Scripts.Mapper;
+namespace HydraTextClient.Scripts.Mapper.Popups;
 
 public partial class MapEditorPopup : WindowSetter
 {
@@ -34,6 +35,12 @@ public partial class MapEditorPopup : WindowSetter
     public void OpenMap(string game)
     {
         Loader = Tracker.MapScene.Instantiate<MapLoader>();
+
+        if (ConnectionController.HasLeaderClient && ConnectionController.LeaderClient!.PlayerGame.ToLower().Replace(":", "") == game.ToLower().Replace(":", ""))
+        {
+            Loader.Client = ConnectionController.LeaderClient;
+        }
+        
         Loader.Name = game;
         Loader.ExitEvent = _ =>
         {

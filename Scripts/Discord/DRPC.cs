@@ -3,6 +3,7 @@ using CreepyUtil.DiscordRpc;
 using Godot;
 using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Settings;
+using HydraTextClient.Scripts.Utility;
 using HydraTextClient.Scripts.Utility.Loaders;
 using static HydraTextClient.Scripts.Discord.DRPC_GTI;
 using static HydraTextClient.Scripts.Discord.DRPC_GTT;
@@ -23,9 +24,10 @@ public static class DRPC
         {
             client.OnItemLogPacketReceived += packet =>
             {
-                var player = packet.Item.Player;
+                var player = packet.FindingPlayer;
+                if (client.PlayerSlot != player) return;
                 LastLocationChecked = client.LocationIdToLocationName(packet.Item.Location, player);
-                if (client.PlayerSlot == player) DiscordIntegration.UpdateActivity();
+                DiscordIntegration.UpdateActivity();
             };
         };
         ConnectionController.OnFullDisconnection += () => LastLocationChecked = null;

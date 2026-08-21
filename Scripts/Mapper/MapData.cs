@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -15,7 +15,7 @@ public struct TabStructure(string name = "", params List<TabStructure> subTabs)
     public override int GetHashCode() => HashCode.Combine(Name, SubTabs);
 }
 
-public struct Maps(string mapName, string imageName, string tab = "", string mapId = "", params List<MapNode> nodes)
+public class Maps(string mapName, string imageName, string tab = "", string mapId = "", params List<MapNode> nodes)
 {
     public string MapName = mapName;
     public string MapId = mapId;
@@ -23,10 +23,10 @@ public struct Maps(string mapName, string imageName, string tab = "", string map
     public string Tab = tab;
     public List<MapNode> Nodes = nodes;
 
-    [JsonIgnore] public string GetId => MapId is "" or null ? MapName is null ? "" : MapName : MapId;
+    [JsonIgnore] public string GetId => MapId is "" or null ? MapName ?? "" : MapId;
 }
 
-public struct MapNode(float x, float y, float w, float h, string group = "",
+public class MapNode(float x, float y, float w, float h, string group = "",
     params List<string> locationChecks)
 {
     public string LocationGroup = group;
@@ -39,12 +39,48 @@ public struct MapNode(float x, float y, float w, float h, string group = "",
 
 public struct LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
 {
+    public enum DataStorageType { Text, Number, Bool }
+
+    [Flags]
+    public enum NumberCompareType // storage value [compare type] data compare 
+    {
+        None = 0, // defaults to equal to
+        EqualTo = 1, GreaterThan = 1 << 1, LessThan = 1 << 2,
+    }
+
     public string GroupName = name;
     public string MappedIcon = mapIcon;
     public string AvailableIcon = openIcon;
-
     public string CollectedIcon = closeIcon;
-    // todo: add slot data conditions here
+
+    // slot data conditions
+    public string SlotDataKey;
+    public DataStorageType StoreType;
+    public string DataCompare;
+    public NumberCompareType CompareType;
+
+    public bool CompareDataValue(object val)
+    {
+        try
+        {
+            switch (StoreType)
+            {
+                case DataStorageType.Text: return (string)val == DataCompare;
+                case DataStorageType.Number:
+                    var num = (long)val;
+                    var compare = long.Parse(DataCompare);
+                    if (CompareType is NumberCompareType.None || CompareType.HasFlag(NumberCompareType.EqualTo))
+                        return num == compare;
+                    if (CompareType.HasFlag(NumberCompareType.GreaterThan)) return num > compare;
+                    if (CompareType.HasFlag(NumberCompareType.LessThan)) return num < compare;
+                    return false;
+                case DataStorageType.Bool: return (bool)val == (DataCompare.ToLower()[0] == 't');
+                default: return false;
+            }
+        }
+        catch (Exception e) { GD.PrintErr($"Error with reading [{SlotDataKey}]", e); }
+        return false;
+    }
 }
 
 #region ugly poptracker imports
@@ -91,6 +127,7 @@ public class PoptrackerLocation
 
     [JsonProperty("map_locations"), JsonConverter(typeof(SingleOrArray<PoptrackerMapLocation>))]
     public PoptrackerMapLocation[] MapLocations;
+
     [JsonProperty("sections")] public PoptrackerSection[] Sections;
 }
 

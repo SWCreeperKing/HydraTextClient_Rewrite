@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://c5snbms58e4nb" path="res://Scripts/Mapper/MapNavigator.cs" id="1_26por"]
 [ext_resource type="Script" uid="uid://dmvjnvx86oiqj" path="res://Scripts/Mapper/MapControl.cs" id="2_4tp12"]
+[ext_resource type="PackedScene" uid="uid://cffrkj53il485" path="res://Scenes/Mapper/MapLocation.tscn" id="2_7rjv2"]
 
-[node name="ScrollContainer" type="ScrollContainer" unique_id=884451234 node_paths=PackedStringArray("Container", "List")]
+[node name="ScrollContainer" type="ScrollContainer" unique_id=884451234 node_paths=PackedStringArray("Container")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -16,7 +17,7 @@ horizontal_scroll_mode = 3
 vertical_scroll_mode = 3
 script = ExtResource("1_26por")
 Container = NodePath("Control")
-List = NodePath("")
+MapLocation = ExtResource("2_7rjv2")
 
 [node name="Control" type="Control" parent="." unique_id=824895664 node_paths=PackedStringArray("ScrollContainer", "MapImage")]
 layout_mode = 2
