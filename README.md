@@ -166,6 +166,10 @@
 
 ## Map Tracker/Maker
 
+- Where to get/put finished map packs?
+  - Recommended to check:
+    - the [Map Pack Discussion Board](https://github.com/SWCreeperKing/HydraTextClient_Rewrite/discussions/categories/map-packs)
+    - the game's thread/download links
 - Importing from poptracker packs
   - There any be alot of errors problems when importing, make sure to check the console
   - You might need to clean up the locations in the map editor since poptracker locations don't often match ap ones
