@@ -28,6 +28,7 @@ public partial class MapLoader : Control
     [Export] public PackedScene MapContainer;
     [Export] private PackedScene AddLocationsPopup;
     [Export] private PackedScene EditMapPopup;
+    [Export] private PackedScene TabEditContainer;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -90,6 +91,8 @@ public partial class MapLoader : Control
         foreach (var group in LocationGroups) LocationGroupingMap[group.GroupName] = group;
 
         Queue<TabStructure> structures = [];
+        if (Structure.Name is null) Structure.Name = "";
+        if (Structure.SubTabs is null) Structure.SubTabs = [];
         structures.Enqueue(Structure);
 
         while (structures.Count != 0)
@@ -101,8 +104,20 @@ public partial class MapLoader : Control
             var container = MapTabs[tab.Name] = new TabContainer();
             container.SizeFlagsVertical = SizeFlags.ExpandFill;
 
+            if (IsInEditMode)
+            {
+                container.DragToRearrangeEnabled = true;
+                container.TabsRearrangeGroup = 59823532;
+            }
+
             if (tab.Name is "" or null)
             {
+                if (IsInEditMode)
+                {
+                    var editor = TabEditContainer.Instantiate();
+                    container.AddChild(editor);
+                }
+
                 Container.AddChild(container);
                 continue;
             }
@@ -151,7 +166,7 @@ public partial class MapLoader : Control
 
     private void CreateMap(string path, Maps map)
     {
-        var container = MapTabs.GetValueOrDefault(map.Tab, MapTabs[""]);
+        var container = MapTabs.GetValueOrDefault(map.Tab ?? "", MapTabs[""]);
         var mapContainer = MapContainer.Instantiate<MapNavigator>();
         mapContainer.SetupMap(this, map, $"{path}/maps/");
         container.AddChild(mapContainer);
@@ -216,7 +231,7 @@ public partial class MapLoader : Control
         CallDeferred("add_child", popup);
         popup.CallDeferred("show");
     }
-    
+
     public void SelectMap(string mapId)
     {
         if (!AutoTab.ButtonPressed) return;
@@ -236,7 +251,7 @@ public partial class MapLoader : Control
         foundMap = MapNavigators.FirstOrDefault(map => map.MapId == id, null);
         return foundMap is not null;
     }
-    
+
     public void ResetSelectedNodes()
     {
         foreach (var loc in SelectedLocation) loc.EmitUnSelect();
@@ -285,9 +300,14 @@ public partial class MapLoader : Control
         UpdateNodes();
     }
 
-    public void StopAndClose() => ExitEvent?.Invoke(this);
+    public void StopAndClose()
+    {
+        if (IsInEditMode) SaveMapData();
+        ExitEvent?.Invoke(this);
+    }
+
     public void ResetZoom() => GetCurrentMap()?.Container.ResetZoom();
-    
+
     public MapNavigator GetCurrentMap()
     {
         var container = MapTabs[""];
@@ -305,8 +325,35 @@ public partial class MapLoader : Control
 
     public void SaveMapData()
     {
-        File.WriteAllText($"{MapPath}/atlas.json", JsonConvert.SerializeObject(MapsList));
-        File.WriteAllText($"{MapPath}/tabs.json", JsonConvert.SerializeObject(Structure));
+        List<Maps> newMapList = [];
+        TabStructure newStructure = new("");
+
+        Queue<(TabContainer, TabStructure)> containers = [];
+        containers.Enqueue((MapTabs[""], newStructure));
+        while (containers.Count != 0)
+        {
+            var (container, associatedStructure) = containers.Dequeue();
+
+            foreach (var child in container.GetChildren())
+            {
+                switch (child)
+                {
+                    case TabContainer tab:
+                        var childStructure = new TabStructure(tab.Name);
+                        associatedStructure.SubTabs.Add(childStructure);
+                        containers.Enqueue((tab, childStructure));
+                        break;
+                    case MapNavigator nav:
+                        var map = nav.CoreMap;
+                        map.Tab = associatedStructure.Name;
+                        newMapList.Add(map);
+                        break;
+                }
+            }
+        }
+
+        File.WriteAllText($"{MapPath}/atlas.json", JsonConvert.SerializeObject(newMapList));
+        File.WriteAllText($"{MapPath}/tabs.json", JsonConvert.SerializeObject(newStructure));
         File.WriteAllText($"{MapPath}/locationgroups.json", JsonConvert.SerializeObject(LocationGroups));
     }
 
@@ -314,7 +361,6 @@ public partial class MapLoader : Control
 
     protected override void Dispose(bool disposing)
     {
-        if (IsInEditMode) SaveMapData();
         Client?.HintsTrackedEvent -= UpdateNodes;
         Client?.RemoveDataStorageListeners("Current Map", Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;

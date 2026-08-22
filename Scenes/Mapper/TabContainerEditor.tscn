@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://bvqjaegqevf3l"]
+
+[node name="Tab Editor" type="ScrollContainer" unique_id=297826689]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1216002806]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=715924946]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1274029500]
+layout_mode = 2
+text = "Add Map Tab"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=368899289]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1015895772]
+layout_mode = 2
+text = "Delete Map Tab"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer" unique_id=1876646024]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=934724417]
+layout_mode = 2
+text = "Add Tab Section"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer" unique_id=1891548030]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer4" unique_id=602065092]
+layout_mode = 2
+text = "Delete Tab Section (deleted children)"

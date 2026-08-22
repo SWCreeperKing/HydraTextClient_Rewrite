@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bqisbomfxfu6r" path="res://Scenes/Utility/Popout.tscn" id="4_5tv33"]
 [ext_resource type="PackedScene" uid="uid://bo1frn0gc2msu" path="res://Scenes/Mapper/Popups/EditMapWindow.tscn" id="4_epac1"]
 [ext_resource type="PackedScene" uid="uid://husigvmns43p" path="res://Scenes/Mapper/Popups/MapAddLocations.tscn" id="4_tesqn"]
+[ext_resource type="PackedScene" uid="uid://bvqjaegqevf3l" path="res://Scenes/Mapper/TabContainerEditor.tscn" id="5_epac1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ajsmo"]
 content_margin_left = 4.0
@@ -43,6 +44,7 @@ AutoTab = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer2/
 MapContainer = ExtResource("3_ajsmo")
 AddLocationsPopup = ExtResource("4_tesqn")
 EditMapPopup = ExtResource("4_epac1")
+TabEditContainer = ExtResource("5_epac1")
 metadata/_tab_index = 0
 
 [node name="HSplitContainer" type="HSplitContainer" parent="." unique_id=208381665]

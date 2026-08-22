@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dbtscwsxii243" path="res://Scripts/Mapper/Popups/MapEditorPopup.cs" id="2_3pvbc"]
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_e3bfx"]
 
-[node name="MapEditorWindow" type="Window" unique_id=2124240976 node_paths=PackedStringArray("TabContainer", "ButtonContainer")]
+[node name="MapEditorWindow" type="Window" unique_id=2124240976 node_paths=PackedStringArray("TabContainer", "ButtonContainer", "MapName")]
 oversampling_override = 1.0
 title = "Map Editor"
 size = Vector2i(650, 400)
@@ -12,6 +12,7 @@ theme = ExtResource("1_gw4rp")
 script = ExtResource("2_3pvbc")
 TabContainer = NodePath("Panel/TabContainer")
 ButtonContainer = NodePath("Panel/TabContainer/ChoseToEdit")
+MapName = NodePath("Panel/TabContainer/ChoseToEdit/HBoxContainer/LineEdit")
 BlockParent = false
 
 [node name="Panel" type="Panel" parent="." unique_id=1461021148]
@@ -40,6 +41,12 @@ layout_mode = 2
 text = "If the leader client's game matches, locations collected will show up when adding locations to nodes"
 autowrap_mode = 2
 
+[node name="Label4" type="Label" parent="Panel/TabContainer/ChoseToEdit" unique_id=276017630]
+modulate = Color(1, 0.31, 0.31, 1)
+layout_mode = 2
+text = "Clicking the X will NOT save changes"
+autowrap_mode = 2
+
 [node name="HSeparator3" type="HSeparator" parent="Panel/TabContainer/ChoseToEdit" unique_id=600682487]
 layout_mode = 2
 
@@ -54,7 +61,7 @@ layout_mode = 2
 [node name="LineEdit" type="LineEdit" parent="Panel/TabContainer/ChoseToEdit/HBoxContainer" unique_id=786877536]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "New Map Name"
+placeholder_text = "New Map (Game) Name"
 
 [node name="Button" type="Button" parent="Panel/TabContainer/ChoseToEdit/HBoxContainer" unique_id=524897467]
 layout_mode = 2
@@ -76,3 +83,5 @@ Prefix = "window_nodes"
 Controls = {
 "map_editor": NodePath("..")
 }
+
+[connection signal="pressed" from="Panel/TabContainer/ChoseToEdit/HBoxContainer/Button" to="." method="CreateMap"]
