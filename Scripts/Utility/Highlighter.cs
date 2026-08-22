@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace HydraTextClient.Scripts.Utility;
@@ -8,6 +9,7 @@ public partial class Highlighter : ColorRect
     [Export] public Color Hover = Colors.AliceBlue;
     [Export] public Control? HigherPower;
     [Export] public bool Selectable;
+    public Func<bool>? InterruptEvents;
     private double Timer;
     private Tween Tween;
     private bool Selected;
@@ -37,6 +39,7 @@ public partial class Highlighter : ColorRect
     {
         IsIn = true;
         if (Selectable && Selected) return;
+        if (InterruptEvents is not null && InterruptEvents()) return;
         EmitSignalOnEntered();
         Tween?.Kill();
         Tween = CreateTween();
@@ -48,6 +51,7 @@ public partial class Highlighter : ColorRect
     {
         IsIn = false;
         if (Selectable && Selected) return;
+        if (InterruptEvents is not null && InterruptEvents()) return;
         EmitSignalOnExited();
         Tween?.Kill();
         Tween = CreateTween();
@@ -57,6 +61,7 @@ public partial class Highlighter : ColorRect
 
     public void OnGuiInput(InputEvent @event)
     {
+        if (InterruptEvents is not null && InterruptEvents()) return;
         if (!Selectable) return;
         if (!IsIn)
         {

@@ -20,7 +20,7 @@ public partial class MapNavigator : ScrollContainer
     {
         foreach (var node in Locations) node.QueueUpdate = true;
     }
-    
+
     public void SetupMap(MapLoader loader, Maps map, string packPath)
     {
         Loader = loader;
@@ -53,7 +53,7 @@ public partial class MapNavigator : ScrollContainer
         SetImage(image);
         CoreMap.MapId = mapId;
     }
-    
+
     private void CreateLocationNode(MapNode loc)
     {
         var node = MapLocation.Instantiate<MapLocation>();
@@ -66,12 +66,13 @@ public partial class MapNavigator : ScrollContainer
         node.OnExited += () => Loader.RemoveHoverLocation(node);
         node.OnSelected += () => Loader.AddSelectedLocation(node);
         node.OnUnSelected += () => Loader.RemoveSelectedLocation(node);
-        
+        node.Highlighter.InterruptEvents = () => Container.IsDragging;
+
         Container.MapImage.AddChild(node);
         Locations.Add(node);
         node.SetPos(new Vector2(loc.X, loc.Y));
     }
-    
+
     public bool UpdateLocationGroup(MapLocation node)
     {
         if (Loader.LocationGroupingMap.TryGetValue(node.LocationGroup, out var group))

@@ -10,6 +10,7 @@ namespace HydraTextClient.Scripts.Mapper;
 public partial class MapLocation : TextureRect
 {
     [Export] public Texture2D BaseCheckImage;
+    [Export] public Highlighter Highlighter;
     public Vector2 Pos = Vector2.Zero;
     public bool QueueUpdate;
     public MapNavigator Map;

@@ -4,10 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://8udjoqovuj74" path="res://Assets/Images/BaseCheck.png" id="2_2k46v"]
 [ext_resource type="PackedScene" uid="uid://ept1ew3d5xe3" path="res://Scenes/Utility/Highlighter.tscn" id="3_2k46v"]
 
-[node name="MapLocation" type="TextureRect" unique_id=2059367512]
+[node name="MapLocation" type="TextureRect" unique_id=2059367512 node_paths=PackedStringArray("Highlighter")]
 expand_mode = 1
 script = ExtResource("1_mh7i2")
 BaseCheckImage = ExtResource("2_2k46v")
+Highlighter = NodePath("Highlighter")
 
 [node name="Highlighter" parent="." unique_id=902065195 node_paths=PackedStringArray("HigherPower") instance=ExtResource("3_2k46v")]
 layout_mode = 1
