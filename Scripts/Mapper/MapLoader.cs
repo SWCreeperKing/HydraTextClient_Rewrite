@@ -26,14 +26,13 @@ public partial class MapLoader : Control
     [Export] public PopoutWindow PopoutWindow;
     [Export] public CheckBox AutoTab;
     [Export] public PackedScene MapContainer;
-    [Export] private OptionButton LocationGroupDropDown;
     [Export] private PackedScene AddLocationsPopup;
+    [Export] private PackedScene EditMapPopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
     public Dictionary<string, TabContainer> MapTabs = [];
-    public Dictionary<int, MapNavigator> MapNavMap = [];
-    public Dictionary<string, MapNavigator> MapAutoTabbing = [];
+    public List<MapNavigator> MapNavigators = [];
     public List<LocationGroup> LocationGroups = [];
     public Action<MapLoader> ExitEvent;
     public ApClient? Client;
@@ -112,8 +111,7 @@ public partial class MapLoader : Control
             MapTabs[tab.Parent].AddChild(container);
         }
 
-        var mapId = -1;
-        foreach (var map in MapsList) CreateMap(path, map, ++mapId);
+        foreach (var map in MapsList) CreateMap(path, map);
     }
 
     public override void _Process(double delta)
@@ -151,15 +149,14 @@ public partial class MapLoader : Control
         else LocationPanel.Hide();
     }
 
-    private void CreateMap(string path, Maps map, int mapId)
+    private void CreateMap(string path, Maps map)
     {
         var container = MapTabs.GetValueOrDefault(map.Tab, MapTabs[""]);
-        var mapContainer = MapAutoTabbing[map.GetId] = MapNavMap[mapId] = MapContainer.Instantiate<MapNavigator>();
+        var mapContainer = MapContainer.Instantiate<MapNavigator>();
         mapContainer.SetupMap(this, map, $"{path}/maps/");
         container.AddChild(mapContainer);
+        MapNavigators.Add(mapContainer);
     }
-
-    public Vector2 GetMapSize(int mapId) => MapNavMap[mapId].GetMapSize;
 
     public void AddHoverLocation(MapLocation node)
     {
@@ -209,10 +206,21 @@ public partial class MapLoader : Control
         }
     }
 
+    public void EditMap()
+    {
+        var map = GetCurrentMap();
+        if (map is null) return;
+        var popup = EditMapPopup.Instantiate<EditMapWindow>();
+        popup.Setup(map);
+        popup.EditMapData += map.EditMapData;
+        CallDeferred("add_child", popup);
+        popup.CallDeferred("show");
+    }
+    
     public void SelectMap(string mapId)
     {
         if (!AutoTab.ButtonPressed) return;
-        if (!MapAutoTabbing.TryGetValue(mapId, out var map)) return;
+        if (!TryGetMapWithId(mapId, out var map)) return;
         var container = (Control)map.GetParent();
         map.Visible = true;
         Control parent;
@@ -223,6 +231,12 @@ public partial class MapLoader : Control
         }
     }
 
+    public bool TryGetMapWithId(string id, out MapNavigator? foundMap)
+    {
+        foundMap = MapNavigators.FirstOrDefault(map => map.MapId == id, null);
+        return foundMap is not null;
+    }
+    
     public void ResetSelectedNodes()
     {
         foreach (var loc in SelectedLocation) loc.EmitUnSelect();
@@ -234,7 +248,7 @@ public partial class MapLoader : Control
 
     public void UpdateNodes()
     {
-        foreach (var (_, map) in MapNavMap) map.UpdateNodes();
+        foreach (var map in MapNavigators) map.UpdateNodes();
     }
 
     public void CopyLocations()
@@ -273,7 +287,7 @@ public partial class MapLoader : Control
 
     public void StopAndClose() => ExitEvent?.Invoke(this);
     public void ResetZoom() => GetCurrentMap()?.Container.ResetZoom();
-
+    
     public MapNavigator GetCurrentMap()
     {
         var container = MapTabs[""];
@@ -295,6 +309,8 @@ public partial class MapLoader : Control
         File.WriteAllText($"{MapPath}/tabs.json", JsonConvert.SerializeObject(Structure));
         File.WriteAllText($"{MapPath}/locationgroups.json", JsonConvert.SerializeObject(LocationGroups));
     }
+
+    public void OpenFolder() => OS.ShellOpen(MapPath);
 
     protected override void Dispose(bool disposing)
     {

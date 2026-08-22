@@ -8,15 +8,16 @@ public partial class MapControl : Control
     [Export] public float ZoomSpeed = .1f;
     [Export] public ScrollContainer ScrollContainer;
     [Export] public TextureRect MapImage;
+    private double ScrollXPercent = -1;
+    private double ScrollYPercent = -1;
 
     public float Zoom
     {
         get => _Zoom;
         set
         {
-            CustomMinimumSize = MapImage.Size * value;
-            MapImage.Scale = new Vector2(value, value);
             _Zoom = value;
+            CallDeferred("UpdateZoom");
         }
     }
 
@@ -40,6 +41,14 @@ public partial class MapControl : Control
     public override void _PhysicsProcess(double delta)
     {
         if (!IsVisibleInTree()) return;
+
+        if (ScrollXPercent is not -1 && ScrollYPercent is not -1)
+        {
+            CallDeferred("SetScrollPercent", (float)ScrollXPercent, (float)ScrollYPercent);
+            ScrollXPercent = -1;
+            ScrollYPercent = -1;
+        }
+
         var leftButton = Input.IsMouseButtonPressed(MouseButton.Left);
         switch (leftButton)
         {
@@ -69,5 +78,26 @@ public partial class MapControl : Control
             case MouseButton.WheelDown: Zoom -= ZoomSpeed * Zoom; break;
             case MouseButton.WheelUp: Zoom += ZoomSpeed * Zoom; break;
         }
+    }
+
+    public void SetScrollPercent(float xPercent, float yPercent)
+    {
+        var scrollX = ScrollContainer.GetHScrollBar();
+        var scrollY = ScrollContainer.GetVScrollBar();
+        
+        // page is the grabber size x.x
+        // its /2f to grab the center of the grabber
+        ScrollContainer.ScrollHorizontal = (int)(scrollX.MaxValue * xPercent - scrollX.Page / 2f);
+        ScrollContainer.ScrollVertical = (int)(scrollY.MaxValue * yPercent - scrollY.Page / 2f);
+    }
+
+    private void UpdateZoom()
+    {
+        var scrollX = ScrollContainer.GetHScrollBar();
+        var scrollY = ScrollContainer.GetVScrollBar();
+        ScrollXPercent = (ScrollContainer.ScrollHorizontal + scrollX.Page / 2f) / scrollX.MaxValue;
+        ScrollYPercent = (ScrollContainer.ScrollVertical + scrollY.Page / 2f) / scrollY.MaxValue;
+        CustomMinimumSize = MapImage.Size * _Zoom;
+        MapImage.Scale = new Vector2(_Zoom, _Zoom);
     }
 }

@@ -12,6 +12,7 @@ theme = ExtResource("1_gw4rp")
 script = ExtResource("2_3pvbc")
 TabContainer = NodePath("Panel/TabContainer")
 ButtonContainer = NodePath("Panel/TabContainer/ChoseToEdit")
+BlockParent = false
 
 [node name="Panel" type="Panel" parent="." unique_id=1461021148]
 anchors_preset = 15

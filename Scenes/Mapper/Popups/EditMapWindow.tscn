@@ -2,16 +2,17 @@
 
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="1_kfaqn"]
 [ext_resource type="Script" uid="uid://c4xmwtw5navbv" path="res://Scripts/Mapper/Popups/EditMapWindow.cs" id="2_cjjud"]
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_nmvjy"]
 
 [node name="EditMapWindow" type="Window" unique_id=1427444570 node_paths=PackedStringArray("MapName", "MapImage", "MapAutoTabId")]
 oversampling_override = 1.0
 title = "Edit Map"
-size = Vector2i(550, 300)
+size = Vector2i(550, 330)
 theme = ExtResource("1_kfaqn")
 script = ExtResource("2_cjjud")
-MapName = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer2/TextEdit")
+MapName = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer2/LineEdit")
 MapImage = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
-MapAutoTabId = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer3/TextEdit")
+MapAutoTabId = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit")
 
 [node name="Panel" type="Panel" parent="." unique_id=323802724]
 anchors_preset = 15
@@ -42,7 +43,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Map Name"
 
-[node name="TextEdit" type="TextEdit" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=1949623817]
+[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=1988735493]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -73,7 +74,7 @@ layout_mode = 2
 [node name="Label2" type="Label" parent="Panel/ScrollContainer/VBoxContainer" unique_id=465229423]
 modulate = Color(1, 0.68, 0.68, 1)
 layout_mode = 2
-text = "leave blank to use the map name as the ID, there can not be duplicate IDs"
+text = "leave blank to use the map name as the ID, duplicate IDs can lead to incorrect behavior"
 autowrap_mode = 2
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1214175691]
@@ -84,6 +85,31 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Map Auto-Tab ID"
 
-[node name="TextEdit" type="TextEdit" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=617926319]
+[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=602618182]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=543802293]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1875753438]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=527381303]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Edit"
+
+[node name="Button2" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=2027019982]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_nmvjy")]
+Prefix = "window_nodes"
+Controls = {
+"edit_map_info_window": NodePath("..")
+}
+
+[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer4/Button" to="." method="Edit"]
+[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer4/Button2" to="." method="Close"]

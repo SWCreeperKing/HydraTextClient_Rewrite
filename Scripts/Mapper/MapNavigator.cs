@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Godot;
 
 namespace HydraTextClient.Scripts.Mapper;
@@ -14,6 +12,7 @@ public partial class MapNavigator : ScrollContainer
     public Maps CoreMap;
     public string MapPath;
     public List<MapLocation> Locations = [];
+    public string MapId => CoreMap.GetId;
 
     public Vector2 GetMapSize => Container.MapImage.Texture.GetSize();
 
@@ -46,6 +45,13 @@ public partial class MapNavigator : ScrollContainer
         var image = ImageTexture.CreateFromImage(Image.LoadFromFile($"{MapPath}{name}"));
         Container.MapImage.Texture = image;
         Container.ResetZoom();
+    }
+
+    public void EditMapData(string mapName, string image, string mapId)
+    {
+        SetMapName(mapName);
+        SetImage(image);
+        CoreMap.MapId = mapId;
     }
     
     private void CreateLocationNode(MapNode loc)
