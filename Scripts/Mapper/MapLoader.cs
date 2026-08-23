@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
@@ -30,6 +29,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene AddLocationsPopup;
     [Export] private PackedScene EditMapPopup;
     [Export] private PackedScene ManageTabPopup;
+    [Export] private PackedScene LocationGroupsManagerPopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -197,16 +197,15 @@ public partial class MapLoader : Control
         ListContainer.Visible = true;
         List.Clear();
 
-        LocationGroup? group = location.LocationGroup is ""
-                               || !LocationGroupingMap.TryGetValue(location.LocationGroup, out var tGroup) ? null
-            : tGroup;
+        var group = location.LocationGroup is ""
+                    || !LocationGroupingMap.TryGetValue(location.LocationGroup, out var tGroup) ? null : tGroup;
         foreach (var loc in location.Locations)
         {
             if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
             var i = List.AddItem(loc);
             if (group is null) continue;
-            var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.Value.AvailableIcon
-                : group!.Value.CollectedIcon;
+            var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.AvailableIcon
+                : group!.CollectedIcon;
             if (icon is "" || !ItemImageLoader.TryGet(icon, out var img))
             {
                 if (icon is not "") GD.PrintErr($"Missing icon for [{icon}]");
@@ -222,9 +221,9 @@ public partial class MapLoader : Control
         if (map is null) return;
         var popup = EditMapPopup.Instantiate<EditMapWindow>();
         popup.Setup(map);
-        popup.EditMapData += (name, image,id ) =>
+        popup.EditMapData += (name, image, id) =>
         {
-            if (FindMapByName(name) is not null) return;
+            if (FindMapByName(name) is null) return;
             map.EditMapData(name, image, id);
         };
         CallDeferred("add_child", popup);
@@ -322,6 +321,7 @@ public partial class MapLoader : Control
         }
     }
 
+    
     public void ManageTabs()
     {
         var popup = ManageTabPopup.Instantiate<TabManager>();
@@ -329,7 +329,7 @@ public partial class MapLoader : Control
         AddChild(popup);
         popup.Show();
     }
-
+    
     private void OnPopupOnConfirmAction(int action, string name, string destination)
     {
         if (!MapTabs.ContainsKey(destination)) destination = "";
@@ -338,11 +338,11 @@ public partial class MapLoader : Control
         MapNavigator map;
         switch ((TabManager.ManageAction)action)
         {
-            case TabManager.ManageAction.AddMap: 
+            case TabManager.ManageAction.AddMap:
                 if (FindMapByName(name) is not null) return;
                 CreateMap(MapPath, new Maps(name, "", destination));
                 break;
-            case TabManager.ManageAction.MoveMap: 
+            case TabManager.ManageAction.MoveMap:
                 if ((map = FindMapByName(name)) is null) return;
                 map.GetParent().RemoveChild(map);
                 target.AddChild(map);
@@ -362,7 +362,7 @@ public partial class MapLoader : Control
                 tab.TabsRearrangeGroup = 59823532;
                 target.AddChild(tab);
                 break;
-            case TabManager.ManageAction.MoveTab: 
+            case TabManager.ManageAction.MoveTab:
                 if (!MapTabs.TryGetValue(name, out tab)) return;
                 tab.GetParent().RemoveChild(tab);
                 target.AddChild(tab);
@@ -381,10 +381,20 @@ public partial class MapLoader : Control
         }
     }
 
-    public MapNavigator FindMapByName(string name) => MapNavigators.FirstOrDefault(map => map.CoreMap.MapName == name, null);
+    public MapNavigator FindMapByName(string name)
+        => MapNavigators.FirstOrDefault(map => map.CoreMap.MapName == name, null);
 
+    public void EditLocationGroup()
+    {
+        var popup = LocationGroupsManagerPopup.Instantiate<LocationGroupsManagement>();
+        popup.Setup(this);
+        AddChild(popup);
+        popup.Show();
+    }
+    
     public void SaveMapData()
     {
+        if (!IsInEditMode) return;
         List<Maps> newMapList = [];
         TabStructure newStructure = new("");
 
@@ -418,6 +428,12 @@ public partial class MapLoader : Control
     }
 
     public void OpenFolder() => OS.ShellOpen(MapPath);
+
+    public override void _Notification(int what)
+    {
+        if (what != NotificationWMCloseRequest) return;
+        if (IsInEditMode) SaveMapData();
+    }
 
     protected override void Dispose(bool disposing)
     {

@@ -37,14 +37,15 @@ public class MapNode(float x, float y, float w, float h, string group = "",
     public float H = h;
 }
 
-public struct LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
+public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
 {
-    public enum DataStorageType { Text, Number, Bool }
+    public const float Tolerance = .00001f;
+    public enum DataStorageType { Bool, Number, Text }
 
     [Flags]
     public enum NumberCompareType // storage value [compare type] data compare 
     {
-        None = 0, // defaults to equal to
+        NotEqualTo = 0, // defaults to equal to
         EqualTo = 1, GreaterThan = 1 << 1, LessThan = 1 << 2,
     }
 
@@ -56,8 +57,11 @@ public struct LocationGroup(string name, string mapIcon, string openIcon = "", s
     // slot data conditions
     public string SlotDataKey;
     public DataStorageType StoreType;
-    public string DataCompare;
+    public string[] DataCompare = [];
+    public bool BoolCompare = true;
+    public double NumberCompare;
     public NumberCompareType CompareType;
+    public bool MatchAny = true; // false means to match none
 
     public bool CompareDataValue(object val)
     {
@@ -65,16 +69,17 @@ public struct LocationGroup(string name, string mapIcon, string openIcon = "", s
         {
             switch (StoreType)
             {
-                case DataStorageType.Text: return (string)val == DataCompare;
+                case DataStorageType.Text:
+                    var text = (string)val;
+                    return MatchAny ? DataCompare.Contains(text) : !DataCompare.Contains(text);
                 case DataStorageType.Number:
                     var num = (long)val;
-                    var compare = long.Parse(DataCompare);
-                    if (CompareType is NumberCompareType.None || CompareType.HasFlag(NumberCompareType.EqualTo))
-                        return num == compare;
-                    if (CompareType.HasFlag(NumberCompareType.GreaterThan)) return num > compare;
-                    if (CompareType.HasFlag(NumberCompareType.LessThan)) return num < compare;
+                    if (CompareType is NumberCompareType.NotEqualTo) return Math.Abs(num - NumberCompare) > Tolerance;
+                    if (CompareType.HasFlag(NumberCompareType.EqualTo)) return Math.Abs(num - NumberCompare) < Tolerance;
+                    if (CompareType.HasFlag(NumberCompareType.GreaterThan)) return num > NumberCompare;
+                    if (CompareType.HasFlag(NumberCompareType.LessThan)) return num < NumberCompare;
                     return false;
-                case DataStorageType.Bool: return (bool)val == (DataCompare.ToLower()[0] == 't');
+                case DataStorageType.Bool: return (bool)val == BoolCompare;
                 default: return false;
             }
         }

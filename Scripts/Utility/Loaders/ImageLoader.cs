@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using Godot;
 using HydraTextClient.Scripts.Controllers;
 
@@ -50,6 +51,7 @@ public abstract class ImageLoader : IDisposable
         => !Images.TryGetValue(NameModify(name), out var value) ? def : value;
 
     public ConcurrentDictionary<string, ImageTexture> GetImages() => Images;
+    public string[] GetImageNames() => Images.Keys.ToArray();
     public ImageTexture GetImage(string name) => Images[NameModify(name)];
     public virtual void ReloadImagesResolved() { }
     public virtual void ImageWasSet(string path, string image, ImageTexture img) { }

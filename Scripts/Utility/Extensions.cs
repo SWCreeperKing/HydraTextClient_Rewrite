@@ -8,6 +8,7 @@ using Godot;
 using HydraTextClient.Scripts.Clients.TextClient;
 using HydraTextClient.Scripts.Clients.TextClient.ParserEffects;
 using HydraTextClient.Scripts.Controllers;
+using HydraTextClient.Scripts.Mapper;
 using HydraTextClient.Scripts.Utilities.ItemFilter;
 using HydraTextClient.Scripts.Utility.DataTypes;
 using HydraTextClient.Scripts.Utility.Loaders;
@@ -227,6 +228,22 @@ public static class Extensions // sorted alphabetically for the memes
         public void AppendText(string text) => edit.Text += text;
     }
 
+    extension(LocationGroup.NumberCompareType compareType)
+    {
+        public int ToSelected()
+        {
+            switch (compareType)
+            {
+                case LocationGroup.NumberCompareType.EqualTo: return 1;
+                case LocationGroup.NumberCompareType.GreaterThan: return 2;
+                case LocationGroup.NumberCompareType.GreaterThan | LocationGroup.NumberCompareType.EqualTo: return 3;
+                case LocationGroup.NumberCompareType.LessThan: return 4;
+                case LocationGroup.NumberCompareType.LessThan | LocationGroup.NumberCompareType.EqualTo: return 5;
+                default: return 0;
+            }
+        }
+    }
+    
     extension(RichTextLabel label)
     {
         public void ApplyCompiledPrintableObjs(IPrintableObj[] objs)

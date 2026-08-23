@@ -31,7 +31,7 @@ public partial class EditMapWindow : WindowSetter
             var map = MapImages[MapImage.Selected];
             EmitSignalEditMapData(MapName.Text.Trim(), map, MapAutoTabId.Text.Trim());
         }
-        catch { }
+        catch (Exception e) { GD.PrintErr(e); }
         Close();
     }
 }

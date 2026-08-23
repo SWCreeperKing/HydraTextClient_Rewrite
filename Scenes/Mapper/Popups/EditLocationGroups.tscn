@@ -1,8 +1,28 @@
 [gd_scene format=3 uid="uid://daejcfoohctjw"]
 
-[node name="EditLocationGroups" type="Window" unique_id=1617194269]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="1_6mmx6"]
+[ext_resource type="Script" uid="uid://dkl8j28i3148l" path="res://Scripts/Mapper/Popups/LocationGroupsManagement.cs" id="1_7bw0f"]
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="2_ptvig"]
+
+[node name="EditLocationGroups" type="Window" unique_id=1617194269 node_paths=PackedStringArray("TabContainer", "AddGroupName", "GroupView", "NodeImage", "ClosedImage", "OpenedImage", "SlotDataVariable", "SlotDataType", "CompareContainer", "IsVariableTrue", "Operator", "ValueCompare", "MatchAny", "StringCompareData")]
 oversampling_override = 1.0
-size = Vector2i(500, 300)
+title = "Location Groups"
+size = Vector2i(550, 400)
+script = ExtResource("1_7bw0f")
+TabContainer = NodePath("Panel/TabContainer")
+AddGroupName = NodePath("Panel/TabContainer/Add_Edit/HBoxContainer/LineEdit")
+GroupView = NodePath("Panel/TabContainer/Add_Edit/ItemList")
+NodeImage = NodePath("Panel/TabContainer/Edit group/HBoxContainer/OptionButton")
+ClosedImage = NodePath("Panel/TabContainer/Edit group/HBoxContainer2/OptionButton")
+OpenedImage = NodePath("Panel/TabContainer/Edit group/HBoxContainer3/OptionButton")
+SlotDataVariable = NodePath("Panel/TabContainer/Edit group/LineEdit")
+SlotDataType = NodePath("Panel/TabContainer/Edit group/HBoxContainer4/OptionButton")
+CompareContainer = NodePath("Panel/TabContainer/Edit group/TabContainer")
+IsVariableTrue = NodePath("Panel/TabContainer/Edit group/TabContainer/Bool/CheckBox")
+Operator = NodePath("Panel/TabContainer/Edit group/TabContainer/Number/HBoxContainer/OptionButton")
+ValueCompare = NodePath("Panel/TabContainer/Edit group/TabContainer/Number/HBoxContainer/SpinBox")
+MatchAny = NodePath("Panel/TabContainer/Edit group/TabContainer/String/CheckBox")
+StringCompareData = NodePath("Panel/TabContainer/Edit group/TabContainer/String/TextEdit")
 
 [node name="Panel" type="Panel" parent="." unique_id=2069696929]
 anchors_preset = 15
@@ -18,10 +38,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_tab = 0
+current_tab = 1
 tabs_visible = false
 
 [node name="Add_Edit" type="VBoxContainer" parent="Panel/TabContainer" unique_id=1642157229]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -35,6 +56,7 @@ size_flags_horizontal = 3
 [node name="Button" type="Button" parent="Panel/TabContainer/Add_Edit/HBoxContainer" unique_id=1985360132]
 layout_mode = 2
 text = "Add Group"
+script = ExtResource("1_6mmx6")
 
 [node name="Label" type="Label" parent="Panel/TabContainer/Add_Edit" unique_id=412987521]
 layout_mode = 2
@@ -43,8 +65,166 @@ text = "Click to Edit"
 [node name="ItemList" type="ItemList" parent="Panel/TabContainer/Add_Edit" unique_id=1956017745]
 layout_mode = 2
 size_flags_vertical = 3
+fixed_icon_size = Vector2i(16, 16)
 
 [node name="Edit group" type="VBoxContainer" parent="Panel/TabContainer" unique_id=397939412]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="Button2" type="Button" parent="Panel/TabContainer/Edit group" unique_id=1369557318]
+layout_mode = 2
+text = "Save"
+script = ExtResource("1_6mmx6")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/TabContainer/Edit group" unique_id=1511199415]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/TabContainer/Edit group/HBoxContainer" unique_id=636235123]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Node Image"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/Edit group/HBoxContainer" unique_id=1819383915]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/TabContainer/Edit group" unique_id=383199816]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/TabContainer/Edit group/HBoxContainer2" unique_id=486307862]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Default Closed Image"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/Edit group/HBoxContainer2" unique_id=1745600268]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/TabContainer/Edit group" unique_id=1113072820]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/TabContainer/Edit group/HBoxContainer3" unique_id=516640622]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Default Opened Image"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/Edit group/HBoxContainer3" unique_id=639010693]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/TabContainer/Edit group" unique_id=1216779193]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="Panel/TabContainer/Edit group" unique_id=1706658286]
+layout_mode = 2
+placeholder_text = "Slot Data Variable"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/TabContainer/Edit group" unique_id=315376314]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/TabContainer/Edit group/HBoxContainer4" unique_id=1433098334]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Slot Data Compare"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/Edit group/HBoxContainer4" unique_id=652090880]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 3
+popup/item_0/text = "Boolean"
+popup/item_0/id = 0
+popup/item_1/text = "Number"
+popup/item_1/id = 1
+popup/item_2/text = "String"
+popup/item_2/id = 2
+
+[node name="TabContainer" type="TabContainer" parent="Panel/TabContainer/Edit group" unique_id=1405854969]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+tabs_visible = false
+
+[node name="Bool" type="VBoxContainer" parent="Panel/TabContainer/Edit group/TabContainer" unique_id=194510379]
+layout_mode = 2
+alignment = 1
+metadata/_tab_index = 0
+
+[node name="CheckBox" type="CheckBox" parent="Panel/TabContainer/Edit group/TabContainer/Bool" unique_id=676596301]
+layout_mode = 2
+button_pressed = true
+text = "Variable Is True"
+
+[node name="Number" type="VBoxContainer" parent="Panel/TabContainer/Edit group/TabContainer" unique_id=785280645]
+visible = false
+layout_mode = 2
+alignment = 1
+metadata/_tab_index = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/TabContainer/Edit group/TabContainer/Number" unique_id=473828854]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=611525751]
+layout_mode = 2
+text = "Variable"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=113556328]
+layout_mode = 2
+selected = 0
+item_count = 6
+popup/item_0/text = "!="
+popup/item_0/id = 0
+popup/item_1/text = "=="
+popup/item_1/id = 1
+popup/item_2/text = ">"
+popup/item_2/id = 2
+popup/item_3/text = ">="
+popup/item_3/id = 3
+popup/item_4/text = "<"
+popup/item_4/id = 4
+popup/item_5/text = "<="
+popup/item_5/id = 5
+
+[node name="SpinBox" type="SpinBox" parent="Panel/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=550467436]
+layout_mode = 2
+size_flags_horizontal = 3
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
+[node name="String" type="VBoxContainer" parent="Panel/TabContainer/Edit group/TabContainer" unique_id=1701391749]
+visible = false
+layout_mode = 2
+alignment = 1
+metadata/_tab_index = 2
+
+[node name="CheckBox" type="CheckBox" parent="Panel/TabContainer/Edit group/TabContainer/String" unique_id=1574998315]
+layout_mode = 2
+button_pressed = true
+text = "Match Any if true, Match None if false"
+
+[node name="TextEdit" type="TextEdit" parent="Panel/TabContainer/Edit group/TabContainer/String" unique_id=109955964]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Possible string values
+each new line is a new value to match"
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/TabContainer/Edit group" unique_id=353129759]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/TabContainer/Edit group" unique_id=31124369]
+modulate = Color(1, 0.49, 0.49, 1)
+layout_mode = 2
+text = "DELETE GROUP"
+script = ExtResource("1_6mmx6")
+
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("2_ptvig")]
+Prefix = "window_nodes"
+Controls = {
+"location_group_management": NodePath("..")
+}
+
+[connection signal="pressed" from="Panel/TabContainer/Add_Edit/HBoxContainer/Button" to="." method="AddGroup"]
+[connection signal="pressed" from="Panel/TabContainer/Edit group/Button2" to="." method="SaveGroup"]
+[connection signal="item_selected" from="Panel/TabContainer/Edit group/HBoxContainer4/OptionButton" to="Panel/TabContainer/Edit group/TabContainer" method="set_current_tab"]
+[connection signal="pressed" from="Panel/TabContainer/Edit group/Button" to="." method="DeleteGroup"]

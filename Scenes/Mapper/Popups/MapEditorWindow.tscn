@@ -41,12 +41,6 @@ layout_mode = 2
 text = "If the leader client's game matches, locations collected will show up when adding locations to nodes"
 autowrap_mode = 2
 
-[node name="Label4" type="Label" parent="Panel/TabContainer/ChoseToEdit" unique_id=276017630]
-modulate = Color(1, 0.31, 0.31, 1)
-layout_mode = 2
-text = "Clicking the X will NOT save changes"
-autowrap_mode = 2
-
 [node name="HSeparator3" type="HSeparator" parent="Panel/TabContainer/ChoseToEdit" unique_id=600682487]
 layout_mode = 2
 
