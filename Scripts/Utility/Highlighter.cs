@@ -9,15 +9,17 @@ public partial class Highlighter : ColorRect
     [Export] public Color Hover = Colors.AliceBlue;
     [Export] public Control? HigherPower;
     [Export] public bool Selectable;
-    public Func<bool>? InterruptEvents;
     private double Timer;
     private Tween Tween;
     private bool Selected;
     private bool IsIn;
 
     [Signal] public delegate void OnSelectedEventHandler();
+
     [Signal] public delegate void OnUnSelectedEventHandler();
+
     [Signal] public delegate void OnEnteredEventHandler();
+
     [Signal] public delegate void OnExitedEventHandler();
 
     public override void _Ready()
@@ -39,7 +41,6 @@ public partial class Highlighter : ColorRect
     {
         IsIn = true;
         if (Selectable && Selected) return;
-        if (InterruptEvents is not null && InterruptEvents()) return;
         EmitSignalOnEntered();
         Tween?.Kill();
         Tween = CreateTween();
@@ -51,7 +52,6 @@ public partial class Highlighter : ColorRect
     {
         IsIn = false;
         if (Selectable && Selected) return;
-        if (InterruptEvents is not null && InterruptEvents()) return;
         EmitSignalOnExited();
         Tween?.Kill();
         Tween = CreateTween();
@@ -61,15 +61,16 @@ public partial class Highlighter : ColorRect
 
     public void OnGuiInput(InputEvent @event)
     {
-        if (InterruptEvents is not null && InterruptEvents()) return;
         if (!Selectable) return;
         if (!IsIn)
         {
-            ResetPressed();
+            if (!Selected) Exit();
             return;
         }
+        
         if (@event is not InputEventMouseButton button) return;
-        if (!button.Pressed || button.ButtonIndex is not MouseButton.Left) return;
+        if (button.ButtonIndex is not MouseButton.Left) return;
+        if (!button.Pressed && Selected) return;
 
         Selected = !Selected;
         if (Selected) EmitSignalOnSelected();

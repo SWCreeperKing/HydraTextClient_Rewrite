@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://daejcfoohctjw"]
+
+[node name="EditLocationGroups" type="Window" unique_id=1617194269]
+oversampling_override = 1.0
+size = Vector2i(500, 300)
+
+[node name="Panel" type="Panel" parent="." unique_id=2069696929]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="Panel" unique_id=231095948]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+tabs_visible = false
+
+[node name="Add_Edit" type="VBoxContainer" parent="Panel/TabContainer" unique_id=1642157229]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/TabContainer/Add_Edit" unique_id=211732894]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="Panel/TabContainer/Add_Edit/HBoxContainer" unique_id=715363259]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Panel/TabContainer/Add_Edit/HBoxContainer" unique_id=1985360132]
+layout_mode = 2
+text = "Add Group"
+
+[node name="Label" type="Label" parent="Panel/TabContainer/Add_Edit" unique_id=412987521]
+layout_mode = 2
+text = "Click to Edit"
+
+[node name="ItemList" type="ItemList" parent="Panel/TabContainer/Add_Edit" unique_id=1956017745]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Edit group" type="VBoxContainer" parent="Panel/TabContainer" unique_id=397939412]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1

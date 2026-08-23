@@ -182,6 +182,7 @@ offset_right = 4.0
 offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 fit_content = true
 autowrap_mode = 0
 

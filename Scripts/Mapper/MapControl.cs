@@ -5,7 +5,7 @@ namespace HydraTextClient.Scripts.Mapper;
 
 public partial class MapControl : Control
 {
-    [Export] public float ZoomSpeed = .1f;
+    [Export] public float ZoomSpeed = .09f;
     [Export] public ScrollContainer ScrollContainer;
     [Export] public TextureRect MapImage;
     private double ScrollXPercent = -1;

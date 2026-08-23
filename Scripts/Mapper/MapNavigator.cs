@@ -78,7 +78,6 @@ public partial class MapNavigator : ScrollContainer
         node.OnExited += () => Loader.RemoveHoverLocation(node);
         node.OnSelected += () => Loader.AddSelectedLocation(node);
         node.OnUnSelected += () => Loader.RemoveSelectedLocation(node);
-        node.Highlighter.InterruptEvents = () => Container.IsDragging;
 
         Container.MapImage.AddChild(node);
         Locations.Add(node);
