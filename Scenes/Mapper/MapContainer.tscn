@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://c5snbms58e4nb" path="res://Scripts/Mapper/MapNavigator.cs" id="1_26por"]
 [ext_resource type="Script" uid="uid://dmvjnvx86oiqj" path="res://Scripts/Mapper/MapControl.cs" id="2_4tp12"]
 [ext_resource type="PackedScene" uid="uid://cffrkj53il485" path="res://Scenes/Mapper/MapLocation.tscn" id="2_7rjv2"]
+[ext_resource type="Texture2D" uid="uid://fopjjxgkvyiv" path="res://Assets/Images/UI/UnknownGame.png" id="3_qbnl0"]
 
 [node name="ScrollContainer" type="ScrollContainer" unique_id=884451234 node_paths=PackedStringArray("Container")]
 anchors_preset = 15
@@ -16,6 +17,7 @@ mouse_filter = 2
 script = ExtResource("1_26por")
 Container = NodePath("Control")
 MapLocation = ExtResource("2_7rjv2")
+DefaultImage = ExtResource("3_qbnl0")
 
 [node name="Control" type="Control" parent="." unique_id=824895664 node_paths=PackedStringArray("ScrollContainer", "MapImage")]
 layout_mode = 2

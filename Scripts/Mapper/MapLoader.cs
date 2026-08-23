@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
@@ -28,7 +29,7 @@ public partial class MapLoader : Control
     [Export] public PackedScene MapContainer;
     [Export] private PackedScene AddLocationsPopup;
     [Export] private PackedScene EditMapPopup;
-    [Export] private PackedScene TabEditContainer;
+    [Export] private PackedScene ManageTabPopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -91,7 +92,7 @@ public partial class MapLoader : Control
         foreach (var group in LocationGroups) LocationGroupingMap[group.GroupName] = group;
 
         Queue<TabStructure> structures = [];
-        if (Structure.Name is null) Structure.Name = "";
+        Structure.Name = "";
         if (Structure.SubTabs is null) Structure.SubTabs = [];
         structures.Enqueue(Structure);
 
@@ -112,12 +113,6 @@ public partial class MapLoader : Control
 
             if (tab.Name is "" or null)
             {
-                if (IsInEditMode)
-                {
-                    var editor = TabEditContainer.Instantiate();
-                    container.AddChild(editor);
-                }
-
                 Container.AddChild(container);
                 continue;
             }
@@ -227,7 +222,11 @@ public partial class MapLoader : Control
         if (map is null) return;
         var popup = EditMapPopup.Instantiate<EditMapWindow>();
         popup.Setup(map);
-        popup.EditMapData += map.EditMapData;
+        popup.EditMapData += (name, image,id ) =>
+        {
+            if (FindMapByName(name) is not null) return;
+            map.EditMapData(name, image, id);
+        };
         CallDeferred("add_child", popup);
         popup.CallDeferred("show");
     }
@@ -322,6 +321,67 @@ public partial class MapLoader : Control
             }
         }
     }
+
+    public void ManageTabs()
+    {
+        var popup = ManageTabPopup.Instantiate<TabManager>();
+        popup.ConfirmAction += (action, name, dest) => CallDeferred("OnPopupOnConfirmAction", (int)action, name, dest);
+        AddChild(popup);
+        popup.Show();
+    }
+
+    private void OnPopupOnConfirmAction(int action, string name, string destination)
+    {
+        if (!MapTabs.ContainsKey(destination)) destination = "";
+        var target = MapTabs[destination];
+        TabContainer tab;
+        MapNavigator map;
+        switch ((TabManager.ManageAction)action)
+        {
+            case TabManager.ManageAction.AddMap: 
+                if (FindMapByName(name) is not null) return;
+                CreateMap(MapPath, new Maps(name, "", destination));
+                break;
+            case TabManager.ManageAction.MoveMap: 
+                if ((map = FindMapByName(name)) is null) return;
+                map.GetParent().RemoveChild(map);
+                target.AddChild(map);
+                break;
+            case TabManager.ManageAction.DeleteMap:
+                if ((map = FindMapByName(name)) is null) return;
+                MapNavigators.Remove(map);
+                map.GetParent().RemoveChild(map);
+                map.QueueFree();
+                break;
+            case TabManager.ManageAction.AddTab:
+                if (MapTabs.ContainsKey(name)) return;
+                tab = MapTabs[name] = new TabContainer();
+                tab.SizeFlagsVertical = SizeFlags.ExpandFill;
+                tab.Name = name;
+                tab.DragToRearrangeEnabled = true;
+                tab.TabsRearrangeGroup = 59823532;
+                target.AddChild(tab);
+                break;
+            case TabManager.ManageAction.MoveTab: 
+                if (!MapTabs.TryGetValue(name, out tab)) return;
+                tab.GetParent().RemoveChild(tab);
+                target.AddChild(tab);
+                break;
+            case TabManager.ManageAction.DeleteTab:
+                if (!MapTabs.TryGetValue(name, out tab)) return;
+                foreach (var child in tab.GetChildren())
+                {
+                    tab.RemoveChild(child);
+                    target.AddChild(child);
+                }
+                tab.GetParent().RemoveChild(tab);
+                tab.QueueFree();
+                MapTabs.Remove(name);
+                break;
+        }
+    }
+
+    public MapNavigator FindMapByName(string name) => MapNavigators.FirstOrDefault(map => map.CoreMap.MapName == name, null);
 
     public void SaveMapData()
     {

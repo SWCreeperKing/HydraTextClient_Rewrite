@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://megqjjecsvfo"]
+
+[ext_resource type="Script" uid="uid://b0hv42jsry375" path="res://Scripts/Mapper/Popups/TabManager.cs" id="1_l0sj6"]
+
+[node name="Window" type="Window" unique_id=1137080991 node_paths=PackedStringArray("Action", "NameEdit", "Destination")]
+oversampling_override = 1.0
+title = "Manage Tabs"
+size = Vector2i(400, 150)
+script = ExtResource("1_l0sj6")
+Action = NodePath("Panel/VBoxContainer/HBoxContainer/OptionButton")
+NameEdit = NodePath("Panel/VBoxContainer/LineEdit")
+Destination = NodePath("Panel/VBoxContainer/LineEdit2")
+
+[node name="Panel" type="Panel" parent="." unique_id=1111119635]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=1264299188]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=720113675]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer" unique_id=1210665836]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Action:"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/VBoxContainer/HBoxContainer" unique_id=1121975106]
+layout_mode = 2
+selected = 0
+item_count = 6
+popup/item_0/text = "Add Map Tab"
+popup/item_0/id = 0
+popup/item_1/text = "Move Map Tab"
+popup/item_1/id = 1
+popup/item_2/text = "Delete Map Tab"
+popup/item_2/id = 2
+popup/item_3/text = "Add Tab"
+popup/item_3/id = 3
+popup/item_4/text = "Move Tab"
+popup/item_4/id = 4
+popup/item_5/text = "Delete Tab"
+popup/item_5/id = 5
+
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer" unique_id=768561163]
+layout_mode = 2
+placeholder_text = "Name"
+
+[node name="LineEdit2" type="LineEdit" parent="Panel/VBoxContainer" unique_id=1189538408]
+layout_mode = 2
+placeholder_text = "Tab Destination"
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer" unique_id=1649373570]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=866672403]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/VBoxContainer/HBoxContainer2" unique_id=781152489]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Confirm"
+
+[node name="Button2" type="Button" parent="Panel/VBoxContainer/HBoxContainer2" unique_id=194435867]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Button" to="." method="Confirm"]
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]
