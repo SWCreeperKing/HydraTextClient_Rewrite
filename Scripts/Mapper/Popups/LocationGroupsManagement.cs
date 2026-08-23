@@ -39,10 +39,14 @@ public partial class LocationGroupsManagement : WindowSetter
     private LocationGroup? SelectedGroup;
     private string[] Images;
 
-    public void Setup(MapLoader loader)
+    public override void _Ready()
     {
         TabContainer.SetCurrentTab(0);
         CompareContainer.SetCurrentTab(0);
+    }
+
+    public void Setup(MapLoader loader)
+    {
         Loader = loader;
         Loader.ItemImageLoader.ReloadImages();
         Images = Loader.ItemImageLoader.GetImageNames().Order().ToArray();

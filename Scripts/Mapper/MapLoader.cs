@@ -30,6 +30,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene EditMapPopup;
     [Export] private PackedScene ManageTabPopup;
     [Export] private PackedScene LocationGroupsManagerPopup;
+    [Export] private PackedScene LocationIconOverridePopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -43,6 +44,8 @@ public partial class MapLoader : Control
     public bool IsInEditMode;
     public List<string> CollectedLocations = [];
     public Dictionary<string, LocationGroup> LocationGroupingMap = [];
+    public Dictionary<string, string> LocationClosedIconOverride = [];
+    public Dictionary<string, string> LocationOpenedIconOverride = [];
     private string TrackerName;
     private HashSet<MapLocation> SelectedLocation = [];
     private List<MapLocation> HoveredLocation = [];
@@ -64,6 +67,16 @@ public partial class MapLoader : Control
         Parent = parent;
         MapsList = JsonConvert.DeserializeObject<List<Maps>>(File.ReadAllText($"{path}/atlas.json"));
         Structure = JsonConvert.DeserializeObject<TabStructure>(File.ReadAllText($"{path}/tabs.json"));
+
+        if (File.Exists($"{path}/locationiconopen.json"))
+            LocationOpenedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                File.ReadAllText($"{path}/locationiconopen.json")
+            );
+        if (File.Exists($"{path}/locationiconclose.json"))
+            LocationClosedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                File.ReadAllText($"{path}/locationiconclose.json")
+            );
+
         LocationGroups = JsonConvert.DeserializeObject<List<LocationGroup>>(
             File.ReadAllText($"{path}/locationgroups.json")
         );
@@ -321,7 +334,7 @@ public partial class MapLoader : Control
         }
     }
 
-    
+
     public void ManageTabs()
     {
         var popup = ManageTabPopup.Instantiate<TabManager>();
@@ -329,7 +342,7 @@ public partial class MapLoader : Control
         AddChild(popup);
         popup.Show();
     }
-    
+
     private void OnPopupOnConfirmAction(int action, string name, string destination)
     {
         if (!MapTabs.ContainsKey(destination)) destination = "";
@@ -392,6 +405,14 @@ public partial class MapLoader : Control
         popup.Show();
     }
     
+    public void EditLocationIconOverrides()
+    {
+        var popup = LocationIconOverridePopup.Instantiate<LocationIconsOverrider>();
+        popup.Setup(this);
+        AddChild(popup);
+        popup.Show();
+    }
+
     public void SaveMapData()
     {
         if (!IsInEditMode) return;
@@ -425,6 +446,8 @@ public partial class MapLoader : Control
         File.WriteAllText($"{MapPath}/atlas.json", JsonConvert.SerializeObject(newMapList));
         File.WriteAllText($"{MapPath}/tabs.json", JsonConvert.SerializeObject(newStructure));
         File.WriteAllText($"{MapPath}/locationgroups.json", JsonConvert.SerializeObject(LocationGroups));
+        File.WriteAllText($"{MapPath}/locationiconopen.json", JsonConvert.SerializeObject(LocationOpenedIconOverride));
+        File.WriteAllText($"{MapPath}/locationiconclose.json", JsonConvert.SerializeObject(LocationClosedIconOverride));
     }
 
     public void OpenFolder() => OS.ShellOpen(MapPath);
