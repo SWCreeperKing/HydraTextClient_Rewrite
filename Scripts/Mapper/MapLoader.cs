@@ -31,6 +31,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene ManageTabPopup;
     [Export] private PackedScene LocationGroupsManagerPopup;
     [Export] private PackedScene LocationIconOverridePopup;
+    [Export] private PackedScene EditMapNodePopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -46,10 +47,10 @@ public partial class MapLoader : Control
     public Dictionary<string, LocationGroup> LocationGroupingMap = [];
     public Dictionary<string, string> LocationClosedIconOverride = [];
     public Dictionary<string, string> LocationOpenedIconOverride = [];
+    public bool UpdateUI;
     private string TrackerName;
     private HashSet<MapLocation> SelectedLocation = [];
     private List<MapLocation> HoveredLocation = [];
-    private bool UpdateUI;
     private EmptyRichLabelInteractor LocationPopupList;
     private string MapPath;
 
@@ -285,6 +286,14 @@ public partial class MapLoader : Control
         DisplayServer.ClipboardSet(string.Join('\n', locationNamesToCopy));
     }
 
+    public void EditNode()
+    {
+        var popup = EditMapNodePopup.Instantiate<EditNodeDataPopup>();
+        popup.Setup(this, SelectedLocation.First());
+        AddChild(popup);
+        popup.Show();
+    }
+
     public void AddLocations()
     {
         var popup = AddLocationsPopup.Instantiate<MapAddLocations>();
@@ -404,7 +413,7 @@ public partial class MapLoader : Control
         AddChild(popup);
         popup.Show();
     }
-    
+
     public void EditLocationIconOverrides()
     {
         var popup = LocationIconOverridePopup.Instantiate<LocationIconsOverrider>();

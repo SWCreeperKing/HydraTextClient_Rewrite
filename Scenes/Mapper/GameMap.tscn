@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://megqjjecsvfo" path="res://Scenes/Mapper/Popups/ManageTabs.tscn" id="5_epac1"]
 [ext_resource type="PackedScene" uid="uid://daejcfoohctjw" path="res://Scenes/Mapper/Popups/EditLocationGroups.tscn" id="6_2nwgb"]
 [ext_resource type="PackedScene" uid="uid://d15rng0n3v6ed" path="res://Scenes/Mapper/Popups/LocationIconOverride.tscn" id="7_0a5q4"]
+[ext_resource type="PackedScene" uid="uid://lobbvevspn8f" path="res://Scenes/Mapper/Popups/EditNodePopup.tscn" id="8_ov35l"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ajsmo"]
 content_margin_left = 4.0
@@ -49,6 +50,7 @@ EditMapPopup = ExtResource("4_epac1")
 ManageTabPopup = ExtResource("5_epac1")
 LocationGroupsManagerPopup = ExtResource("6_2nwgb")
 LocationIconOverridePopup = ExtResource("7_0a5q4")
+EditMapNodePopup = ExtResource("8_ov35l")
 metadata/_tab_index = 0
 
 [node name="HSplitContainer" type="HSplitContainer" parent="." unique_id=208381665]
@@ -187,7 +189,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 5.0
+offset_right = 4.0
 offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -204,6 +206,7 @@ autowrap_mode = 0
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button8" to="." method="ManageTabs"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button" to="." method="EditLocationIconOverrides"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer3/Button" to="." method="StopAndClose"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button3" to="." method="EditNode"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button2" to="." method="AddLocations"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button4" to="." method="CopyLocations"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button" to="." method="RemoveSelectedLocations"]

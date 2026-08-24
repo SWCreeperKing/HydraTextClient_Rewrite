@@ -4,12 +4,11 @@
 [ext_resource type="Script" uid="uid://dkl8j28i3148l" path="res://Scripts/Mapper/Popups/LocationGroupsManagement.cs" id="1_7bw0f"]
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="2_ptvig"]
 
-[node name="EditLocationGroups" type="Window" unique_id=1617194269 node_paths=PackedStringArray("TabContainer", "AddGroupName", "GroupView", "NodeImage", "ClosedImage", "OpenedImage", "SlotDataVariable", "SlotDataType", "CompareContainer", "IsVariableTrue", "Operator", "ValueCompare", "MatchAny", "StringCompareData")]
+[node name="EditLocationGroups" type="Window" unique_id=1617194269 node_paths=PackedStringArray("AddGroupName", "GroupView", "NodeImage", "ClosedImage", "OpenedImage", "SlotDataVariable", "SlotDataType", "CompareContainer", "IsVariableTrue", "Operator", "ValueCompare", "MatchAny", "StringCompareData", "MainContainer")]
 oversampling_override = 1.0
 title = "Location Groups"
 size = Vector2i(550, 400)
 script = ExtResource("1_7bw0f")
-TabContainer = NodePath("Panel/TabContainer")
 AddGroupName = NodePath("Panel/TabContainer/Add_Edit/HBoxContainer/LineEdit")
 GroupView = NodePath("Panel/TabContainer/Add_Edit/ItemList")
 NodeImage = NodePath("Panel/TabContainer/Edit group/HBoxContainer/OptionButton")
@@ -23,6 +22,7 @@ Operator = NodePath("Panel/TabContainer/Edit group/TabContainer/Number/HBoxConta
 ValueCompare = NodePath("Panel/TabContainer/Edit group/TabContainer/Number/HBoxContainer/SpinBox")
 MatchAny = NodePath("Panel/TabContainer/Edit group/TabContainer/String/CheckBox")
 StringCompareData = NodePath("Panel/TabContainer/Edit group/TabContainer/String/TextEdit")
+MainContainer = NodePath("Panel/TabContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=2069696929]
 anchors_preset = 15
@@ -225,6 +225,6 @@ Controls = {
 }
 
 [connection signal="pressed" from="Panel/TabContainer/Add_Edit/HBoxContainer/Button" to="." method="AddGroup"]
-[connection signal="pressed" from="Panel/TabContainer/Edit group/Button2" to="." method="SaveGroup"]
+[connection signal="pressed" from="Panel/TabContainer/Edit group/Button2" to="." method="SaveAndSwitchBack"]
 [connection signal="item_selected" from="Panel/TabContainer/Edit group/HBoxContainer4/OptionButton" to="Panel/TabContainer/Edit group/TabContainer" method="set_current_tab"]
-[connection signal="pressed" from="Panel/TabContainer/Edit group/Button" to="." method="DeleteGroup"]
+[connection signal="pressed" from="Panel/TabContainer/Edit group/Button" to="." method="DeleteAndSwitchBack"]

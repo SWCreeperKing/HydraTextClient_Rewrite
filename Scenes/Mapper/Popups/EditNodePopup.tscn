@@ -1,0 +1,123 @@
+[gd_scene format=3 uid="uid://lobbvevspn8f"]
+
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="1_mnmjq"]
+[ext_resource type="Script" uid="uid://bmv5ss44mthec" path="res://Scripts/Mapper/Popups/EditNodeDataPopup.cs" id="1_sfu5c"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_lup2p"]
+
+[node name="EditNodePopup" type="Window" unique_id=206010802 node_paths=PackedStringArray("LocationGroup", "Xposition", "Yposition", "Width", "Height")]
+oversampling_override = 1.0
+title = "Edit Map Node"
+size = Vector2i(400, 240)
+script = ExtResource("1_sfu5c")
+LocationGroup = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer/OptionButton")
+Xposition = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer2/SpinBox")
+Yposition = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer3/SpinBox")
+Width = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer4/SpinBox")
+Height = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer5/SpinBox")
+
+[node name="Panel" type="Panel" parent="." unique_id=1036124765]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=504441]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=638966464]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1054209692]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=16165355]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Location Group"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=114502428]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer" unique_id=678970806]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1028189571]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=524709590]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "X Position"
+
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1289084197]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_greater = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1465487651]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=1767043359]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Y Position"
+
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=862421647]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_greater = true
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer" unique_id=1834391581]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=698814238]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer4" unique_id=1233011067]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Width"
+
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer4" unique_id=587070277]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_greater = true
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=336997179]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1109228018]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Height"
+
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1813851936]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_greater = true
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer" unique_id=1169041718]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSeparator4" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer" unique_id=1521624018]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/MarginContainer/VBoxContainer" unique_id=855814433]
+layout_mode = 2
+text = "Copy Node"
+script = ExtResource("2_lup2p")
+
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("1_mnmjq")]
+Prefix = "window_nodes"
+Controls = {
+"edit_node_popup": NodePath("..")
+}

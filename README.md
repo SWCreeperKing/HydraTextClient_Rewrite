@@ -173,9 +173,18 @@
 - Importing from poptracker packs
   - There any be alot of errors problems when importing, make sure to check the console
   - You might need to clean up the locations in the map editor since poptracker locations don't often match ap ones
-- For devs implementing auto tabbing
-  - Update the slot data storage "Current Map" with the map id when the player moves from one map to another
-  - map id by default is the name, can override, maps with multiple ids will not work
+- Auto Tabbing
+  - For Devs:
+    - Update the slot data storage "Current Map" with the map id when the player moves from one map to another
+  - For Map Makers:
+    - map id by default is the name, can override, maps with multiple ids will not work
+- Entrance Tracker (Auto Tracking)
+  - For Devs:
+    - The slot data key "Entrance Rando" needs to consist of a map of entrance ids to destinations (using entrance ids)
+    - The slot data key "entrance_rando" signifies if entrance rando is enabled or not 
+    - The slot data storage key of the entrance id needs to be false, then set to true when the entrance is found
+  - For Map Makers:
+    - The Entrance IDs might need to be mapped to a correct entrance name
 - For those who don't want to use the UI
   - The folder of the pack should be named the game's name as it appears in ap
   - You can use other maps as a template on how to write the 3 json files 

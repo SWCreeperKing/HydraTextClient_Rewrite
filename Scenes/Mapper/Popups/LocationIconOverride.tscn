@@ -4,15 +4,15 @@
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_2guyp"]
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_elmde"]
 
-[node name="LocationIconOverride" type="Window" unique_id=1632930607 node_paths=PackedStringArray("TabContainer", "LocationView", "ClosedImage", "OpenedImage", "LocationName")]
+[node name="LocationIconOverride" type="Window" unique_id=1632930607 node_paths=PackedStringArray("LocationView", "ClosedImage", "OpenedImage", "LocationName", "MainContainer")]
 oversampling_override = 1.0
 size = Vector2i(300, 200)
 script = ExtResource("1_i3pcj")
-TabContainer = NodePath("Panel/TabContainer")
 LocationView = NodePath("Panel/TabContainer/ScrollContainer/ItemList")
 ClosedImage = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer2/OptionButton")
 OpenedImage = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer3/OptionButton")
 LocationName = NodePath("Panel/TabContainer/VBoxContainer/Label2")
+MainContainer = NodePath("Panel/TabContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=42482944]
 anchors_preset = 15
@@ -28,10 +28,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_tab = 0
+current_tab = 1
 tabs_visible = false
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer" unique_id=208762560]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -47,7 +48,6 @@ same_column_width = true
 fixed_icon_size = Vector2i(16, 16)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/TabContainer" unique_id=632945007]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -102,4 +102,4 @@ Controls = {
 "location_icon_override": NodePath("..")
 }
 
-[connection signal="pressed" from="Panel/TabContainer/VBoxContainer/Button2" to="." method="Save"]
+[connection signal="pressed" from="Panel/TabContainer/VBoxContainer/Button2" to="." method="SaveAndSwitchBack"]

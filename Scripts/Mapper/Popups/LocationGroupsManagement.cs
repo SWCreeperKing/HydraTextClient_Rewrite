@@ -2,14 +2,12 @@
 using System.Linq;
 using Godot;
 using HydraTextClient.Scripts.Utility;
-using HydraTextClient.Scripts.Utility.Popups;
+using HydraTextClient.Scripts.Utility.UIHelpers;
 
 namespace HydraTextClient.Scripts.Mapper.Popups;
 
-public partial class LocationGroupsManagement : WindowSetter
+public partial class LocationGroupsManagement : SelectionEditWindow<LocationGroup>
 {
-    [Export] private TabContainer TabContainer;
-
     [Export, ExportGroup("Add-View Groups")]
     private LineEdit AddGroupName;
 
@@ -36,25 +34,19 @@ public partial class LocationGroupsManagement : WindowSetter
 
     private LocationGroup[] Groups = [];
     private MapLoader Loader;
-    private LocationGroup? SelectedGroup;
     private string[] Images;
-
-    public override void _Ready()
-    {
-        TabContainer.SetCurrentTab(0);
-        CompareContainer.SetCurrentTab(0);
-    }
 
     public void Setup(MapLoader loader)
     {
+        CompareContainer.SetCurrentTab(0);
         Loader = loader;
         Loader.ItemImageLoader.ReloadImages();
         Images = Loader.ItemImageLoader.GetImageNames().Order().ToArray();
-        GroupView.ItemSelected += l => EditGroup(Groups[l]);
+        GroupView.ItemSelected += l => SwitchToEdit(Groups[l]);
         SetImages(NodeImage);
         SetImages(ClosedImage);
         SetImages(OpenedImage);
-        ReloadGroups();
+        ReloadData();
     }
 
     public void SetImages(OptionButton button)
@@ -72,46 +64,40 @@ public partial class LocationGroupsManagement : WindowSetter
         Loader.LocationGroupingMap[group.GroupName] = group;
         Loader.LocationGroups.Add(group);
         AddGroupName.Clear();
-        ReloadGroups();
+        ReloadData();
     }
 
-    public void EditGroup(LocationGroup group)
-    {
-        SelectedGroup = group;
-        NodeImage.Selected = Images.IndexOf(group.MappedIcon);
-        ClosedImage.Selected = Images.IndexOf(group.AvailableIcon);
-        OpenedImage.Selected = Images.IndexOf(group.CollectedIcon);
-        SlotDataVariable.Text = group.SlotDataKey;
+    protected override bool DataCheck(LocationGroup dataIn, out LocationGroup dataOut)
+        => (dataOut = dataIn) is not null;
 
-        var varType = (int)group.StoreType;
+    protected override void EditData(LocationGroup data)
+    {
+        NodeImage.Selected = Images.IndexOf(data.MappedIcon);
+        ClosedImage.Selected = Images.IndexOf(data.AvailableIcon);
+        OpenedImage.Selected = Images.IndexOf(data.CollectedIcon);
+        SlotDataVariable.Text = data.SlotDataKey;
+
+        var varType = (int)data.StoreType;
         SlotDataType.Selected = varType;
         CompareContainer.SetCurrentTab(varType);
 
-        IsVariableTrue.ButtonPressed = group.BoolCompare; // bool
-        Operator.Selected = group.CompareType.ToSelected(); // number
-        ValueCompare.Value = group.NumberCompare;
-        MatchAny.ButtonPressed = group.MatchAny; // string
-        StringCompareData.Text = string.Join('\n', group.DataCompare ?? []);
-
-        TabContainer.SetCurrentTab(1);
+        IsVariableTrue.ButtonPressed = data.BoolCompare; // bool
+        Operator.Selected = data.CompareType.ToSelected(); // number
+        ValueCompare.Value = data.NumberCompare;
+        MatchAny.ButtonPressed = data.MatchAny; // string
+        StringCompareData.Text = string.Join('\n', data.DataCompare ?? []);
     }
 
-    public void SaveGroup()
+    protected override void SaveData(LocationGroup data)
     {
-        if (SelectedGroup is null)
-        {
-            TabContainer.SetCurrentTab(0);
-            ReloadGroups();
-        }
+        data.MappedIcon = NodeImage.Selected == -1 ? "" : Images[NodeImage.Selected];
+        data.AvailableIcon = ClosedImage.Selected == -1 ? "" : Images[ClosedImage.Selected];
+        data.CollectedIcon = OpenedImage.Selected == -1 ? "" : Images[OpenedImage.Selected];
+        data.SlotDataKey = SlotDataVariable.Text;
+        data.StoreType = (LocationGroup.DataStorageType)SlotDataType.Selected;
 
-        SelectedGroup!.MappedIcon = NodeImage.Selected == -1 ? "" : Images[NodeImage.Selected];
-        SelectedGroup!.AvailableIcon = ClosedImage.Selected == -1 ? "" : Images[ClosedImage.Selected];
-        SelectedGroup!.CollectedIcon = OpenedImage.Selected == -1 ? "" : Images[OpenedImage.Selected];
-        SelectedGroup!.SlotDataKey = SlotDataVariable.Text;
-        SelectedGroup!.StoreType = (LocationGroup.DataStorageType)SlotDataType.Selected;
-
-        SelectedGroup!.BoolCompare = IsVariableTrue.ButtonPressed; // bool
-        SelectedGroup!.CompareType = Operator.Selected switch
+        data.BoolCompare = IsVariableTrue.ButtonPressed; // bool
+        data.CompareType = Operator.Selected switch
         {
             0 => LocationGroup.NumberCompareType.NotEqualTo, 1 => LocationGroup.NumberCompareType.EqualTo,
             2 => LocationGroup.NumberCompareType.GreaterThan,
@@ -119,23 +105,18 @@ public partial class LocationGroupsManagement : WindowSetter
             4 => LocationGroup.NumberCompareType.LessThan,
             5 => LocationGroup.NumberCompareType.LessThan | LocationGroup.NumberCompareType.EqualTo,
         }; // number
-        SelectedGroup!.NumberCompare = ValueCompare.Value;
-        SelectedGroup!.MatchAny = MatchAny.ButtonPressed; // string
-        SelectedGroup!.DataCompare = StringCompareData.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-
-        TabContainer.SetCurrentTab(0);
-        ReloadGroups();
+        data.NumberCompare = ValueCompare.Value;
+        data.MatchAny = MatchAny.ButtonPressed; // string
+        data.DataCompare = StringCompareData.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
     }
 
-    public void DeleteGroup()
+    protected override void DeleteData(LocationGroup data)
     {
-        Loader.LocationGroupingMap.Remove(SelectedGroup!.GroupName);
-        Loader.LocationGroups.Remove(SelectedGroup);
-        TabContainer.SetCurrentTab(0);
-        ReloadGroups();
+        Loader.LocationGroupingMap.Remove(data.GroupName);
+        Loader.LocationGroups.Remove(data);
     }
 
-    public void ReloadGroups()
+    public override void ReloadData()
     {
         GroupView.Clear();
         Groups = Loader.LocationGroups.OrderBy(g => g.GroupName).ToArray();

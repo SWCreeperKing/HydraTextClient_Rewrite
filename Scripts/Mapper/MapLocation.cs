@@ -11,12 +11,27 @@ public partial class MapLocation : TextureRect
 {
     [Export] public Texture2D BaseCheckImage;
     [Export] public Highlighter Highlighter;
-    public Vector2 Pos = Vector2.Zero;
+
+    public Vector2 Pos
+    {
+        get => Position;
+        set
+        {
+            var mapSize = Map.GetMapSize;
+            Position = new Vector2(
+                Math.Clamp(value.X, Size.X / 2f, mapSize.X - Size.X / 2f),
+                Math.Clamp(value.Y, Size.Y / 2f, mapSize.Y - Size.Y / 2f)
+            );
+            RawNodeData.X = Position.X;
+            RawNodeData.Y = Position.Y;
+        }
+    }
+
     public bool QueueUpdate;
     public MapNavigator Map;
     public bool HasCustomImage;
     public MapNode RawNodeData;
-    
+
     public List<string> Locations => RawNodeData.Locations;
     public string LocationGroup => RawNodeData.LocationGroup;
 
@@ -29,30 +44,22 @@ public partial class MapLocation : TextureRect
     [Signal] public delegate void OnExitedEventHandler();
 
     [Signal] public delegate void OnUnSelectHighlighterEventHandler();
-    
+
     public void SetData(MapNavigator map) => Map = map;
 
     public void SetImage(string image)
     {
         QueueUpdate = true;
-        Texture = image is not "" ? Map.Loader.ItemImageLoader.GetImage(image) : BaseCheckImage;
+        Texture = image is not "" ? Map.Loader.ItemImageLoader[image] : BaseCheckImage;
         QueueRedraw();
-    }
-
-    public void SetPos(Vector2 pos)
-    {
-        Pos = pos;
-        var mapSize = Map.GetMapSize;
-        Position = new Vector2(
-            Math.Clamp(pos.X, Size.X / 2f, mapSize.X - Size.X / 2f),
-            Math.Clamp(pos.Y, Size.Y / 2f, mapSize.Y - Size.Y / 2f)
-        );
     }
 
     public void SetNodeSize(Vector2 size)
     {
         QueueUpdate = true;
         Size = size;
+        RawNodeData.W = size.X;
+        RawNodeData.H = size.Y;
         QueueRedraw();
     }
 
@@ -72,7 +79,7 @@ public partial class MapLocation : TextureRect
             : client.Hints
                     .Where(hint => hint.FindingPlayer
                          == client.PlayerSlot && !hint.Found
-                                                     && hint.Status is HintStatus.Priority
+                                              && hint.Status is HintStatus.Priority
                      )
                     .Select(hint => hint.LocationName)
                     .ToArray();

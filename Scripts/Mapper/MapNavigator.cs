@@ -81,7 +81,7 @@ public partial class MapNavigator : ScrollContainer
 
         Container.MapImage.AddChild(node);
         Locations.Add(node);
-        node.SetPos(new Vector2(loc.X, loc.Y));
+        node.Pos = new Vector2(loc.X, loc.Y);
     }
 
     public bool UpdateLocationGroup(MapLocation node)
