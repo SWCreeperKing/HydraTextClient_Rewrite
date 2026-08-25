@@ -98,9 +98,9 @@ public partial class MapNavigator : ScrollContainer
         node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
         node.SetData(this);
         if (UpdateLocationGroup(node)) return; // return if slot data doesn't match
-        node.OnEntered += () => Loader.AddHoverLocation(node);
+        node.OnEntered += () => Loader.SetHoverLocation(node);
         node.OnExited += () => Loader.RemoveHoverLocation(node);
-        node.OnSelected += () => Loader.AddSelectedLocation(node);
+        node.OnSelected += () => Loader.SetSelectedLocation(node);
         node.OnUnSelected += () => Loader.RemoveSelectedLocation(node);
         node.OnRightClick += () => Loader.RightClickedNode(node);
 

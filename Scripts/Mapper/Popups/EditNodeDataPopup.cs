@@ -60,7 +60,7 @@ public partial class EditNodeDataPopup : WindowSetter
 
     public void DeleteNode()
     {
-        Loader.RemoveSelectedLocation(Node);
+        Loader.SetSelectedLocation(Node);
         Node.Map.DeleteNode(Node);
         Close();
     }

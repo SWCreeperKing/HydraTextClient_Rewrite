@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 namespace HydraTextClient.Scripts.Utility;
@@ -42,6 +41,7 @@ public partial class Highlighter : ColorRect
 
     public void Select()
     {
+        Enter();
         Selected = true;
         EmitSignalOnSelected();
     }

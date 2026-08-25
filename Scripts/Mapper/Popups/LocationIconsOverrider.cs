@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Godot;
-using HydraTextClient.Scripts.Utility.Popups;
 using HydraTextClient.Scripts.Utility.UIHelpers;
 
 namespace HydraTextClient.Scripts.Mapper.Popups;

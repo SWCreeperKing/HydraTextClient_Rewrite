@@ -48,12 +48,14 @@ public partial class MapLoader : Control
     public Dictionary<string, string> LocationClosedIconOverride = [];
     public Dictionary<string, string> LocationOpenedIconOverride = [];
     public bool UpdateUI;
+
     private string TrackerName;
-    private List<MapLocation> SelectedLocation = [];
-    private List<MapLocation> HoveredLocation = [];
+
     private EmptyRichLabelInteractor LocationPopupList;
     private string MapPath;
     private PopupMenu OptionMenu;
+    private MapLocation? HoveredMapLocation;
+    private MapLocation? SelectedMapLocation;
     private MapLocation RightClickSelectedNode;
     private MapLocation CopyTargetNode;
     private MapLocation MoveTargetNode;
@@ -149,34 +151,34 @@ public partial class MapLoader : Control
         ListContainer.Visible = false;
         UpdateUI = false;
 
-        if (SelectedLocation.Count != 0) SetItemList(SelectedLocation.First());
+        if (SelectedMapLocation is not null) SetItemList(SelectedMapLocation);
         if (IsInEditMode) return;
-        var possibleHovered = HoveredLocation.Where(loc => !SelectedLocation.Contains(loc)).ToArray();
-        if (possibleHovered.Length != 0)
+        if (HoveredMapLocation is null || HoveredMapLocation == SelectedMapLocation)
         {
-            var node = possibleHovered[0];
-
-            StringBuilder sb = new();
-            foreach (var loc in node.Locations.Where(l => Client is null || Client.Locations.Any(kv => kv.Key == l)))
-            {
-                if (loc.Trim() is "") continue;
-                if (sb.Length != 0) sb.Append('\n');
-                sb.Append(loc);
-            }
-
-            if (sb.Length == 0) return;
-
-            LocationPanelText.Text = "";
-            LocationPanel.Position = Vector2I.Zero;
-            LocationPanelText.Size = Vector2.Zero;
-            var rect = node.GetGlobalRect();
-            LocationPanel.Popup(
-                new Rect2I(new Vector2I((int)rect.Position.X, (int)(rect.Position.Y + rect.Size.Y)), Vector2I.Zero)
-            );
-
-            LocationPanelText.Text = sb.ToString();
+            LocationPanel.Hide();
+            return;
         }
-        else LocationPanel.Hide();
+        StringBuilder sb = new();
+        foreach (var loc in HoveredMapLocation.Locations.Where(l => Client is null
+                                                                    || Client.Locations.Any(kv => kv.Key == l)
+                 ))
+        {
+            if (loc.Trim() is "") continue;
+            if (sb.Length != 0) sb.Append('\n');
+            sb.Append(loc);
+        }
+
+        if (sb.Length == 0) return;
+
+        LocationPanelText.Text = "";
+        LocationPanel.Position = Vector2I.Zero;
+        LocationPanelText.Size = Vector2.Zero;
+        var rect = HoveredMapLocation.GetGlobalRect();
+        LocationPanel.Popup(
+            new Rect2I(new Vector2I((int)rect.Position.X, (int)(rect.Position.Y + rect.Size.Y)), Vector2I.Zero)
+        );
+
+        LocationPanelText.Text = sb.ToString();
     }
 
     private void CreateMap(string path, Maps map)
@@ -188,28 +190,29 @@ public partial class MapLoader : Control
         MapNavigators.Add(mapContainer);
     }
 
-    public void AddHoverLocation(MapLocation node)
+    public void SetHoverLocation(MapLocation node)
     {
-        HoveredLocation.Add(node);
+        HoveredMapLocation = node;
         UpdateUI = true;
     }
 
     public void RemoveHoverLocation(MapLocation node)
     {
-        HoveredLocation.RemoveAll(n => n == node);
-        UpdateUI = true;
+        if (HoveredMapLocation != node) return;
+        SetHoverLocation(null);
     }
 
-    public void AddSelectedLocation(MapLocation loc)
+    public void SetSelectedLocation(MapLocation loc)
     {
-        SelectedLocation.Add(loc);
+        SelectedMapLocation?.Highlighter.ResetPressed();
+        SelectedMapLocation = loc;
         UpdateUI = true;
     }
 
     public void RemoveSelectedLocation(MapLocation loc)
     {
-        SelectedLocation.RemoveAll(l => l == loc);
-        UpdateUI = true;
+        if (SelectedMapLocation != loc) return;
+        SetSelectedLocation(null);
     }
 
     public void SetItemList(MapLocation location)
@@ -283,12 +286,7 @@ public partial class MapLoader : Control
         return foundMap is not null;
     }
 
-    public void ResetSelectedNodes()
-    {
-        foreach (var loc in SelectedLocation) loc.EmitUnSelect();
-        SelectedLocation.Clear();
-        UpdateUI = true;
-    }
+    public void ResetSelectedNodes() => SetSelectedLocation(null);
 
     public void RightClickedNode(MapLocation location)
     {
@@ -323,8 +321,6 @@ public partial class MapLoader : Control
         switch (option)
         {
             case 0:
-                SelectedLocation.Insert(0, RightClickSelectedNode);
-                RightClickSelectedNode.Highlighter.Enter();
                 RightClickSelectedNode.Highlighter.Select();
                 UpdateUI = true;
                 EditNode();
@@ -393,29 +389,31 @@ public partial class MapLoader : Control
 
     public void CopyLocations()
     {
-        var locs = SelectedLocation.First();
-        if (locs.Locations.Count == 0) return;
-        var locationNamesToCopy = List.GetSelectedItems().Select(i => locs.Locations[i]).ToArray();
+        if (SelectedMapLocation is null) return;
+        var locationNamesToCopy = List.GetSelectedItems().Select(i => SelectedMapLocation.Locations[i]).ToArray();
         DisplayServer.ClipboardSet(string.Join('\n', locationNamesToCopy));
     }
 
     public void EditNode()
     {
+        if (SelectedMapLocation is null) return;
         var popup = EditMapNodePopup.Instantiate<EditNodeDataPopup>();
-        popup.Setup(this, SelectedLocation.First());
+        popup.Setup(this, SelectedMapLocation);
         AddChild(popup);
         popup.Show();
     }
 
     public void AddLocations()
     {
+        if (SelectedMapLocation is null) return;
         var popup = AddLocationsPopup.Instantiate<MapAddLocations>();
         popup.Setup(this);
         popup.AddLocations += locs =>
         {
-            var locMap = SelectedLocation.First();
-            locs = locs.Select(l => l.Trim()).Where(l => l is not "" && !locMap.Locations.Contains(l)).ToArray();
-            locMap.Locations.AddRange(locs.DistinctBy(s => s));
+            if (SelectedMapLocation is null) return;
+            locs = locs.Select(l => l.Trim()).Where(l => l is not "" && !SelectedMapLocation.Locations.Contains(l))
+                       .ToArray();
+            SelectedMapLocation.Locations.AddRange(locs.DistinctBy(s => s));
             UpdateUI = true;
             UpdateNodes();
         };
@@ -425,10 +423,9 @@ public partial class MapLoader : Control
 
     public void RemoveSelectedLocations()
     {
-        var locs = SelectedLocation.First();
-        if (locs.Locations.Count == 0) return;
-        var locationNamesToRemove = List.GetSelectedItems().Select(i => locs.Locations[i]).ToArray();
-        locs.Locations.RemoveAll(loc => locationNamesToRemove.Contains(loc));
+        if (SelectedMapLocation is null) return;
+        var locationNamesToRemove = List.GetSelectedItems().Select(i => SelectedMapLocation.Locations[i]).ToArray();
+        SelectedMapLocation.Locations.RemoveAll(loc => locationNamesToRemove.Contains(loc));
         UpdateUI = true;
         UpdateNodes();
     }
