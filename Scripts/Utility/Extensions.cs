@@ -341,4 +341,16 @@ public static class Extensions // sorted alphabetically for the memes
         // .Replace("\r", "")
         ;
     }
+
+    extension(PackedScene scene)
+    {
+        public void OpenPopup<T>(Node parent, Action<T> setup) where T : Window
+        {
+            var popup = scene.Instantiate<T>();
+            setup(popup);
+            try { parent.AddChild(popup); }
+            catch { parent.CallDeferred("add_child", popup); }
+            popup.Show();
+        }
+    }
 }

@@ -29,7 +29,7 @@ public partial class EditNodeDataPopup : WindowSetter
             var group = Loader.LocationGroupingMap[groupName];
             LocationGroup.AddIconItem(Loader.ItemImageLoader[group.MappedIcon], groupName);
         }
-        LocationGroup.Selected = Groups.IndexOf(Node.LocationGroup);
+        LocationGroup.Selected = Groups.IndexOf(Node.Group);
 
         Xposition.ValueChanged += d =>
         {

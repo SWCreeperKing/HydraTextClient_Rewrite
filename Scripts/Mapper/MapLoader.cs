@@ -9,6 +9,7 @@ using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using HydraTextClient.Scripts.Clients.CircleTracker;
 using HydraTextClient.Scripts.Mapper.Popups;
+using HydraTextClient.Scripts.Utility;
 using HydraTextClient.Scripts.Utility.UIHelpers;
 using Newtonsoft.Json;
 
@@ -47,12 +48,11 @@ public partial class MapLoader : Control
     public Dictionary<string, LocationGroup> LocationGroupingMap = [];
     public Dictionary<string, string> LocationClosedIconOverride = [];
     public Dictionary<string, string> LocationOpenedIconOverride = [];
+    public Dictionary<string, string> EntranceMap = [];
     public bool UpdateUI;
-
     private string TrackerName;
-
-    private EmptyRichLabelInteractor LocationPopupList;
     private string MapPath;
+    private EmptyRichLabelInteractor LocationPopupList;
     private PopupMenu OptionMenu;
     private MapLocation? HoveredMapLocation;
     private MapLocation? SelectedMapLocation;
@@ -75,6 +75,9 @@ public partial class MapLoader : Control
         Parent = parent;
         MapsList = JsonConvert.DeserializeObject<List<Maps>>(File.ReadAllText($"{path}/atlas.json"));
         Structure = JsonConvert.DeserializeObject<TabStructure>(File.ReadAllText($"{path}/tabs.json"));
+        EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+            File.ReadAllText($"{path}/entrance_rando_names.json")
+        );
 
         if (File.Exists($"{path}/locationiconopen.json"))
             LocationOpenedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
@@ -220,8 +223,8 @@ public partial class MapLoader : Control
         ListContainer.Visible = true;
         List.Clear();
 
-        var group = location.LocationGroup is ""
-                    || !LocationGroupingMap.TryGetValue(location.LocationGroup, out var tGroup) ? null : tGroup;
+        var group = location.Group is ""
+                    || !LocationGroupingMap.TryGetValue(location.Group, out var tGroup) ? null : tGroup;
         foreach (var loc in location.Locations)
         {
             if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
@@ -255,15 +258,17 @@ public partial class MapLoader : Control
     {
         var map = GetCurrentMap();
         if (map is null) return;
-        var popup = EditMapPopup.Instantiate<EditMapWindow>();
-        popup.Setup(map);
-        popup.EditMapData += (name, image, id) =>
-        {
-            if (FindMapByName(name) is null) return;
-            map.EditMapData(name, image, id);
-        };
-        CallDeferred("add_child", popup);
-        popup.CallDeferred("show");
+        EditMapPopup.OpenPopup<EditMapWindow>(
+            this, p =>
+            {
+                p.Setup(map);
+                p.EditMapData += (name, image, id) =>
+                {
+                    if (FindMapByName(name) is null) return;
+                    map.EditMapData(name, image, id);
+                };
+            }
+        );
     }
 
     public void SelectMap(string mapId)
@@ -316,8 +321,6 @@ public partial class MapLoader : Control
 
     public void OptionSelected(long option)
     {
-        MapNavigator map;
-        Vector2 pos;
         switch (option)
         {
             case 0:
@@ -327,29 +330,28 @@ public partial class MapLoader : Control
                 break;
             case 1: MoveTargetNode = RightClickSelectedNode; break;
             case 2: CopyTargetNode = RightClickSelectedNode; break;
-            case 3:
-                map = GetCurrentMap();
-                pos = (PopupPos - map.Container.MapImage.GlobalPosition) / map.Container.MapImage.Scale;
-                map.CreateNewNode(pos);
-                break;
+            case 3: CreateNewNodAtMouse(); break;
             case 4:
-                map = GetCurrentMap();
-                pos = (PopupPos - map.Container.MapImage.GlobalPosition) / map.Container.MapImage.Scale;
-                map.CreateNewNode(MoveTargetNode.RawNodeData, pos - MoveTargetNode.Size / 2);
+                CreateNewNodAtMouse(MoveTargetNode.Size, MoveTargetNode.Group, MoveTargetNode.Locations.ToList());
                 RemoveSelectedLocation(MoveTargetNode);
                 MoveTargetNode.Map.DeleteNode(MoveTargetNode);
                 MoveTargetNode = null;
                 break;
             case 5:
-                map = GetCurrentMap();
-                pos = (PopupPos - map.Container.MapImage.GlobalPosition) / map.Container.MapImage.Scale;
-                map.CreateNewNode(CopyTargetNode.RawNodeData.Copy(), pos - CopyTargetNode.Size / 2);
+                CreateNewNodAtMouse(CopyTargetNode.Size, CopyTargetNode.Group, CopyTargetNode.Locations.ToList());
                 RemoveSelectedLocation(CopyTargetNode);
                 CopyTargetNode = null;
                 break;
         }
 
         ResetRightClickSelectedNode();
+        return;
+
+        void CreateNewNodAtMouse(Vector2? size = null, string group = "", params List<string> locs)
+        {
+            var map = GetCurrentMap();
+            map.CreateNewNode(map.ToLocalPos(PopupPos), size ?? new Vector2(32, 32), group, locs);
+        }
     }
 
     public void CreatePopup(Action<PopupMenu> propagateItems)
@@ -397,28 +399,28 @@ public partial class MapLoader : Control
     public void EditNode()
     {
         if (SelectedMapLocation is null) return;
-        var popup = EditMapNodePopup.Instantiate<EditNodeDataPopup>();
-        popup.Setup(this, SelectedMapLocation);
-        AddChild(popup);
-        popup.Show();
+        EditMapNodePopup.OpenPopup<EditNodeDataPopup>(this, p => p.Setup(this, SelectedMapLocation));
     }
 
     public void AddLocations()
     {
         if (SelectedMapLocation is null) return;
-        var popup = AddLocationsPopup.Instantiate<MapAddLocations>();
-        popup.Setup(this);
-        popup.AddLocations += locs =>
-        {
-            if (SelectedMapLocation is null) return;
-            locs = locs.Select(l => l.Trim()).Where(l => l is not "" && !SelectedMapLocation.Locations.Contains(l))
-                       .ToArray();
-            SelectedMapLocation.Locations.AddRange(locs.DistinctBy(s => s));
-            UpdateUI = true;
-            UpdateNodes();
-        };
-        AddChild(popup);
-        popup.Show();
+        AddLocationsPopup.OpenPopup<MapAddLocations>(
+            this, p =>
+            {
+                p.Setup(this);
+                p.AddLocations += locs =>
+                {
+                    if (SelectedMapLocation is null) return;
+                    locs = locs.Select(l => l.Trim())
+                               .Where(l => l is not "" && !SelectedMapLocation.Locations.Contains(l))
+                               .ToArray();
+                    SelectedMapLocation.Locations.AddRange(locs.DistinctBy(s => s));
+                    UpdateUI = true;
+                    UpdateNodes();
+                };
+            }
+        );
     }
 
     public void RemoveSelectedLocations()
@@ -451,14 +453,6 @@ public partial class MapLoader : Control
                 default: return null;
             }
         }
-    }
-
-    public void ManageTabs()
-    {
-        var popup = ManageTabPopup.Instantiate<TabManager>();
-        popup.ConfirmAction += (action, name, dest) => CallDeferred("OnPopupOnConfirmAction", (int)action, name, dest);
-        AddChild(popup);
-        popup.Show();
     }
 
     private void OnPopupOnConfirmAction(int action, string name, string destination)
@@ -515,21 +509,16 @@ public partial class MapLoader : Control
     public MapNavigator FindMapByName(string name)
         => MapNavigators.FirstOrDefault(map => map.CoreMap.MapName == name, null);
 
+    public void ManageTabs() => ManageTabPopup.OpenPopup<TabManager>(
+        this,
+        p => p.ConfirmAction += (action, name, dest) => CallDeferred("OnPopupOnConfirmAction", (int)action, name, dest)
+    );
+
     public void EditLocationGroup()
-    {
-        var popup = LocationGroupsManagerPopup.Instantiate<LocationGroupsManagement>();
-        popup.Setup(this);
-        AddChild(popup);
-        popup.Show();
-    }
+        => LocationGroupsManagerPopup.OpenPopup<LocationGroupsManagement>(this, p => p.Setup(this));
 
     public void EditLocationIconOverrides()
-    {
-        var popup = LocationIconOverridePopup.Instantiate<LocationIconsOverrider>();
-        popup.Setup(this);
-        AddChild(popup);
-        popup.Show();
-    }
+        => LocationIconOverridePopup.OpenPopup<LocationIconsOverrider>(this, p => p.Setup(this));
 
     public void SaveMapData()
     {
@@ -566,6 +555,7 @@ public partial class MapLoader : Control
         File.WriteAllText($"{MapPath}/locationgroups.json", JsonConvert.SerializeObject(LocationGroups));
         File.WriteAllText($"{MapPath}/locationiconopen.json", JsonConvert.SerializeObject(LocationOpenedIconOverride));
         File.WriteAllText($"{MapPath}/locationiconclose.json", JsonConvert.SerializeObject(LocationClosedIconOverride));
+        File.WriteAllText($"{MapPath}/entrance_rando_names.json", JsonConvert.SerializeObject(EntranceMap));
     }
 
     public void OpenFolder() => OS.ShellOpen(MapPath);

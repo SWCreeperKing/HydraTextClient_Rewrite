@@ -36,8 +36,6 @@ public class MapNode(float x, float y, float w, float h, string group = "",
     public float Y = y;
     public float W = w;
     public float H = h;
-
-    public MapNode Copy() => new(X, Y, W, H, LocationGroup, Locations.ToList());
 }
 
 public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")

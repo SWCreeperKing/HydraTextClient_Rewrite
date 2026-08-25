@@ -67,17 +67,9 @@ public partial class MapNavigator : ScrollContainer
         CoreMap.MapId = mapId;
     }
 
-    public void CreateNewNode(Vector2 pos)
+    public void CreateNewNode(Vector2 pos, Vector2 size, string group, params List<string> locs)
     {
-        MapNode newNode = new(pos.X, pos.Y, 32, 32);
-        CoreMap.Nodes.Add(newNode);
-        CreateLocationNode(newNode);
-    }
-
-    public void CreateNewNode(MapNode nodeData, Vector2 pos)
-    {
-        nodeData.X = pos.X;
-        nodeData.Y = pos.Y;
+        var nodeData = new MapNode(pos.X, pos.Y, size.X, size.Y, group, locs);
         CoreMap.Nodes.Add(nodeData);
         CreateLocationNode(nodeData);
     }
@@ -112,7 +104,7 @@ public partial class MapNavigator : ScrollContainer
 
     public bool UpdateLocationGroup(MapLocation node)
     {
-        if (Loader.LocationGroupingMap.TryGetValue(node.LocationGroup, out var group))
+        if (Loader.LocationGroupingMap.TryGetValue(node.Group, out var group))
         {
             if (group.SlotDataKey is not ("" or null) && !Loader.IsInEditMode)
             {
@@ -136,4 +128,6 @@ public partial class MapNavigator : ScrollContainer
         else node.SetImage("");
         return false;
     }
+
+    public Vector2 ToLocalPos(Vector2 pos) => (pos - Container.MapImage.GlobalPosition) / Container.MapImage.Scale;
 }

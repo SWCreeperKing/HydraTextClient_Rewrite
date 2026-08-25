@@ -112,6 +112,11 @@ layout_mode = 2
 text = "Location Icons"
 script = ExtResource("4_1xhnn")
 
+[node name="Button2" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1049533912]
+layout_mode = 2
+text = "Entrances"
+script = ExtResource("4_1xhnn")
+
 [node name="HFlowContainer3" type="HFlowContainer" parent="HSplitContainer/VBoxContainer/HBoxContainer" unique_id=551543628]
 layout_mode = 2
 alignment = 2

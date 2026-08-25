@@ -33,7 +33,7 @@ public partial class MapLocation : TextureRect
     public MapNode RawNodeData;
 
     public List<string> Locations => RawNodeData.Locations;
-    public string LocationGroup => RawNodeData.LocationGroup;
+    public string Group => RawNodeData.LocationGroup;
 
     [Signal] public delegate void OnSelectedEventHandler();
 
