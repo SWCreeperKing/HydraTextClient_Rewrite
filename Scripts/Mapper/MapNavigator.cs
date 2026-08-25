@@ -28,6 +28,7 @@ public partial class MapNavigator : ScrollContainer
         Loader = loader;
         CoreMap = map;
         MapPath = packPath;
+        Container.OnRightClick += Loader.RightClickedMap;
         SetMapName(map.MapName);
         SetImage(map.ImageName);
         foreach (var loc in map.Nodes) CreateLocationNode(loc);
@@ -54,16 +55,39 @@ public partial class MapNavigator : ScrollContainer
     private void LoadImage(string name)
     {
         if (name is not "" && !File.Exists($"{MapPath}{name}")) name = "";
-        var image = name is "" ? DefaultImage: ImageTexture.CreateFromImage(Image.LoadFromFile($"{MapPath}{name}"));
+        var image = name is "" ? DefaultImage : ImageTexture.CreateFromImage(Image.LoadFromFile($"{MapPath}{name}"));
         Container.MapImage.Texture = image;
         Container.ResetZoom();
     }
-    
+
     public void EditMapData(string mapName, string image, string mapId)
     {
         SetMapName(mapName);
         SetImage(image);
         CoreMap.MapId = mapId;
+    }
+
+    public void CreateNewNode(Vector2 pos)
+    {
+        MapNode newNode = new(pos.X, pos.Y, 32, 32);
+        CoreMap.Nodes.Add(newNode);
+        CreateLocationNode(newNode);
+    }
+
+    public void CreateNewNode(MapNode nodeData, Vector2 pos)
+    {
+        nodeData.X = pos.X;
+        nodeData.Y = pos.Y;
+        CoreMap.Nodes.Add(nodeData);
+        CreateLocationNode(nodeData);
+    }
+
+    public void DeleteNode(MapLocation node)
+    {
+        CoreMap.Nodes.Remove(node.RawNodeData);
+        Container.MapImage.CallDeferred("remove_child", node);
+        Locations.Remove(node);
+        node.QueueFree();
     }
 
     private void CreateLocationNode(MapNode loc)
@@ -78,8 +102,10 @@ public partial class MapNavigator : ScrollContainer
         node.OnExited += () => Loader.RemoveHoverLocation(node);
         node.OnSelected += () => Loader.AddSelectedLocation(node);
         node.OnUnSelected += () => Loader.RemoveSelectedLocation(node);
+        node.OnRightClick += () => Loader.RightClickedNode(node);
 
-        Container.MapImage.AddChild(node);
+        try { Container.MapImage.AddChild(node); }
+        catch { Container.MapImage.CallDeferred("add_child", node); }
         Locations.Add(node);
         node.Pos = new Vector2(loc.X, loc.Y);
     }

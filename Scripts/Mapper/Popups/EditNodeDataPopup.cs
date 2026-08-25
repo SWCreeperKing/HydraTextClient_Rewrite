@@ -58,6 +58,13 @@ public partial class EditNodeDataPopup : WindowSetter
         Reload();
     }
 
+    public void DeleteNode()
+    {
+        Loader.RemoveSelectedLocation(Node);
+        Node.Map.DeleteNode(Node);
+        Close();
+    }
+    
     public void SetGroup(string groupName)
     {
         Node.RawNodeData.LocationGroup = groupName;

@@ -175,12 +175,14 @@
   - You might need to clean up the locations in the map editor since poptracker locations don't often match ap ones
 - Auto Tabbing
   - For Devs:
+    - Each map should have a unique id (ids can be non-numerical) 
     - Update the slot data storage "Current Map" with the map id when the player moves from one map to another
   - For Map Makers:
     - map id by default is the name, can override, maps with multiple ids will not work
 - Entrance Tracker (Auto Tracking)
   - For Devs:
-    - The slot data key "Entrance Rando" needs to consist of a map of entrance ids to destinations (using entrance ids)
+    - Each entrance needs to have a unique id (ids can be non-numerical) 
+    - The slot data key "Entrance Rando" needs to consist of a map of entrance id to destination entrance id
     - The slot data key "entrance_rando" signifies if entrance rando is enabled or not 
     - The slot data storage key of the entrance id needs to be false, then set to true when the entrance is found
   - For Map Makers:

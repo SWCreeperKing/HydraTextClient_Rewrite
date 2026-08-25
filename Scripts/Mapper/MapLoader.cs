@@ -49,10 +49,15 @@ public partial class MapLoader : Control
     public Dictionary<string, string> LocationOpenedIconOverride = [];
     public bool UpdateUI;
     private string TrackerName;
-    private HashSet<MapLocation> SelectedLocation = [];
+    private List<MapLocation> SelectedLocation = [];
     private List<MapLocation> HoveredLocation = [];
     private EmptyRichLabelInteractor LocationPopupList;
     private string MapPath;
+    private PopupMenu OptionMenu;
+    private MapLocation RightClickSelectedNode;
+    private MapLocation CopyTargetNode;
+    private MapLocation MoveTargetNode;
+    private Vector2 PopupPos;
 
     public void Setup(string path, string trackerName, Control parent)
     {
@@ -145,6 +150,7 @@ public partial class MapLoader : Control
         UpdateUI = false;
 
         if (SelectedLocation.Count != 0) SetItemList(SelectedLocation.First());
+        if (IsInEditMode) return;
         var possibleHovered = HoveredLocation.Where(loc => !SelectedLocation.Contains(loc)).ToArray();
         if (possibleHovered.Length != 0)
         {
@@ -190,7 +196,7 @@ public partial class MapLoader : Control
 
     public void RemoveHoverLocation(MapLocation node)
     {
-        HoveredLocation.Remove(node);
+        HoveredLocation.RemoveAll(n => n == node);
         UpdateUI = true;
     }
 
@@ -202,7 +208,7 @@ public partial class MapLoader : Control
 
     public void RemoveSelectedLocation(MapLocation loc)
     {
-        SelectedLocation.Remove(loc);
+        SelectedLocation.RemoveAll(l => l == loc);
         UpdateUI = true;
     }
 
@@ -271,6 +277,100 @@ public partial class MapLoader : Control
         UpdateUI = true;
     }
 
+    public void RightClickedNode(MapLocation location)
+    {
+        if (!IsInEditMode) return;
+        RightClickSelectedNode = location;
+        CreatePopup(menu =>
+            {
+                menu.AddItem("Edit Node", 0);
+                menu.AddItem("Move Node", 1);
+                menu.AddItem("Copy Node", 2);
+            }
+        );
+    }
+
+    public void RightClickedMap()
+    {
+        if (!IsInEditMode) return;
+        CreatePopup(menu =>
+            {
+                if (RightClickSelectedNode is not null) ResetRightClickSelectedNode();
+                menu.AddItem("Create Node", 3);
+                if (MoveTargetNode is not null) menu.AddItem("Move Node Here", 4);
+                if (CopyTargetNode is not null) menu.AddItem("Paste Node Here", 5);
+            }
+        );
+    }
+
+    public void OptionSelected(long option)
+    {
+        MapNavigator map;
+        Vector2 pos;
+        switch (option)
+        {
+            case 0:
+                SelectedLocation.Insert(0, RightClickSelectedNode);
+                RightClickSelectedNode.Highlighter.Enter();
+                RightClickSelectedNode.Highlighter.Select();
+                UpdateUI = true;
+                EditNode();
+                break;
+            case 1: MoveTargetNode = RightClickSelectedNode; break;
+            case 2: CopyTargetNode = RightClickSelectedNode; break;
+            case 3:
+                map = GetCurrentMap();
+                pos = (PopupPos - map.Container.MapImage.GlobalPosition) / map.Container.MapImage.Scale;
+                map.CreateNewNode(pos);
+                break;
+            case 4:
+                map = GetCurrentMap();
+                pos = (PopupPos - map.Container.MapImage.GlobalPosition) / map.Container.MapImage.Scale;
+                map.CreateNewNode(MoveTargetNode.RawNodeData, pos - MoveTargetNode.Size / 2);
+                RemoveSelectedLocation(MoveTargetNode);
+                MoveTargetNode.Map.DeleteNode(MoveTargetNode);
+                MoveTargetNode = null;
+                break;
+            case 5:
+                map = GetCurrentMap();
+                pos = (PopupPos - map.Container.MapImage.GlobalPosition) / map.Container.MapImage.Scale;
+                map.CreateNewNode(CopyTargetNode.RawNodeData.Copy(), pos - CopyTargetNode.Size / 2);
+                RemoveSelectedLocation(CopyTargetNode);
+                CopyTargetNode = null;
+                break;
+        }
+
+        ResetRightClickSelectedNode();
+    }
+
+    public void CreatePopup(Action<PopupMenu> propagateItems)
+    {
+        if (OptionMenu is not null)
+        {
+            OptionMenu?.Hide();
+            CallDeferred("remove_child", OptionMenu);
+            OptionMenu?.QueueFree();
+            OptionMenu = null;
+        }
+
+        PopupMenu menu = new();
+        CallDeferred("add_child", menu);
+        menu.PopupHide += () =>
+        {
+            OptionMenu = null;
+            CallDeferred("remove_child", menu);
+            menu.QueueFree();
+        };
+        menu.IdPressed += OptionSelected;
+
+        propagateItems(menu);
+
+        menu.Position = Vector2I.Zero;
+        menu.CallDeferred("popup", new Rect2I((Vector2I)(PopupPos = GetGlobalMousePosition()), menu.Size));
+        OptionMenu = menu;
+    }
+
+    public void ResetRightClickSelectedNode() => RightClickSelectedNode = null;
     public void UpdateNodes(Hint[] hints) => UpdateNodes();
 
     public void UpdateNodes()
@@ -342,7 +442,6 @@ public partial class MapLoader : Control
             }
         }
     }
-
 
     public void ManageTabs()
     {

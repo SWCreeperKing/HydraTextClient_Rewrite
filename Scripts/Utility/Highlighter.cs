@@ -9,6 +9,7 @@ public partial class Highlighter : ColorRect
     [Export] public Color Hover = Colors.AliceBlue;
     [Export] public Control? HigherPower;
     [Export] public bool Selectable;
+    [Export] public bool DetectRightClick;
     private double Timer;
     private Tween Tween;
     private bool Selected;
@@ -21,6 +22,8 @@ public partial class Highlighter : ColorRect
     [Signal] public delegate void OnEnteredEventHandler();
 
     [Signal] public delegate void OnExitedEventHandler();
+
+    [Signal] public delegate void OnRightClickEventHandler();
 
     public override void _Ready()
     {
@@ -35,6 +38,12 @@ public partial class Highlighter : ColorRect
         MouseEntered += Enter;
         MouseExited += Exit;
         GuiInput += OnGuiInput;
+    }
+
+    public void Select()
+    {
+        Selected = true;
+        EmitSignalOnSelected();
     }
 
     public void Enter()
@@ -67,10 +76,11 @@ public partial class Highlighter : ColorRect
             if (!Selected) Exit();
             return;
         }
-        
+
         if (@event is not InputEventMouseButton button) return;
+        if (!button.Pressed) return;
+        if (button.ButtonIndex is MouseButton.Right && DetectRightClick) EmitSignalOnRightClick();
         if (button.ButtonIndex is not MouseButton.Left) return;
-        if (!button.Pressed && Selected) return;
 
         Selected = !Selected;
         if (Selected) EmitSignalOnSelected();

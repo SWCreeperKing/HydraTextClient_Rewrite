@@ -45,6 +45,8 @@ public partial class MapLocation : TextureRect
 
     [Signal] public delegate void OnUnSelectHighlighterEventHandler();
 
+    [Signal] public delegate void OnRightClickEventHandler();
+
     public void SetData(MapNavigator map) => Map = map;
 
     public void SetImage(string image)
@@ -111,4 +113,5 @@ public partial class MapLocation : TextureRect
     public void EmitUnSelected() => EmitSignalOnUnSelected();
     public void EmitOnEntered() => EmitSignalOnEntered();
     public void EmitOnExited() => EmitSignalOnExited();
+    public void EmitOnRightClick() => EmitSignalOnRightClick();
 }

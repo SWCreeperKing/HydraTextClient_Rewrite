@@ -11,6 +11,8 @@ public partial class MapControl : Control
     private double ScrollXPercent = -1;
     private double ScrollYPercent = -1;
 
+    [Signal] public delegate void OnRightClickEventHandler();
+
     public float Zoom
     {
         get => _Zoom;
@@ -62,13 +64,27 @@ public partial class MapControl : Control
         if (leftButton)
         {
             var mousePos = GetGlobalMousePosition();
-            if (!Dragging) Dragging = true;
-            else posDelta -= mousePos - LastMouse;
-            LastMouse = mousePos;
+            if (!ScrollContainer.GetGlobalRect().HasPoint(mousePos)) Dragging = false;
+            else
+            {
+                if (!Dragging) Dragging = true;
+                else posDelta -= mousePos - LastMouse;
+                LastMouse = mousePos;
+            }
         }
 
         if (posDelta.X != 0) ScrollContainer.ScrollHorizontal += (int)posDelta.X;
         if (posDelta.Y != 0) ScrollContainer.ScrollVertical += (int)posDelta.Y;
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        if (!IsVisibleInTree()) return;
+        if (@event is not InputEventMouseButton mouse) return;
+        if (mouse.ButtonIndex is MouseButton.Right && mouse.Pressed
+                                                   && ScrollContainer.GetGlobalRect()
+                                                                     .HasPoint(GetGlobalMousePosition()))
+            EmitSignalOnRightClick();
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -77,8 +93,12 @@ public partial class MapControl : Control
         if (@event is not InputEventMouseButton mouse) return;
         switch (mouse.ButtonIndex)
         {
-            case MouseButton.WheelDown: Zoom -= ZoomSpeed * Zoom; break;
-            case MouseButton.WheelUp: Zoom += ZoomSpeed * Zoom; break;
+            case MouseButton.WheelDown: Zoom -= ZoomSpeed * Zoom;
+                AcceptEvent();
+                break;
+            case MouseButton.WheelUp: Zoom += ZoomSpeed * Zoom;
+                AcceptEvent();
+                break;
         }
     }
 
@@ -86,7 +106,7 @@ public partial class MapControl : Control
     {
         var scrollX = ScrollContainer.GetHScrollBar();
         var scrollY = ScrollContainer.GetVScrollBar();
-        
+
         // page is the grabber size x.x
         // its /2f to grab the center of the grabber
         ScrollContainer.ScrollHorizontal = (int)(scrollX.MaxValue * xPercent - scrollX.Page / 2f);

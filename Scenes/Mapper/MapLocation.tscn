@@ -14,9 +14,11 @@ Highlighter = NodePath("Highlighter")
 layout_mode = 1
 HigherPower = NodePath("..")
 Selectable = true
+DetectRightClick = true
 
 [connection signal="OnUnSelectHighlighter" from="." to="Highlighter" method="ResetPressed"]
 [connection signal="OnEntered" from="Highlighter" to="." method="EmitOnEntered"]
 [connection signal="OnExited" from="Highlighter" to="." method="EmitOnExited"]
+[connection signal="OnRightClick" from="Highlighter" to="." method="EmitOnRightClick"]
 [connection signal="OnSelected" from="Highlighter" to="." method="EmitSelected"]
 [connection signal="OnUnSelected" from="Highlighter" to="." method="EmitUnSelected"]
