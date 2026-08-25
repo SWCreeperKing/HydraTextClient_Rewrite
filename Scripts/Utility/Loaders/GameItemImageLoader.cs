@@ -70,5 +70,5 @@ public struct AliasGroups(Alias[] aliases)
 public struct Alias(string aliasName, string[] itemNames)
 {
     public string AliasName = aliasName.ToLower().Replace(":", "");
-    public string[] ItemNames = itemNames.Select(img => img.ToLower().Replace(":", "")).ToArray();
+    public string[] ItemNames = [.. itemNames.Select(img => img.ToLower().Replace(":", ""))];
 }

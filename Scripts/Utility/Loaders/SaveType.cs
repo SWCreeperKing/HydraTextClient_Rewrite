@@ -63,8 +63,8 @@ public static class SaveType<T>
         return def;
     }
 
-    public static string[] GetKeys() => SaveItems.Keys.ToArray();
-    public static T[] GetValues() => SaveItems.Values.ToArray();
+    public static string[] GetKeys() => [.. SaveItems.Keys];
+    public static T[] GetValues() => [.. SaveItems.Values];
     public static bool ContainsKey(string id) => SaveItems.ContainsKey(id);
     public static bool TryGet(string id, out T val) => SaveItems.TryGetValue(id, out val);
 

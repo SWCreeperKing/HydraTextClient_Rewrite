@@ -75,7 +75,7 @@ public partial class SlotView : MarginContainer
         var names = ConnectionController.GetClientNames();
         if (names.Length == 0) return;
 
-        OrderedSlots = names.Order().ToArray();
+        OrderedSlots = [.. names.Order()];
         var leader = names[0];
         var index = Array.IndexOf(OrderedSlots, leader);
 

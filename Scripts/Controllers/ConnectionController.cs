@@ -77,8 +77,7 @@ public partial class ConnectionController : Control
             ApClient client = new() { ServerTimeout = disconnectTimer, ExcludeBouncedPacketsFromSelf = false };
             var isLeader = !HasLeaderClient;
             List<ArchipelagoTag> tags = [ArchipelagoTag.TextOnly, ArchipelagoTag.DeathLink, ArchipelagoTag.TrapLink];
-            client.DeathLinkGroups = mw.DeathLinkGroups.ToHashSet();
-            client.DeathLinkGroups.Add("");
+            client.DeathLinkGroups = [.. mw.DeathLinkGroups, ""];
 
             if (!isLeader) tags.Add(ArchipelagoTag.NoText);
             OnClientPrepareConnection?.Invoke(name, client, tags, isLeader);
@@ -127,7 +126,7 @@ public partial class ConnectionController : Control
                             new LoginInfo(
                                 int.Parse(mw.Port), name!, mw.Address, GetMultiworldPassword(originalName, false)
                             ),
-                            "", ItemsHandlingFlags.AllItems, tags: tags.ToArray()
+                            "", ItemsHandlingFlags.AllItems, tags: [.. tags]
                         );
 
                         if (error is not null && error.Length > 0)
@@ -275,7 +274,7 @@ public partial class ConnectionController : Control
     public static bool IsConnected(string name) => Singleton.Clients.Contains(name)
                                                    || HasReceipt(name) && Singleton.Clients.Contains(GetReceipt(name));
 
-    public static string[] GetClientNames() => Singleton.Clients.ToArray();
+    public static string[] GetClientNames() => [.. Singleton.Clients];
 
     public static ApClient? GetClient(int slot) => HasLeaderClient ? GetClient(LeaderClient!.PlayerNames[slot]) : null;
 

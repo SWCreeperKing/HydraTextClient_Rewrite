@@ -16,7 +16,7 @@ public partial class RunOnConnect : WindowSetter
 
     public void SetupEntries(CoreAppEntry[] entries, Action<CoreAppEntry[]> entriesToRun)
     {
-        RunSelected.Pressed += () => entriesToRun(ToRun.Where(kv => kv.Value).Select(kv => kv.Key).ToArray());
+        RunSelected.Pressed += () => entriesToRun([.. ToRun.Where(kv => kv.Value).Select(kv => kv.Key)]);
         RunAll.Pressed += () => entriesToRun(entries);
         
         RunSelected.Pressed += Close;

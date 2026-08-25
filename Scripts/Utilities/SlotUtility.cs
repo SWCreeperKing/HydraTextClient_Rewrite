@@ -29,7 +29,7 @@ public partial class SlotUtility : HSplitContainer
         client.OnLocationsChecked += locPack =>
         {
             LocationList.RemoveItems(
-                locPack.Locations.Select(loc => client.LocationIdToLocationName(loc, client.PlayerSlot)).ToArray()
+                [.. locPack.Locations.Select(loc => client.LocationIdToLocationName(loc, client.PlayerSlot))]
             );
         };
 
@@ -62,11 +62,11 @@ public partial class SlotUtility : HSplitContainer
             ItemList.ImageQueue.Enqueue((index, img));
         };
 
-        ItemList.SetItems(client.Items.Select(kv => kv.Key).ToArray());
+        ItemList.SetItems([.. client.Items.Select(kv => kv.Key)]);
         ItemList.List.FixedIconSize = new Vector2I(fontSize, fontSize);
 
         LocationList.SetItems(
-            client.Locations.Select(kv => kv.Key).Where(loc => client.MissingLocations.Contains(loc)).ToArray()
+            [.. client.Locations.Select(kv => kv.Key).Where(loc => client.MissingLocations.Contains(loc))]
         );
 
         ItemList.OnItemPressed += s => CallDeferred("CreateDialog", "Hint Item", $"Hint for\n{s}?", $"!hint {s}");

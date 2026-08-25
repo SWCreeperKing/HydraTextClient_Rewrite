@@ -332,13 +332,13 @@ public partial class MapLoader : Control
             case 2: CopyTargetNode = RightClickSelectedNode; break;
             case 3: CreateNewNodAtMouse(); break;
             case 4:
-                CreateNewNodAtMouse(MoveTargetNode.Size, MoveTargetNode.Group, MoveTargetNode.Locations.ToList());
+                CreateNewNodAtMouse(MoveTargetNode.Size, MoveTargetNode.Group, [.. MoveTargetNode.Locations]);
                 RemoveSelectedLocation(MoveTargetNode);
                 MoveTargetNode.Map.DeleteNode(MoveTargetNode);
                 MoveTargetNode = null;
                 break;
             case 5:
-                CreateNewNodAtMouse(CopyTargetNode.Size, CopyTargetNode.Group, CopyTargetNode.Locations.ToList());
+                CreateNewNodAtMouse(CopyTargetNode.Size, CopyTargetNode.Group, [.. CopyTargetNode.Locations]);
                 RemoveSelectedLocation(CopyTargetNode);
                 CopyTargetNode = null;
                 break;
@@ -412,9 +412,11 @@ public partial class MapLoader : Control
                 p.AddLocations += locs =>
                 {
                     if (SelectedMapLocation is null) return;
-                    locs = locs.Select(l => l.Trim())
-                               .Where(l => l is not "" && !SelectedMapLocation.Locations.Contains(l))
-                               .ToArray();
+                    locs =
+                    [
+                        .. locs.Select(l => l.Trim())
+                               .Where(l => l is not "" && !SelectedMapLocation.Locations.Contains(l)),
+                    ];
                     SelectedMapLocation.Locations.AddRange(locs.DistinctBy(s => s));
                     UpdateUI = true;
                     UpdateNodes();

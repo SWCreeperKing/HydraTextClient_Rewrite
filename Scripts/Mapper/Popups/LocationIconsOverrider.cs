@@ -20,9 +20,12 @@ public partial class LocationIconsOverrider : SelectionEditWindow<string>
     {
         Loader = loader;
         Loader.ItemImageLoader.ReloadImages();
-        Images = Loader.ItemImageLoader.GetImageNames().Order().ToArray();
-        Locations = loader.MapNavigators.SelectMany(map => map.Locations.SelectMany(loc => loc.Locations))
-                          .DistinctBy(s => s).Order().ToArray();
+        Images = [.. Loader.ItemImageLoader.GetImageNames().Order()];
+        Locations =
+        [
+            .. loader.MapNavigators.SelectMany(map => map.Locations.SelectMany(loc => loc.Locations))
+                     .DistinctBy(s => s).Order(),
+        ];
         SetImages(ClosedImage);
         SetImages(OpenedImage);
         LocationView.ItemSelected += l =>

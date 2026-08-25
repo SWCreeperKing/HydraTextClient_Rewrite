@@ -315,7 +315,7 @@ public static class Extensions // sorted alphabetically for the memes
                 objs.Add(new TextPrintObj(section[(index + 2)..], appendRawTextAsBBCode));
             }
 
-            return objs.ToArray();
+            return [.. objs];
         }
 
         public string CompileSimpleText(Dictionary<string, string> replacers) => replacers.Aggregate(

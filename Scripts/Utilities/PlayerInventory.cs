@@ -92,8 +92,8 @@ public partial class PlayerInventory : TextTable
         }
         else ordered = ordered.ThenBy(item => item[0].ItemName);
 
-        Keys = ordered.Select(item => item[0].UID).ToArray();
-        RawItemNames = Inventory.Values.Select(arr => arr[0].ItemName).Distinct().ToArray();
+        Keys = [.. ordered.Select(item => item[0].UID)];
+        RawItemNames = [.. Inventory.Values.Select(arr => arr[0].ItemName).Distinct()];
 
         var mw = ConnectionController.GetCurrentMultiworld;
 

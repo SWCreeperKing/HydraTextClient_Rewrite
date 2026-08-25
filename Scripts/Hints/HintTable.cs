@@ -193,7 +193,7 @@ public partial class HintTable : TextTable
                 orderedHints = SortOrder.Skip(1)
                                         .Aggregate(orderedHints, (current, option) => SortingOrder(current, option));
 
-            SortedHints = orderedHints.ToArray();
+            SortedHints = [.. orderedHints];
         }
 
         UpdateData(resort);

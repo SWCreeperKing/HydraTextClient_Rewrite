@@ -45,7 +45,7 @@ public partial class SearchingList : Control
         Items.Clear();
         List.Clear();
         ImageQueue.Clear();
-        Items = items.Distinct().Order().ToList();
+        Items = [.. items.Distinct().Order()];
         for (var i = 0; i < Items.Count; i++)
         {
             var item = Items[i];

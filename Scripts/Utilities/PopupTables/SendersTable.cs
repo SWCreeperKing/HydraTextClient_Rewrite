@@ -16,7 +16,7 @@ public partial class SendersTable : TextTable
     public void SetItems(ItemInfo[] items)
     {
         ItemCount = items.GroupBy(item => item.Player.Slot).ToDictionary(g => g.Key, g => g.ToArray());
-        Players = ItemCount.Keys.ToArray();
+        Players = [.. ItemCount.Keys];
         QueueUiRefresh(true);
     }
 

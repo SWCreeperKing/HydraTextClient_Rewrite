@@ -17,7 +17,7 @@ public partial class EditMapWindow : WindowSetter
 
     public void Setup(MapNavigator map)
     {
-        MapImages = Directory.GetFiles(map.MapPath).Select(Path.GetFileName).ToArray();
+        MapImages = [.. Directory.GetFiles(map.MapPath).Select(Path.GetFileName)];
         foreach (var image in MapImages) MapImage.AddItem(image);
         MapImage.Selected = MapImages.IndexOf(map.CoreMap.ImageName);
         MapName.Text = map.CoreMap.MapName;

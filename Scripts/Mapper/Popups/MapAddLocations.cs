@@ -47,7 +47,7 @@ public partial class MapAddLocations : WindowSetter
     }
 
     public string[] GetSelectedLocations()
-        => LastLocations.GetSelectedItems().Select(i => LastLocationList[i]).ToArray();
+        => [.. LastLocations.GetSelectedItems().Select(i => LastLocationList[i])];
 
     public void ReloadItemList()
     {

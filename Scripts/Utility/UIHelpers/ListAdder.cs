@@ -52,7 +52,7 @@ public partial class ListAdder : FoldableContainer
         Groups.Remove(group);
     }
 
-    public string[] GetItems() => Groups.Keys.ToArray();
+    public string[] GetItems() => [.. Groups.Keys];
     
     public void Clear()
     {

@@ -39,7 +39,7 @@ public class ItemEffect : MessageParserEffect
                 argList[1] = $"{argList[1]};{argList[2]}";
                 argList.RemoveAt(2);
             }
-            args = argList.ToArray();
+            args = [.. argList];
         }
         catch (IndexOutOfRangeException)
         {

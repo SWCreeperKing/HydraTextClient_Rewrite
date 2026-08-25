@@ -20,7 +20,7 @@ public class GamePortraitLoader : ImageLoader
 
     public override void ReloadImagesResolved()
     {
-        GameList = BaseList.Order().ToArray();
+        GameList = [.. BaseList.Order()];
         GD.Print("Loading Game Portraits");
     }
 

@@ -49,7 +49,7 @@ public partial class ItemHistoryTable : TextTable
             itemHistory.Add(current);
         }
 
-        ItemHistory = itemHistory.ToArray();
+        ItemHistory = [.. itemHistory];
         QueueUiRefresh(true);
     }
 

@@ -117,8 +117,8 @@ public partial class TrackerPage : Control
         var priority = localHints.Where(hint => hint.Status is HintStatus.Priority).Select(hint => hint.LocationId)
                                  .ToArray();
         var firstEnd = SaveType<bool>.Load(ShowFutureCircles, false);
-        LocationsInLogic = Circles.Values.SelectMany(arr => arr).ToArray();
-        LocationNamesInLogic = LocationsInLogic.Select(loc => Client.Locations[(long)loc]).ToArray(); 
+        LocationsInLogic = [.. Circles.Values.SelectMany(arr => arr)];
+        LocationNamesInLogic = [.. LocationsInLogic.Select(loc => Client.Locations[(long)loc])]; 
 
         foreach (var circle in Circles.Keys.Order())
         {
@@ -130,7 +130,7 @@ public partial class TrackerPage : Control
 
             var uniqueLocations = locations.Except(recordedLocations).ToArray();
             recordedLocations.AddRange(uniqueLocations);
-            uniqueLocations = uniqueLocations.Where(id => Client.MissingRawLocations.Contains((long)id)).ToArray();
+            uniqueLocations = [.. uniqueLocations.Where(id => Client.MissingRawLocations.Contains((long)id))];
 
             if (uniqueLocations.Length == 0 && !SaveType<bool>.Load(ShowEmptyCircles, true)) continue;
 
@@ -191,13 +191,13 @@ public partial class TrackerPage : Control
             QueueCircle(CurrentCircle++, start);
         }
 
-        while (items.Length > TrackedCount) { QueueCircle(CurrentCircle++, items.Take(TrackedCount + 1).ToArray()); }
+        while (items.Length > TrackedCount) { QueueCircle(CurrentCircle++, [.. items.Take(TrackedCount + 1)]); }
     }
 
     public void QueueCircle(int circle, params ItemInfo[] items)
     {
         CircleItems[circle] = $"{string.Join(", ", items.Skip(TrackedCount).Select(item => item.GetEffectText()))}";
-        Entry.ItemsQueued.Enqueue((circle, items.Select(item => item.ItemId).ToArray()));
+        Entry.ItemsQueued.Enqueue((circle, [.. items.Select(item => item.ItemId)]));
         TrackedCount = items.Length;
     }
 

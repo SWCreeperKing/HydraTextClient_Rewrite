@@ -51,7 +51,7 @@ public abstract class ImageLoader : IDisposable
         => !Images.TryGetValue(NameModify(name), out var value) ? def : value;
 
     public ConcurrentDictionary<string, ImageTexture> GetImages() => Images;
-    public string[] GetImageNames() => Images.Keys.ToArray();
+    public string[] GetImageNames() => [.. Images.Keys];
     public ImageTexture GetImage(string name) => Images[NameModify(name)];
     public virtual void ReloadImagesResolved() { }
     public virtual void ImageWasSet(string path, string image, ImageTexture img) { }

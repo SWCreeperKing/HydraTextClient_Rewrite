@@ -20,7 +20,7 @@ public partial class EditNodeDataPopup : WindowSetter
     {
         Loader = loader;
         Node = selectedNode;
-        Groups = Loader.LocationGroupingMap.Keys.Order().ToArray();
+        Groups = [.. Loader.LocationGroupingMap.Keys.Order()];
 
         LocationGroup.ItemSelected += l => SetGroup(Groups[l]);
         LocationGroup.GetPopup().AddThemeConstantOverride("icon_max_width", 14);

@@ -94,7 +94,7 @@ public partial class SlotPortrait : TextureRect
                     .Select(args =>
                          {
                              var context = args[0];
-                             args = args.Where(arg => arg is not ("{{mw}}" or "{{hydra}}")).ToArray();
+                             args = [.. args.Where(arg => arg is not ("{{mw}}" or "{{hydra}}"))];
                              if (args.Length == 0) return null;
 
                              if (args[0].StartsWith('"'))

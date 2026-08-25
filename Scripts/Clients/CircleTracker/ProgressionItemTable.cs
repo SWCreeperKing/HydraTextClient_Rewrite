@@ -18,9 +18,12 @@ public partial class ProgressionItemTable : TextTable
     public void SetPage(TrackerPage page) => Page = page;
 
     public override void RefreshUi(bool recompile) =>
-        OrderedData = Page.NextProgression
-                          .OrderByDescending(kv => kv.Value)
-                          .Select(kv => (kv.Key, kv.Value)).ToArray();
+        OrderedData =
+        [
+            .. Page.NextProgression
+                   .OrderByDescending(kv => kv.Value)
+                   .Select(kv => (kv.Key, kv.Value)),
+        ];
 
     public override string GetData(int row, int col)
     {
