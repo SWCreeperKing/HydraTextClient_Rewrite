@@ -223,15 +223,28 @@ public partial class MapLoader : Control
         {
             if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
             var i = List.AddItem(loc);
-            if (group is null) continue;
-            var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.AvailableIcon
-                : group!.CollectedIcon;
-            if (icon is "" || !ItemImageLoader.TryGet(icon, out var img))
+            switch (Client?.MissingLocations.Contains(loc))
             {
-                if (icon is not "") GD.PrintErr($"Missing icon for [{icon}]");
-                return;
+                case true when LocationClosedIconOverride.ContainsKey(loc):
+                    if (ItemImageLoader.TryGet(LocationClosedIconOverride[loc], out var closedImg))
+                        List.SetItemIcon(i, closedImg);
+                    break;
+                case false when LocationOpenedIconOverride.ContainsKey(loc):
+                    if (ItemImageLoader.TryGet(LocationOpenedIconOverride[loc], out var openedImg))
+                        List.SetItemIcon(i, openedImg);
+                    break;
+                default:
+                    if (group is null) continue;
+                    var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.AvailableIcon
+                        : group!.CollectedIcon;
+                    if (icon is "" || !ItemImageLoader.TryGet(icon, out var img))
+                    {
+                        if (icon is not "") GD.PrintErr($"Missing icon for [{icon}]");
+                        return;
+                    }
+                    List.SetItemIcon(i, img);
+                    break;
             }
-            List.SetItemIcon(i, img);
         }
     }
 

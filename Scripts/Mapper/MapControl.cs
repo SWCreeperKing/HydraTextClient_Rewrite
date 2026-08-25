@@ -36,6 +36,7 @@ public partial class MapControl : Control
     public override void _Process(double delta)
     {
         if (!ToResetZoom) return;
+        if (!IsVisibleInTree()) return;
 
         var rawZoom = ScrollContainer.Size / MapImage.Texture.GetSize();
         Zoom = Math.Min(rawZoom.X, rawZoom.Y) - .01f;
@@ -91,12 +92,15 @@ public partial class MapControl : Control
     {
         if (!IsVisibleInTree()) return;
         if (@event is not InputEventMouseButton mouse) return;
+        if (!ScrollContainer.GetGlobalRect().HasPoint(GetGlobalMousePosition())) return;
         switch (mouse.ButtonIndex)
         {
-            case MouseButton.WheelDown: Zoom -= ZoomSpeed * Zoom;
+            case MouseButton.WheelDown:
+                Zoom -= ZoomSpeed * Zoom;
                 AcceptEvent();
                 break;
-            case MouseButton.WheelUp: Zoom += ZoomSpeed * Zoom;
+            case MouseButton.WheelUp:
+                Zoom += ZoomSpeed * Zoom;
                 AcceptEvent();
                 break;
         }
