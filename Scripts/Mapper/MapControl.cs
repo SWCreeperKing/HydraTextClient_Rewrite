@@ -29,7 +29,6 @@ public partial class MapControl : Control
     private bool ToResetZoom;
 
     public bool IsDragging => Dragging;
-
     public override void _Ready() => Zoom = 1;
     public void ResetZoom() => ToResetZoom = true;
 

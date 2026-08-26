@@ -33,6 +33,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene LocationGroupsManagerPopup;
     [Export] private PackedScene LocationIconOverridePopup;
     [Export] private PackedScene EditMapNodePopup;
+    [Export] private PackedScene EntranceManagerPopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -123,6 +124,15 @@ public partial class MapLoader : Control
         while (structures.Count != 0)
         {
             var tab = structures.Dequeue();
+
+            if (tab.Name.StartsWith("__") && tab.Name.Length > 2)
+            {
+                var mapName = tab.Name[2..];
+                var map = MapsList.FirstOrDefault(m => m.MapName == mapName, null);
+                if (map is not null) CreateMap(path, map);
+                continue;
+            }
+            
             foreach (var child in tab.SubTabs) structures.Enqueue(child with { Parent = tab.Name });
             if (MapTabs.ContainsKey(tab.Name)) continue;
 
@@ -186,6 +196,7 @@ public partial class MapLoader : Control
 
     private void CreateMap(string path, Maps map)
     {
+        if (MapNavigators.Any(m => m.CoreMap == map)) return;
         var container = MapTabs.GetValueOrDefault(map.Tab ?? "", MapTabs[""]);
         var mapContainer = MapContainer.Instantiate<MapNavigator>();
         mapContainer.SetupMap(this, map, $"{path}/maps/");
@@ -522,6 +533,9 @@ public partial class MapLoader : Control
     public void EditLocationIconOverrides()
         => LocationIconOverridePopup.OpenPopup<LocationIconsOverrider>(this, p => p.Setup(this));
 
+    public void ManageEntrances()
+        => EntranceManagerPopup.OpenPopup<EntranceManagerPopup>(this, p => p.Setup(this));
+    
     public void SaveMapData()
     {
         if (!IsInEditMode) return;
@@ -546,6 +560,7 @@ public partial class MapLoader : Control
                     case MapNavigator nav:
                         var map = nav.CoreMap;
                         map.Tab = associatedStructure.Name;
+                        associatedStructure.SubTabs.Add(new TabStructure($"__{map.MapName}"));
                         newMapList.Add(map);
                         break;
                 }

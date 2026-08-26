@@ -41,7 +41,12 @@ public abstract partial class SelectionEditWindow<T> : WindowSetter
         MainContainer.SetCurrentTab(0);
     }
 
-    protected abstract bool DataCheck(T dataIn, out T dataOut);
+    protected virtual bool DataCheck(T dataIn, out T dataOut)
+    {
+        dataOut = dataIn;
+        return true;
+    }
+
     protected abstract void EditData(T data);
     protected abstract void SaveData(T data);
     protected abstract void DeleteData(T data);

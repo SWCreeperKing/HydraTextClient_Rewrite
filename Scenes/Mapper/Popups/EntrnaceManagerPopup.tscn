@@ -1,11 +1,19 @@
 [gd_scene format=3 uid="uid://8ib67dxo0ieh"]
 
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="1_4kwl7"]
+[ext_resource type="Script" uid="uid://mf5nh4begg5g" path="res://Scripts/Mapper/Popups/EntranceManagerPopup.cs" id="1_pe3fg"]
 
-[node name="EntranceManager" type="Window" unique_id=1969874574]
+[node name="EntranceManager" type="Window" unique_id=1969874574 node_paths=PackedStringArray("EntranceTable", "AddEntranceName", "AddEntranceID", "EditEntranceName", "EditEntranceID", "MainContainer")]
 oversampling_override = 1.0
 title = "Manage Entrances"
 size = Vector2i(550, 300)
+script = ExtResource("1_pe3fg")
+EntranceTable = NodePath("Panel/TabContainer/VBoxContainer/ScrollContainer/ItemList")
+AddEntranceName = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer/LineEdit")
+AddEntranceID = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer/LineEdit2")
+EditEntranceName = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit")
+EditEntranceID = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit2")
+MainContainer = NodePath("Panel/TabContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=1323930821]
 anchors_preset = 15
@@ -46,9 +54,18 @@ placeholder_text = "ID (leave blank if Name=ID)"
 layout_mode = 2
 text = "Add"
 
-[node name="ItemList" type="ItemList" parent="Panel/TabContainer/VBoxContainer" unique_id=2058000489]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer/VBoxContainer" unique_id=1394724783]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="ItemList" type="ItemList" parent="Panel/TabContainer/VBoxContainer/ScrollContainer" unique_id=2058000489]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_text_lines = 2
+wraparound_items = false
+max_columns = 2
+same_column_width = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Panel/TabContainer" unique_id=1109631592]
 layout_mode = 2
@@ -83,6 +100,7 @@ layout_mode = 2
 text = "DELETE"
 
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("1_4kwl7")]
+visible = true
 Prefix = "window_nodes"
 Controls = {
 "entrance_manager_popup": NodePath("..")

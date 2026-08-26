@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://daejcfoohctjw" path="res://Scenes/Mapper/Popups/EditLocationGroups.tscn" id="6_2nwgb"]
 [ext_resource type="PackedScene" uid="uid://d15rng0n3v6ed" path="res://Scenes/Mapper/Popups/LocationIconOverride.tscn" id="7_0a5q4"]
 [ext_resource type="PackedScene" uid="uid://lobbvevspn8f" path="res://Scenes/Mapper/Popups/EditNodePopup.tscn" id="8_ov35l"]
+[ext_resource type="PackedScene" uid="uid://8ib67dxo0ieh" path="res://Scenes/Mapper/Popups/EntrnaceManagerPopup.tscn" id="9_yu0wl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ajsmo"]
 content_margin_left = 4.0
@@ -52,6 +53,7 @@ ManageTabPopup = ExtResource("5_epac1")
 LocationGroupsManagerPopup = ExtResource("6_2nwgb")
 LocationIconOverridePopup = ExtResource("7_0a5q4")
 EditMapNodePopup = ExtResource("8_ov35l")
+EntranceManagerPopup = ExtResource("9_yu0wl")
 metadata/_tab_index = 0
 
 [node name="HSplitContainer" type="HSplitContainer" parent="." unique_id=208381665]
@@ -218,6 +220,7 @@ fixed_icon_size = Vector2i(16, 16)
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button6" to="." method="EditLocationGroup"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button8" to="." method="ManageTabs"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button" to="." method="EditLocationIconOverrides"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button2" to="." method="ManageEntrances"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer3/Button" to="." method="StopAndClose"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/Button3" to="." method="ResetSelectedNodes"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button3" to="." method="EditNode"]

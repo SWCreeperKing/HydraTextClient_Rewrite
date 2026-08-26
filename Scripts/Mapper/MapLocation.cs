@@ -11,6 +11,7 @@ public partial class MapLocation : TextureRect
 {
     [Export] public Texture2D BaseCheckImage;
     [Export] public Highlighter Highlighter;
+    [Export] private ColorRect ColorTarget;
 
     public Vector2 Pos
     {
@@ -26,6 +27,8 @@ public partial class MapLocation : TextureRect
             RawNodeData.Y = Position.Y;
         }
     }
+
+    public Color NodeColor { get => SelfModulate; set => SelfModulate = Colors.White.Lerp(value, .75f); }
 
     public bool QueueUpdate;
     public MapNavigator Map;
@@ -98,13 +101,13 @@ public partial class MapLocation : TextureRect
             if (applicableHints.Length == 0 && color is 1) break;
         }
 
-        SelfModulate = color switch
+        NodeColor = color switch
         {
             0 => ColorIdConstants.ColorConstant.InLogicHinted.Color(),
             1 => ColorIdConstants.ColorConstant.InLogic.Color(),
             2 => ColorIdConstants.ColorConstant.NotInLogicHinted.Color(),
             3 => ColorIdConstants.ColorConstant.NotInLogic.Color(),
-            4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(), _ => SelfModulate,
+            4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(), _ => NodeColor,
         };
     }
 
