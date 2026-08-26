@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://doy4vtge7n3pv"]
+
+[ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="1_883cf"]
+[ext_resource type="Script" uid="uid://th38htoma37o" path="res://Scripts/Mapper/EntranceLocation.cs" id="2_4pt1e"]
+[ext_resource type="PackedScene" uid="uid://ept1ew3d5xe3" path="res://Scenes/Utility/Highlighter.tscn" id="2_w2sge"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_883cf"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.758)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[node name="Panel" type="PanelContainer" unique_id=156928014 node_paths=PackedStringArray("Highlighter", "EntranceSelection", "Label")]
+offset_right = 40.0
+offset_bottom = 40.0
+offset_transform_enabled = true
+offset_transform_position_ratio = Vector2(-0.5, -0.5)
+offset_transform_visual_only = false
+theme = ExtResource("1_883cf")
+theme_override_styles/panel = SubResource("StyleBoxFlat_883cf")
+script = ExtResource("2_4pt1e")
+Highlighter = NodePath("Highlighter")
+EntranceSelection = NodePath("MarginContainer/OptionButton")
+Label = NodePath("MarginContainer/RichTextLabel")
+
+[node name="Highlighter" parent="." unique_id=902065195 node_paths=PackedStringArray("HigherPower") instance=ExtResource("2_w2sge")]
+layout_mode = 2
+HigherPower = NodePath("..")
+DetectRightClick = true
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1614886379]
+layout_mode = 2
+
+[node name="OptionButton" type="OptionButton" parent="MarginContainer" unique_id=1194061956]
+visible = false
+layout_mode = 2
+alignment = 1
+search_bar_enabled = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer" unique_id=1129927979]
+visible = false
+layout_mode = 2
+text = "?"
+fit_content = true
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="OnRightClick" from="Highlighter" to="." method="EmitOnRightClick"]

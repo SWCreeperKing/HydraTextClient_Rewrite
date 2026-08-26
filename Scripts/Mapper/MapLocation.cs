@@ -30,9 +30,9 @@ public partial class MapLocation : TextureRect
 
     public Color NodeColor { get => SelfModulate; set => SelfModulate = Colors.White.Lerp(value, .75f); }
 
+    public bool HasCustomImage;
     public bool QueueUpdate;
     public MapNavigator Map;
-    public bool HasCustomImage;
     public MapNode RawNodeData;
 
     public List<string> Locations => RawNodeData.Locations;

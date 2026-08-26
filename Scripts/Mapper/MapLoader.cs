@@ -273,10 +273,12 @@ public partial class MapLoader : Control
             this, p =>
             {
                 p.Setup(map);
-                p.EditMapData += (name, image, id) =>
+                p.EditMapData += (name, image, id, fontSize) =>
                 {
                     if (FindMapByName(name) is null) return;
                     map.EditMapData(name, image, id);
+                    foreach (var entrance in map.Entrances) entrance.SetNodeFontSize(fontSize);
+                    map.CoreMap.EntranceFontSize = fontSize;
                 };
             }
         );

@@ -8,12 +8,14 @@ namespace HydraTextClient.Scripts.Mapper;
 public partial class MapNavigator : ScrollContainer
 {
     [Export] public MapControl Container;
-    [Export] public PackedScene MapLocation;
     [Export] public Texture2D DefaultImage;
+    [Export] public PackedScene MapLocation;
+    [Export] public PackedScene EntranceLocation;
     public MapLoader Loader;
     public Maps CoreMap;
     public string MapPath;
     public List<MapLocation> Locations = [];
+    public List<EntranceLocation> Entrances = [];
     public string MapId => CoreMap.GetId;
 
     public Vector2 GetMapSize => Container.MapImage.Texture.GetSize();
@@ -81,7 +83,22 @@ public partial class MapNavigator : ScrollContainer
         Locations.Remove(node);
         node.QueueFree();
     }
+    
+    private void CreateEntranceNode(EntranceNode loc)
+    {
+        var node = EntranceLocation.Instantiate<EntranceLocation>();
+        node.RawNodeData = loc;
 
+        node.SetNodeFontSize(CoreMap.EntranceFontSize);
+        // node.SetData(this);
+        // node.OnRightClick += () => Loader.RightClickedNode(node);
+
+        try { Container.MapImage.AddChild(node); }
+        catch { Container.MapImage.CallDeferred("add_child", node); }
+        Entrances.Add(node);
+        node.Pos = new Vector2(loc.X, loc.Y);
+    }
+    
     private void CreateLocationNode(MapNode loc)
     {
         var node = MapLocation.Instantiate<MapLocation>();

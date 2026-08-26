@@ -7,7 +7,7 @@
 [node name="EditMapWindow" type="Window" unique_id=1427444570 node_paths=PackedStringArray("MapName", "MapImage", "MapAutoTabId")]
 oversampling_override = 1.0
 title = "Edit Map"
-size = Vector2i(550, 330)
+size = Vector2i(550, 468)
 theme = ExtResource("1_kfaqn")
 script = ExtResource("2_cjjud")
 MapName = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer2/LineEdit")
@@ -90,6 +90,28 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="HSeparator3" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=543802293]
+layout_mode = 2
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1042470332]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer5" unique_id=2105170960]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Entrance Label Font Size"
+
+[node name="SpinBox" type="SpinBox" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer5" unique_id=1506344206]
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+allow_greater = true
+
+[node name="HSeparator5" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=2133349355]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSeparator6" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=94914200]
 layout_mode = 2
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1875753438]
