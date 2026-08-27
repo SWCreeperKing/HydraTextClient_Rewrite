@@ -124,7 +124,16 @@ public partial class MultiworldCreator : WindowSetter
             return;
         }
 
-        SaveType<MultiworldData>.Save(data.WorldName, GenDataFromFields(), true);
+        if (SaveType<MultiworldData>.TryGet(data.WorldName, out var oldWorld))
+        {
+            var newWorld = GenDataFromFields();
+            oldWorld.Address = newWorld.Address;
+            oldWorld.Port = newWorld.Port;
+            oldWorld.Password = newWorld.Password;
+            oldWorld.DeathLinkGroups = newWorld.DeathLinkGroups;
+            SaveType<MultiworldData>.Save(data.WorldName, oldWorld, true);
+        }
+        else SaveType<MultiworldData>.Save(data.WorldName, GenDataFromFields(), true);
         Close();
     }
 
