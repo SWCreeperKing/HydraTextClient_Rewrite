@@ -32,6 +32,8 @@ Label = NodePath("MarginContainer/RichTextLabel")
 layout_mode = 2
 HigherPower = NodePath("..")
 DetectRightClick = true
+DetectLeftClick = true
+DetectMiddleClick = true
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1614886379]
 layout_mode = 2
@@ -45,4 +47,6 @@ vertical_alignment = 1
 resize_font_to_fit = true
 minimum_font_size = 1
 
+[connection signal="OnLeftClick" from="Highlighter" to="." method="EmitOnLeftClick"]
+[connection signal="OnMiddleClick" from="Highlighter" to="." method="EmitOnMiddleClick"]
 [connection signal="OnRightClick" from="Highlighter" to="." method="EmitOnRightClick"]

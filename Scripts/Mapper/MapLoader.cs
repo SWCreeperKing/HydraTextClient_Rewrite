@@ -34,6 +34,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene LocationGroupsManagerPopup;
     [Export] private PackedScene LocationIconOverridePopup;
     [Export] private PackedScene EditMapNodePopup;
+    [Export] private PackedScene EditEntranceNodePopup;
     [Export] private PackedScene EntranceManagerPopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
@@ -51,6 +52,7 @@ public partial class MapLoader : Control
     public Dictionary<string, string> LocationClosedIconOverride = [];
     public Dictionary<string, string> LocationOpenedIconOverride = [];
     public Dictionary<string, string> EntranceMap = [];
+    public Dictionary<string, List<EntranceLocation>> EntranceNodes = [];
     public bool UpdateUI;
     private string TrackerName;
     private string MapPath;
@@ -326,6 +328,7 @@ public partial class MapLoader : Control
             {
                 if (RightClickSelectedNode is not null) ResetRightClickSelectedNode();
                 menu.AddItem("Create Node", 3);
+                menu.AddItem("Create Entrance", 6);
                 if (MoveTargetNode is not null) menu.AddItem("Move Node Here", 4);
                 if (CopyTargetNode is not null) menu.AddItem("Paste Node Here", 5);
             }

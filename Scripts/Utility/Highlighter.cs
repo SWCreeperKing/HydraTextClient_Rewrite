@@ -9,6 +9,8 @@ public partial class Highlighter : ColorRect
     [Export] public Control? HigherPower;
     [Export] public bool Selectable;
     [Export] public bool DetectRightClick;
+    [Export] public bool DetectLeftClick;
+    [Export] public bool DetectMiddleClick;
     private double Timer;
     private Tween Tween;
     private bool Selected;
@@ -23,6 +25,10 @@ public partial class Highlighter : ColorRect
     [Signal] public delegate void OnExitedEventHandler();
 
     [Signal] public delegate void OnRightClickEventHandler();
+
+    [Signal] public delegate void OnLeftClickEventHandler();
+
+    [Signal] public delegate void OnMiddleClickEventHandler();
 
     public override void _Ready()
     {
@@ -80,7 +86,12 @@ public partial class Highlighter : ColorRect
 
         if (@event is not InputEventMouseButton button) return;
         if (!button.Pressed) return;
-        if (button.ButtonIndex is MouseButton.Right && DetectRightClick) EmitSignalOnRightClick();
+        switch (button.ButtonIndex)
+        {
+            case MouseButton.Right when DetectRightClick: EmitSignalOnRightClick(); break;
+            case MouseButton.Middle when DetectMiddleClick: EmitSignalOnMiddleClick(); break;
+            case MouseButton.Left when DetectLeftClick: EmitSignalOnLeftClick(); break;
+        }
         if (button.ButtonIndex is not MouseButton.Left) return;
 
         Selected = !Selected;

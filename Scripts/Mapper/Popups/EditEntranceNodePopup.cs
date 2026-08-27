@@ -6,20 +6,19 @@ using HydraTextClient.Scripts.Utility.UIHelpers;
 
 namespace HydraTextClient.Scripts.Mapper.Popups;
 
-public partial class EditNodeDataPopup : WindowSetter
+public partial class EditEntranceNodePopup : WindowSetter
 {
-    [Export] private OptionButton LocationGroup;
     [Export] private SpinBox Xposition;
     [Export] private SpinBox Yposition;
     [Export] private SpinBox Width;
     [Export] private SpinBox Height;
     [Export] private UISaver Saver;
     private MapLoader Loader;
-    private MapLocation Node;
+    private EntranceLocation Node;
     private string[] Groups;
     private bool IsNewNode;
 
-    public void Setup(MapLoader loader, MapLocation selectedNode, bool isNew)
+    public void Setup(MapLoader loader, EntranceLocation selectedNode, bool isNew)
     {
         Loader = loader;
         Node = selectedNode;
@@ -33,15 +32,6 @@ public partial class EditNodeDataPopup : WindowSetter
             Node.SetNodeSize(new Vector2((float)Width.Value, (float)Height.Value));
         }
         
-        LocationGroup.ItemSelected += l => SetGroup(Groups[l]);
-        LocationGroup.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
-        foreach (var groupName in Groups)
-        {
-            var group = Loader.LocationGroupingMap[groupName];
-            LocationGroup.AddIconItem(Loader.ItemImageLoader[group.MappedIcon], groupName);
-        }
-        LocationGroup.Selected = Groups.IndexOf(Node.Group);
-
         Xposition.ValueChanged += d =>
         {
             Node.Pos = Node.Pos with { X = (int)d };
@@ -71,18 +61,8 @@ public partial class EditNodeDataPopup : WindowSetter
 
     public void DeleteNode()
     {
-        Loader.SetSelectedLocation(null);
-        Loader.RemoveSelectedLocation(Node);
-        Loader.RemoveHoverLocation(Node);
         Node.Map.DeleteNode(Node);
         Close();
-    }
-    
-    public void SetGroup(string groupName)
-    {
-        Node.RawNodeData.LocationGroup = groupName;
-        Node.SetImage(Loader.LocationGroupingMap[groupName].MappedIcon);
-        Loader.UpdateUI = true;
     }
     
     public void Reload()

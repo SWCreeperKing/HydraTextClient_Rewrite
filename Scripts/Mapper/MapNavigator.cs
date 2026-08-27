@@ -84,20 +84,32 @@ public partial class MapNavigator : ScrollContainer
         node.QueueFree();
     }
     
+    public void DeleteNode(EntranceLocation node)
+    {
+        CoreMap.Entrances.Remove(node.RawNodeData);
+        Container.MapImage.CallDeferred("remove_child", node);
+        Loader.EntranceNodes[node.RawNodeData.Entrance].Remove(node);
+        Entrances.Remove(node);
+        node.QueueFree();
+    }
+
     private void CreateEntranceNode(EntranceNode loc)
     {
         var node = EntranceLocation.Instantiate<EntranceLocation>();
         node.RawNodeData = loc;
+        node.SetText(Loader.IsInEditMode ? Loader.EntranceMap[loc.Entrance] : null);
 
-        // node.SetData(this);
         // node.OnRightClick += () => Loader.RightClickedNode(node);
 
+        if (!Loader.EntranceNodes.ContainsKey(loc.Entrance)) Loader.EntranceNodes[loc.Entrance] = [];
+        Loader.EntranceNodes[loc.Entrance].Add(node);
+            
         try { Container.MapImage.AddChild(node); }
         catch { Container.MapImage.CallDeferred("add_child", node); }
         Entrances.Add(node);
         node.Pos = new Vector2(loc.X, loc.Y);
     }
-    
+
     private MapLocation CreateLocationNode(MapNode loc)
     {
         var node = MapLocation.Instantiate<MapLocation>();

@@ -1,15 +1,14 @@
-[gd_scene format=3 uid="uid://lobbvevspn8f"]
+[gd_scene format=3 uid="uid://fkodvymae5ad"]
 
-[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="1_mnmjq"]
-[ext_resource type="Script" uid="uid://bmv5ss44mthec" path="res://Scripts/Mapper/Popups/EditNodeDataPopup.cs" id="1_sfu5c"]
-[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_lup2p"]
+[ext_resource type="Script" uid="uid://clemt0wksxt2v" path="res://Scripts/Mapper/Popups/EditEntranceNodePopup.cs" id="1_64o7s"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_l332g"]
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_xx528"]
 
-[node name="EditNodePopup" type="Window" unique_id=206010802 node_paths=PackedStringArray("LocationGroup", "Xposition", "Yposition", "Width", "Height", "Saver")]
+[node name="EditEntranceNodePopup" type="Window" unique_id=206010802 node_paths=PackedStringArray("Xposition", "Yposition", "Width", "Height", "Saver")]
 oversampling_override = 1.0
-title = "Edit Map Node"
-size = Vector2i(400, 230)
-script = ExtResource("1_sfu5c")
-LocationGroup = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer/OptionButton")
+title = "Edit Entrance Node"
+size = Vector2i(400, 200)
+script = ExtResource("1_64o7s")
 Xposition = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer2/SpinBox")
 Yposition = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer3/SpinBox")
 Width = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer4/SpinBox")
@@ -32,21 +31,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=638966464]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1054209692]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=16165355]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Location Group"
-
-[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=114502428]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer" unique_id=678970806]
 layout_mode = 2
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1028189571]
@@ -116,9 +100,9 @@ layout_mode = 2
 modulate = Color(1, 0.45999998, 0.45999998, 1)
 layout_mode = 2
 text = "DELETE NODE"
-script = ExtResource("2_lup2p")
+script = ExtResource("2_l332g")
 
-[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("1_mnmjq")]
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_xx528")]
 Prefix = "window_nodes"
 Controls = {
 "edit_node_popup": NodePath("..")
