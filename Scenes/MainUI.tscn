@@ -91,23 +91,23 @@ expand_mode = 1
 [node name="Main Container" type="TabContainer" parent="." unique_id=534411987]
 layout_mode = 2
 theme = ExtResource("1_yd0xa")
-current_tab = 1
+current_tab = 0
 
 [node name="Connection" type="TabContainer" parent="Main Container" unique_id=2072097402]
-visible = false
 layout_mode = 2
-current_tab = 0
+current_tab = 1
 metadata/_tab_index = 0
 
 [node name="Multiworlds" parent="Main Container/Connection" unique_id=1488541377 instance=ExtResource("2_c3bvd")]
+visible = false
 layout_mode = 2
 
 [node name="Slots" parent="Main Container/Connection" unique_id=1007135951 instance=ExtResource("3_8dqd8")]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
 [node name="Clients" type="TabContainer" parent="Main Container" unique_id=1143605094]
+visible = false
 layout_mode = 2
 theme = ExtResource("1_yd0xa")
 current_tab = 0

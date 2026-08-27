@@ -2,6 +2,7 @@
 using System.Linq;
 using Godot;
 using HydraTextClient.Scripts.Utility.Popups;
+using HydraTextClient.Scripts.Utility.UIHelpers;
 
 namespace HydraTextClient.Scripts.Mapper.Popups;
 
@@ -12,16 +13,26 @@ public partial class EditNodeDataPopup : WindowSetter
     [Export] private SpinBox Yposition;
     [Export] private SpinBox Width;
     [Export] private SpinBox Height;
+    [Export] private UISaver Saver;
     private MapLoader Loader;
     private MapLocation Node;
     private string[] Groups;
+    private bool IsNewNode;
 
-    public void Setup(MapLoader loader, MapLocation selectedNode)
+    public void Setup(MapLoader loader, MapLocation selectedNode, bool isNew)
     {
         Loader = loader;
         Node = selectedNode;
         Groups = [.. Loader.LocationGroupingMap.Keys.Order()];
+        IsNewNode = isNew;
 
+        if (isNew)
+        {
+            Saver.BuildSavable(Width, "MapTracker/New/MapNode/W", 32);
+            Saver.BuildSavable(Height, "MapTracker/New/MapNode/H", 32);
+            Node.SetNodeSize(new Vector2((float)Width.Value, (float)Height.Value));
+        }
+        
         LocationGroup.ItemSelected += l => SetGroup(Groups[l]);
         LocationGroup.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
         foreach (var groupName in Groups)
@@ -61,6 +72,8 @@ public partial class EditNodeDataPopup : WindowSetter
     public void DeleteNode()
     {
         Loader.SetSelectedLocation(Node);
+        Loader.RemoveSelectedLocation(Node);
+        Loader.RemoveHoverLocation(Node);
         Node.Map.DeleteNode(Node);
         Close();
     }

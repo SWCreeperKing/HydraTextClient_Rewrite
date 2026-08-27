@@ -15,13 +15,13 @@ public partial class SlotPortrait : TextureRect
 {
     [ExportGroup("Internal"), Export] private Texture2D UnknownPortrait;
     [Export] private TextureRect Portrait;
-    [Export] private Label SlotNameLabel;
+    [Export] private RichTextLabel SlotNameLabel;
     [Export] private PackedScene RunOnCommandPopup;
 
     [ExportGroup("Internal - CheckCount"), Export]
     private PanelContainer CheckCountPanel;
 
-    [Export] private Label CheckCountLabel;
+    [Export] private RichTextLabel CheckCountLabel;
     [Export] private ProgressBar CheckProgressBar;
 
     [ExportGroup("Internal - Tinter"), Export]
@@ -45,7 +45,6 @@ public partial class SlotPortrait : TextureRect
     private Action<string, ApClient, bool> RunOnConnectAction;
     private Action<string, ApClient, bool> OnDisconnect;
     private Tween ColorTween;
-    private Tween FontSizeTween;
     private Tween ScaleTween;
     private ConcurrentBag<int> ProcessIds = [];
     private ConnectionStatus CurrentStatus = ConnectionStatus.NotConnected;
@@ -154,7 +153,6 @@ public partial class SlotPortrait : TextureRect
         };
 
         CheckCountPanel.Visible = false;
-        SetFontSize((int)SaveType<double>.Load("Connection/SlotsMenu/PortraitFontSize", 14));
         SetScale((float)SaveType<double>.Load("Connection/SlotsMenu/PortraitScale", 1f));
         ConnectionController.OnCheckCountUpdated += CheckAction;
         ConnectionController.OnFullDisconnection += ClearCheckCountOnDisconnect;
@@ -193,16 +191,6 @@ public partial class SlotPortrait : TextureRect
         ScaleTween.TweenProperty(this, "custom_minimum_size", newSize, .7f);
         ScaleTween.Parallel().TweenProperty(this, "size", newSize, .7f);
         SetSize(newSize);
-    }
-
-    public void SetFontSize(int size)
-    {
-        FontSizeTween?.Kill();
-        FontSizeTween = CreateTween();
-        FontSizeTween.SetTrans(Tween.TransitionType.Elastic).SetEase(Tween.EaseType.Out);
-        FontSizeTween.TweenProperty(SlotNameLabel, "theme_override_font_sizes/font_size", size, .7f);
-        FontSizeTween.Parallel().TweenProperty(CheckCountLabel, "theme_override_font_sizes/font_size", size, .7f);
-        FontSizeTween.Parallel().TweenProperty(CheckProgressBar, "theme_override_font_sizes/font_size", size, .7f);
     }
 
     public override void _GuiInput(InputEvent @event)

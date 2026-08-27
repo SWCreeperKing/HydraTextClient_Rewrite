@@ -17,7 +17,6 @@ public partial class SlotView : MarginContainer
     [Export] private HFlowContainer SubSlotContainer;
     [Export] private PackedScene SlotPortraitScene;
     [Export] private OptionButton LeaderChanger;
-    [Export] private SpinBox FontSize;
     [Export] private SpinBox ScaleBox;
     [Export] private Texture2D UnknownGame;
 
@@ -57,16 +56,8 @@ public partial class SlotView : MarginContainer
         if (@event is not InputEventMouseButton button || !button.IsPressed()) return;
         if (!Input.IsKeyPressed(Key.Ctrl)) return;
 
-        if (button.ButtonIndex is MouseButton.WheelUp)
-        {
-            FontSize.Increment();
-            ScaleBox.Increment();
-        }
-        if (button.ButtonIndex is MouseButton.WheelDown)
-        {
-            FontSize.Decrement();
-            ScaleBox.Decrement();
-        }
+        if (button.ButtonIndex is MouseButton.WheelUp) ScaleBox.Increment();
+        if (button.ButtonIndex is MouseButton.WheelDown) ScaleBox.Decrement();
     }
 
     private void UpdateLeaderBox()

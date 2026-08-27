@@ -69,11 +69,11 @@ public partial class MapNavigator : ScrollContainer
         CoreMap.MapId = mapId;
     }
 
-    public void CreateNewNode(Vector2 pos, Vector2 size, string group, params List<string> locs)
+    public MapLocation CreateNewNode(Vector2 pos, Vector2 size, string group, params List<string> locs)
     {
         var nodeData = new MapNode(pos.X, pos.Y, size.X, size.Y, group, locs);
         CoreMap.Nodes.Add(nodeData);
-        CreateLocationNode(nodeData);
+        return CreateLocationNode(nodeData);
     }
 
     public void DeleteNode(MapLocation node)
@@ -89,7 +89,6 @@ public partial class MapNavigator : ScrollContainer
         var node = EntranceLocation.Instantiate<EntranceLocation>();
         node.RawNodeData = loc;
 
-        node.SetNodeFontSize(CoreMap.EntranceFontSize);
         // node.SetData(this);
         // node.OnRightClick += () => Loader.RightClickedNode(node);
 
@@ -99,14 +98,14 @@ public partial class MapNavigator : ScrollContainer
         node.Pos = new Vector2(loc.X, loc.Y);
     }
     
-    private void CreateLocationNode(MapNode loc)
+    private MapLocation CreateLocationNode(MapNode loc)
     {
         var node = MapLocation.Instantiate<MapLocation>();
         node.RawNodeData = loc;
 
         node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
         node.SetData(this);
-        if (UpdateLocationGroup(node)) return; // return if slot data doesn't match
+        if (UpdateLocationGroup(node)) return null; // return if slot data doesn't match
         node.OnEntered += () => Loader.SetHoverLocation(node);
         node.OnExited += () => Loader.RemoveHoverLocation(node);
         node.OnSelected += () => Loader.SetSelectedLocation(node);
@@ -117,6 +116,7 @@ public partial class MapNavigator : ScrollContainer
         catch { Container.MapImage.CallDeferred("add_child", node); }
         Locations.Add(node);
         node.Pos = new Vector2(loc.X, loc.Y);
+        return node;
     }
 
     public bool UpdateLocationGroup(MapLocation node)

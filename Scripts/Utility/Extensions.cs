@@ -243,7 +243,7 @@ public static class Extensions // sorted alphabetically for the memes
             }
         }
     }
-    
+
     extension(RichTextLabel label)
     {
         public void ApplyCompiledPrintableObjs(IPrintableObj[] objs)
@@ -347,7 +347,8 @@ public static class Extensions // sorted alphabetically for the memes
         public void OpenPopup<T>(Node parent, Action<T> setup) where T : Window
         {
             var popup = scene.Instantiate<T>();
-            setup(popup);
+            try { setup(popup); }
+            catch { return; }
             try { parent.AddChild(popup); }
             catch { parent.CallDeferred("add_child", popup); }
             popup.Show();

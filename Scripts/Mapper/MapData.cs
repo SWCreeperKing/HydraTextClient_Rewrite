@@ -15,7 +15,7 @@ public struct TabStructure(string name = "", params List<TabStructure> subTabs)
     public override int GetHashCode() => HashCode.Combine(Name, SubTabs);
 }
 
-public class Maps(string mapName, string imageName, string tab = "", string mapId = "", int entranceFontSize = 24, List<EntranceNode>? entrances = null, params List<MapNode> nodes)
+public class Maps(string mapName, string imageName, string tab = "", string mapId = "", List<EntranceNode>? entrances = null, params List<MapNode> nodes)
 {
     public string MapName = mapName;
     public string MapId = mapId;
@@ -23,7 +23,6 @@ public class Maps(string mapName, string imageName, string tab = "", string mapI
     public string Tab = tab;
     public List<MapNode> Nodes = nodes;
     public List<EntranceNode> Entrances = entrances ?? [];
-    public int EntranceFontSize = entranceFontSize;
 
     [JsonIgnore] public string GetId => MapId is "" or null ? MapName ?? "" : MapId;
 }
@@ -39,11 +38,13 @@ public class MapNode(float x, float y, float w, float h, string group = "",
     public float H = h;
 }
 
-public class EntranceNode(float x, float y, string entrance)
+public class EntranceNode(float x, float y, float w, float h, string entrance)
 {
     public string Entrance = entrance;
     public float X = x;
     public float Y = y;
+    public float W = w;
+    public float H = h;
 }
 
 public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")

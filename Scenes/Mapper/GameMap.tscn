@@ -24,7 +24,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
 
-[node name="Game" type="MarginContainer" unique_id=235484884 node_paths=PackedStringArray("SaveMap", "Container", "List", "ListContainer", "ListEditControls", "LocationPanel", "LocationPanelText", "PopoutWindow", "AutoTab")]
+[node name="Game" type="MarginContainer" unique_id=235484884 node_paths=PackedStringArray("SaveMap", "Container", "List", "ListContainer", "ListEditControls", "LocationPanel", "LocationPanelText", "PopoutWindow", "AutoTab", "OpenConfig")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -47,6 +47,7 @@ LocationPanelText = NodePath("HSplitContainer/VBoxContainer/Popout/Control/Popup
 PopoutWindow = NodePath("HSplitContainer/VBoxContainer/Popout")
 AutoTab = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer2/CheckBox")
 MapContainer = ExtResource("3_ajsmo")
+OpenConfig = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/CheckBox")
 AddLocationsPopup = ExtResource("4_tesqn")
 EditMapPopup = ExtResource("4_epac1")
 ManageTabPopup = ExtResource("5_epac1")
@@ -118,6 +119,11 @@ script = ExtResource("4_1xhnn")
 layout_mode = 2
 text = "Entrances"
 script = ExtResource("4_1xhnn")
+
+[node name="CheckBox" type="CheckBox" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1042946624]
+layout_mode = 2
+button_pressed = true
+text = "Creation Popups"
 
 [node name="HFlowContainer3" type="HFlowContainer" parent="HSplitContainer/VBoxContainer/HBoxContainer" unique_id=551543628]
 layout_mode = 2

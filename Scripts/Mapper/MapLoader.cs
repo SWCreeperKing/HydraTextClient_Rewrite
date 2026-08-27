@@ -27,7 +27,8 @@ public partial class MapLoader : Control
     [Export] public PopoutWindow PopoutWindow;
     [Export] public CheckBox AutoTab;
     [Export] public PackedScene MapContainer;
-    [Export] private PackedScene AddLocationsPopup;
+    [Export] private CheckBox OpenConfig;
+    [Export, ExportGroup("Popups")] private PackedScene AddLocationsPopup;
     [Export] private PackedScene EditMapPopup;
     [Export] private PackedScene ManageTabPopup;
     [Export] private PackedScene LocationGroupsManagerPopup;
@@ -132,7 +133,7 @@ public partial class MapLoader : Control
                 if (map is not null) CreateMap(path, map);
                 continue;
             }
-            
+
             foreach (var child in tab.SubTabs) structures.Enqueue(child with { Parent = tab.Name });
             if (MapTabs.ContainsKey(tab.Name)) continue;
 
@@ -218,7 +219,8 @@ public partial class MapLoader : Control
 
     public void SetSelectedLocation(MapLocation loc)
     {
-        SelectedMapLocation?.Highlighter.ResetPressed();
+        try { SelectedMapLocation?.Highlighter.ResetPressed(); }
+        catch { }
         SelectedMapLocation = loc;
         UpdateUI = true;
     }
@@ -273,12 +275,10 @@ public partial class MapLoader : Control
             this, p =>
             {
                 p.Setup(map);
-                p.EditMapData += (name, image, id, fontSize) =>
+                p.EditMapData += (name, image, id) =>
                 {
                     if (FindMapByName(name) is null) return;
                     map.EditMapData(name, image, id);
-                    foreach (var entrance in map.Entrances) entrance.SetNodeFontSize(fontSize);
-                    map.CoreMap.EntranceFontSize = fontSize;
                 };
             }
         );
@@ -343,15 +343,15 @@ public partial class MapLoader : Control
                 break;
             case 1: MoveTargetNode = RightClickSelectedNode; break;
             case 2: CopyTargetNode = RightClickSelectedNode; break;
-            case 3: CreateNewNodAtMouse(); break;
+            case 3: CreateNewNodAtMouse(true); break;
             case 4:
-                CreateNewNodAtMouse(MoveTargetNode.Size, MoveTargetNode.Group, [.. MoveTargetNode.Locations]);
+                CreateNewNodAtMouse(false, MoveTargetNode.Size, MoveTargetNode.Group, [.. MoveTargetNode.Locations]);
                 RemoveSelectedLocation(MoveTargetNode);
                 MoveTargetNode.Map.DeleteNode(MoveTargetNode);
                 MoveTargetNode = null;
                 break;
             case 5:
-                CreateNewNodAtMouse(CopyTargetNode.Size, CopyTargetNode.Group, [.. CopyTargetNode.Locations]);
+                CreateNewNodAtMouse(false, CopyTargetNode.Size, CopyTargetNode.Group, [.. CopyTargetNode.Locations]);
                 RemoveSelectedLocation(CopyTargetNode);
                 CopyTargetNode = null;
                 break;
@@ -360,10 +360,11 @@ public partial class MapLoader : Control
         ResetRightClickSelectedNode();
         return;
 
-        void CreateNewNodAtMouse(Vector2? size = null, string group = "", params List<string> locs)
+        void CreateNewNodAtMouse(bool isNew, Vector2? size = null, string group = "", params List<string> locs)
         {
             var map = GetCurrentMap();
-            map.CreateNewNode(map.ToLocalPos(PopupPos), size ?? new Vector2(32, 32), group, locs);
+            var node = map.CreateNewNode(map.ToLocalPos(PopupPos), size ?? new Vector2(32, 32), group, locs);
+            if (OpenConfig.ButtonPressed && isNew) AddNode(node);
         }
     }
 
@@ -409,10 +410,13 @@ public partial class MapLoader : Control
         DisplayServer.ClipboardSet(string.Join('\n', locationNamesToCopy));
     }
 
+    public void AddNode(MapLocation loc)
+        => EditMapNodePopup.OpenPopup<EditNodeDataPopup>(this, p => p.Setup(this, loc, false));
+
     public void EditNode()
     {
         if (SelectedMapLocation is null) return;
-        EditMapNodePopup.OpenPopup<EditNodeDataPopup>(this, p => p.Setup(this, SelectedMapLocation));
+        EditMapNodePopup.OpenPopup<EditNodeDataPopup>(this, p => p.Setup(this, SelectedMapLocation, false));
     }
 
     public void AddLocations()
@@ -537,7 +541,7 @@ public partial class MapLoader : Control
 
     public void ManageEntrances()
         => EntranceManagerPopup.OpenPopup<EntranceManagerPopup>(this, p => p.Setup(this));
-    
+
     public void SaveMapData()
     {
         if (!IsInEditMode) return;

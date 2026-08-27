@@ -11,10 +11,9 @@ public partial class EditMapWindow : WindowSetter
     [Export] private LineEdit MapName;
     [Export] private OptionButton MapImage;
     [Export] private LineEdit MapAutoTabId;
-    [Export] private SpinBox EntranceFontSize;
     private string[] MapImages;
 
-    [Signal] public delegate void EditMapDataEventHandler(string name, string image, string mapId, int entranceFontSize);
+    [Signal] public delegate void EditMapDataEventHandler(string name, string image, string mapId);
 
     public void Setup(MapNavigator map)
     {
@@ -30,7 +29,7 @@ public partial class EditMapWindow : WindowSetter
         try
         {
             var map = MapImages[MapImage.Selected];
-            EmitSignalEditMapData(MapName.Text.Trim(), map, MapAutoTabId.Text.Trim(), (int)EntranceFontSize.Value);
+            EmitSignalEditMapData(MapName.Text.Trim(), map, MapAutoTabId.Text.Trim());
         }
         catch (Exception e) { GD.PrintErr(e); }
         Close();

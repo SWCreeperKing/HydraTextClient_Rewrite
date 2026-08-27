@@ -61,7 +61,8 @@ public partial class Highlighter : ColorRect
     {
         IsIn = false;
         if (Selectable && Selected) return;
-        EmitSignalOnExited();
+        try { EmitSignalOnExited(); }
+        catch { }
         Tween?.Kill();
         Tween = CreateTween();
         Tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);

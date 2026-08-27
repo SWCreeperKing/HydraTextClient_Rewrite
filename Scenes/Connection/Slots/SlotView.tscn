@@ -7,7 +7,7 @@
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="5_28ygy"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="6_28ygy"]
 
-[node name="View" type="MarginContainer" unique_id=1050209111 node_paths=PackedStringArray("MainSlotContainer", "SubSlotContainer", "LeaderChanger", "FontSize", "ScaleBox")]
+[node name="View" type="MarginContainer" unique_id=1050209111 node_paths=PackedStringArray("MainSlotContainer", "SubSlotContainer", "LeaderChanger", "ScaleBox")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -19,7 +19,6 @@ MainSlotContainer = NodePath("VBoxContainer/MarginContainer/ScrollContainer/VBox
 SubSlotContainer = NodePath("VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer/SlotContainer")
 SlotPortraitScene = ExtResource("1_87y10")
 LeaderChanger = NodePath("VBoxContainer/HBoxContainer/OptionButton")
-FontSize = NodePath("VBoxContainer/HBoxContainer/FontSize")
 ScaleBox = NodePath("VBoxContainer/HBoxContainer/ScaleBox")
 UnknownGame = ExtResource("3_nusw7")
 metadata/_tab_index = 1
@@ -30,7 +29,6 @@ layout_mode = 2
 script = ExtResource("2_oacbj")
 Prefix = "Connection/SlotsMenu"
 Controls = {
-"PortraitFontSize": NodePath("../VBoxContainer/HBoxContainer/FontSize"),
 "PortraitScale": NodePath("../VBoxContainer/HBoxContainer/ScaleBox"),
 "SlotsNotConnectedFolder": NodePath("../VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer")
 }
@@ -79,22 +77,6 @@ theme = ExtResource("5_28ygy")
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1223610009]
-layout_mode = 2
-text = "Font Size:"
-
-[node name="FontSize" type="SpinBox" parent="VBoxContainer/HBoxContainer" unique_id=1408129143]
-layout_mode = 2
-min_value = 5.0
-value = 14.0
-rounded = true
-allow_greater = true
-custom_arrow_step = 1.0
-custom_arrow_round = true
-
-[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=939361100]
-layout_mode = 2
 
 [node name="PortraitScale" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=862110446]
 layout_mode = 2
@@ -147,5 +129,4 @@ offset_transform_enabled = true
 
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="CallAddNew"]
 [connection signal="item_selected" from="VBoxContainer/HBoxContainer/OptionButton" to="." method="ChangeLeader"]
-[connection signal="value_changed" from="VBoxContainer/HBoxContainer/FontSize" to="." method="ChangeFontSize"]
 [connection signal="value_changed" from="VBoxContainer/HBoxContainer/ScaleBox" to="." method="ChangePortraitScale"]
