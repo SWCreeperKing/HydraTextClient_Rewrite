@@ -109,7 +109,12 @@ public partial class MapNavigator : ScrollContainer
         node.SetText(Loader.IsInEditMode && loc.Entrance.Trim() is not "" ? Loader.EntranceMap[loc.Entrance] : null);
         node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
 
-        node.OnRightClick += () => Loader.RightClickedNode(node);
+        if (!Loader.IsInEditMode)
+        {
+            node.OnRightClick += () => Loader.EntranceLink(node);
+            node.OnMiddleClick += () => Loader.BreakLink(node);
+            node.OnLeftClick += () => Loader.NavigateEntrance(node);
+        } else node.OnRightClick += () => Loader.RightClickedNode(node);
 
         if (loc.Entrance is not "")
         {

@@ -20,6 +20,7 @@ public class MultiworldData
     public ConcurrentDictionary<string, int> ItemHistory = [];
     public ConcurrentDictionary<int, string> PlayerAliases = [];
     public ConcurrentDictionary<int, string> PlayerCopyAliases = [];
+    public ConcurrentDictionary<string, Dictionary<string, string>> MapEntrances = [];
 
     public void ClearCache()
     {
@@ -32,6 +33,7 @@ public class MultiworldData
         ItemHistory.Clear();
         PlayerAliases.Clear();
         PlayerCopyAliases.Clear();
+        MapEntrances.Clear();
     }
 
     public string GetSlotName(string slot) => SlotNames.GetValueOrDefault(slot, slot);

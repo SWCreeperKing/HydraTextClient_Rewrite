@@ -88,9 +88,16 @@
   - Map Tracker
     - Requires you to use the circle tracker for a slot 
     - Ability to render checks on a map
-    - Ability to map entrances
     - Has auto tabbing support
     - For more, advanced info visit the [Map Tracker/Maker](#map-trackermaker) Section
+    - Entrance Tracker (manual controls, more info at [Map Tracker/Maker](#map-trackermaker))
+      - Automatically tracked entrances will have priority over manually tracked ones and can not be modified 
+      - Right Click to start linking (can link an entrance to itself)
+        - Holding Shift will decouple the entrances 
+      - Middle Click to break a link or stop linking
+        - Holding Shift will break the destination entrance only
+      - Left Click to go to where the entrance leads
+        - Hold Shift to go to where the entrance leads from 
   - Displays inventory (view an item to see who sent you those items)
   - Has sorting and some filtering capabilities
   - Can view the history of all items received (based on the order you received them)
@@ -188,6 +195,7 @@
     - The slot data storage key of the entrance id needs to be false, then set to true when the entrance is found
   - For Map Makers:
     - The Entrance IDs might need to be mapped to a correct entrance name
+    - When opening the map outside the editor with ER on, any id's in the slot data not found in the map data will be written 
 - For those who don't want to use the UI
   - The folder of the pack should be named the game's name as it appears in ap
   - You can use other maps as a template on how to write the 3 json files 

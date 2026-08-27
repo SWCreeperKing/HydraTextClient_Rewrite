@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Linq;
+using CreepyUtil.Archipelago.ApClient;
 using Godot;
+using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Utility;
 
 namespace HydraTextClient.Scripts.Mapper;
 
 public partial class EntranceLocation : PanelContainer
 {
+    [Export] public ColorRect LinkingDisplay;
     [Export] public Highlighter Highlighter;
     [Export] public RichTextLabel Label;
 
@@ -29,6 +33,7 @@ public partial class EntranceLocation : PanelContainer
     public string EntranceId;
     public bool UpdateEntrance = true;
     public MapLoader Loader => Map.Loader;
+    public ApClient Client => Loader.Client;
 
     [Signal] public delegate void OnRightClickEventHandler();
 
@@ -41,16 +46,34 @@ public partial class EntranceLocation : PanelContainer
         if (Loader.IsInEditMode || !UpdateEntrance) return;
         UpdateEntrance = false;
         if (Loader.FoundEntrances.Contains(EntranceId)
-            && Loader.TrueEntranceMap.TryGetValue(EntranceId, out var foundId)
-            && Loader.EntranceNodes.TryGetValue(foundId, out var nodes) && nodes.Count > 0)
+            && Loader.TrueEntranceMap.TryGetValue(EntranceId, out var foundId))
         {
-            SetText(nodes[0].Map.CoreMap.MapName);
+            if (Loader.EntranceNodes.TryGetValue(foundId, out var nodes) && nodes.Count > 0) SetEntranceName(nodes[0]);
+            else SetText("Unknown Node Destination");
             return;
         }
+
+        var mw = ConnectionController.GetCurrentMultiworld;
+        if (mw is null) return;
+        if (!mw.MapEntrances.TryGetValue(Client.PlayerName, out var value)) return;
+        if (!value.TryGetValue(EntranceId, out var destId)) return;
+        if (!Loader.EntranceNodes.TryGetValue(destId, out var entranceNodes)) return;
+        if (entranceNodes.Count == 0)
+        {
+            SetText("Unknown Node Destination");
+            return;
+        }
+        SetEntranceName(entranceNodes[0]);
+
+        return;
+
+        void SetEntranceName(EntranceLocation node)
+            => SetText(node.Map.CoreMap.MapName); // maybe later have overrides? idk
     }
 
     public void SetData(MapNavigator map, string id)
     {
+        LinkingDisplay.Visible = false;
         Map = map;
         EntranceId = id;
     }

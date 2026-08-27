@@ -8,6 +8,7 @@ using Archipelago.MultiClient.Net.Models;
 using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using HydraTextClient.Scripts.Clients.CircleTracker;
+using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Mapper.Popups;
 using HydraTextClient.Scripts.Utility;
 using HydraTextClient.Scripts.Utility.UIHelpers;
@@ -64,8 +65,9 @@ public partial class MapLoader : Control
     private PopupMenu OptionMenu;
     private MapLocation? HoveredMapLocation;
     private MapLocation? SelectedMapLocation;
-    private MapLocation RightClickSelectedNode;
-    private EntranceLocation RightClickSelectedEntranceNode;
+    private EntranceLocation? LinkingEntrance;
+    private MapLocation? RightClickSelectedNode;
+    private EntranceLocation? RightClickSelectedEntranceNode;
     private MapLocation CopyTargetNode;
     private MapLocation MoveTargetNode;
     private Vector2 PopupPos;
@@ -177,6 +179,14 @@ public partial class MapLoader : Control
             {
                 TrueEntranceMap = ((JObject)value).ToObject<Dictionary<string, string>>();
                 foreach (var (entrance, dest) in TrueEntranceMap.ToArray()) TrueEntranceMap.TryAdd(dest, entrance);
+                var saveEntranceData = false;
+                foreach (var key in TrueEntranceMap.Keys.Where(key => !EntranceMap.ContainsKey(key)))
+                {
+                    EntranceMap.TryAdd(key, key);
+                    saveEntranceData = true;
+                }
+                if (saveEntranceData)
+                    File.WriteAllText($"{MapPath}/entrance_rando_names.json", JsonConvert.SerializeObject(EntranceMap));
             }
             catch (Exception e) { GD.PrintErr("Entrance Map not in correct format", e); }
         }
@@ -190,7 +200,7 @@ public partial class MapLoader : Control
                     if (val) CallDeferred("EntranceFound", entranceId);
                 }, def: false
             );
-            
+
             Client!.AddDataStorageListener(
                 entranceId, (_, newValue, _) =>
                 {
@@ -220,9 +230,20 @@ public partial class MapLoader : Control
 
     public void EntranceFound(string entranceId)
     {
-        GD.Print($"Entrance found: [{entranceId}] [({EntranceMap[entranceId]})]");
         Client?.RemoveDataStorageListeners(entranceId, Scope.Slot);
         FoundEntrances.Add(entranceId);
+        if (!EntranceNodes.TryGetValue(entranceId, out var entranceNode)) return;
+        foreach (var node in entranceNode) node.UpdateEntrance = true;
+    }
+
+    public void SetEntrance(string entranceId, string destinationId)
+    {
+        if (entranceId is "") return;
+        var mw = ConnectionController.GetCurrentMultiworld;
+        if (mw is null) return;
+        if (!mw.MapEntrances.ContainsKey(Client!.PlayerName)) mw.MapEntrances[Client!.PlayerName] = [];
+        if (destinationId is not "") mw.MapEntrances[Client!.PlayerName][entranceId] = destinationId;
+        else mw.MapEntrances[Client!.PlayerName].Remove(entranceId);
         if (!EntranceNodes.TryGetValue(entranceId, out var entranceNode)) return;
         foreach (var node in entranceNode) node.UpdateEntrance = true;
     }
@@ -349,6 +370,70 @@ public partial class MapLoader : Control
 
     public void ResetSelectedNodes() => SetSelectedLocation(null);
 
+    public void EntranceLink(EntranceLocation loc)
+    {
+        if (LinkingEntrance is null)
+        {
+            LinkingEntrance = loc;
+            loc.LinkingDisplay.Visible = true;
+            return;
+        }
+
+        SetEntrance(LinkingEntrance.EntranceId, loc.EntranceId);
+        if (!Input.IsKeyPressed(Key.Shift)) SetEntrance(loc.EntranceId, LinkingEntrance.EntranceId);
+        LinkingEntrance.LinkingDisplay.Visible = false;
+        LinkingEntrance = null;
+    }
+
+    public void BreakLink(EntranceLocation loc)
+    {
+        if (LinkingEntrance is not null)
+        {
+            LinkingEntrance.LinkingDisplay.Visible = false;
+            LinkingEntrance = null;
+            return;
+        }
+        SetEntrance(loc.EntranceId, "");
+        if (!Input.IsKeyPressed(Key.Shift)) SetEntrance(FindLinkingEntrance(loc.EntranceId, false), "");
+    }
+
+    public void NavigateEntrance(EntranceLocation loc)
+    {
+        var switchTo = "";
+
+        if (FoundEntrances.Contains(loc.EntranceId))
+        {
+            if (!Input.IsKeyPressed(Key.Shift))
+            {
+                if (TrueEntranceMap.TryGetValue(loc.EntranceId, out var foundId)
+                    && EntranceNodes.TryGetValue(foundId, out var nodes)
+                    && nodes.Count > 0) CallDeferred("SelectMap", nodes[0].Map.MapId);
+            }
+            else
+            {
+                var backwards = TrueEntranceMap.FirstOrDefault(
+                    kv => kv.Value == loc.EntranceId, new KeyValuePair<string, string>(null, null)
+                ).Key;
+                if (backwards is not null && EntranceNodes.TryGetValue(backwards, out var nodes) && nodes.Count > 0)
+                    CallDeferred("SelectMap", nodes[0].Map.MapId);
+            }
+        }
+
+        if (switchTo is "") switchTo = FindLinkingEntrance(loc.EntranceId, !Input.IsKeyPressed(Key.Shift));
+        if (switchTo is "" || !EntranceNodes.TryGetValue(switchTo, out var entranceNodes)
+                           || entranceNodes.Count == 0) return;
+        CallDeferred("SelectMap", entranceNodes[0].Map.MapId);
+    }
+
+    public string FindLinkingEntrance(string entranceId, bool forward)
+    {
+        var mw = ConnectionController.GetCurrentMultiworld;
+        if (mw is null || !mw.MapEntrances.TryGetValue(Client!.PlayerName, out var erMap)) return "";
+        return !forward
+            ? erMap.FirstOrDefault(kv => kv.Value == entranceId, new KeyValuePair<string, string>(null, null)).Key ?? ""
+            : erMap.GetValueOrDefault(entranceId, "");
+    }
+
     public void RightClickedNode(MapLocation location)
     {
         if (!IsInEditMode) return;
@@ -388,7 +473,7 @@ public partial class MapLoader : Control
         switch (option)
         {
             case 0:
-                RightClickSelectedNode.Highlighter.Select();
+                RightClickSelectedNode?.Highlighter.Select();
                 UpdateUI = true;
                 EditNode();
                 break;
