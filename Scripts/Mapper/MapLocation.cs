@@ -93,7 +93,7 @@ public partial class MapLocation : TextureRect
                     .Select(hint => hint.LocationName)
                     .ToArray();
 
-        LocationValueDict = Locations.ToDictionary(
+        LocationValueDict = Locations.DistinctBy(s => s).ToDictionary(
             l => l, l =>
             {
                 if (client is null && Loader.IsInEditMode) return 4;
