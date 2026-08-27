@@ -32,6 +32,7 @@ corner_detail = 10
 
 [node name="SlotPortrait" type="TextureRect" unique_id=118846534 node_paths=PackedStringArray("Portrait", "SlotNameLabel", "CheckCountPanel", "CheckCountLabel", "CheckProgressBar", "Tinter")]
 custom_minimum_size = Vector2(150, 225)
+clip_contents = true
 offset_right = 150.0
 offset_bottom = 225.0
 offset_transform_scale = Vector2(0.425, 0.425)
@@ -42,7 +43,7 @@ expand_mode = 4
 script = ExtResource("3_364q8")
 UnknownPortrait = ExtResource("1_nokb1")
 Portrait = NodePath(".")
-SlotNameLabel = NodePath("MarginContainer/VBoxContainer/PanelContainer/RichTextLabel")
+SlotNameLabel = NodePath("MarginContainer/PanelContainer/RichTextLabel")
 RunOnCommandPopup = ExtResource("4_e8rt3")
 CheckCountPanel = NodePath("MarginContainer2/PanelContainer2")
 CheckCountLabel = NodePath("MarginContainer2/PanelContainer2/RichTextLabel")
@@ -71,29 +72,24 @@ clip_children = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-anchor_bottom = 0.120000005
-offset_top = -1.499999
-offset_bottom = 1.4999981
+anchor_bottom = 0.133
+offset_bottom = 0.074998856
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 3
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 3
-theme_override_constants/margin_bottom = 3
+theme_override_constants/margin_bottom = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1400040280]
-layout_mode = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1590314869]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=1590314869]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer" unique_id=2085542404]
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/PanelContainer" unique_id=2085542404]
 layout_mode = 2
 text = "Slot Name"
-fit_content = true
 scroll_active = false
 shortcut_keys_enabled = false
 horizontal_alignment = 1
@@ -105,15 +101,15 @@ minimum_font_size = 1
 clip_children = 1
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.88000005
+anchor_top = 0.86700004
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -3.0000153
+offset_top = -0.07501221
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 theme_override_constants/margin_left = 3
-theme_override_constants/margin_top = 3
+theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 3
 

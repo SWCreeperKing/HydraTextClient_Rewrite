@@ -61,6 +61,7 @@ public partial class MapLoader : Control
     private MapLocation? HoveredMapLocation;
     private MapLocation? SelectedMapLocation;
     private MapLocation RightClickSelectedNode;
+    private EntranceLocation RightClickSelectedEntranceNode;
     private MapLocation CopyTargetNode;
     private MapLocation MoveTargetNode;
     private Vector2 PopupPos;
@@ -237,36 +238,7 @@ public partial class MapLoader : Control
     {
         ListContainer.Visible = true;
         List.Clear();
-
-        var group = location.Group is ""
-                    || !LocationGroupingMap.TryGetValue(location.Group, out var tGroup) ? null : tGroup;
-        foreach (var loc in location.Locations)
-        {
-            if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
-            var i = List.AddItem(loc);
-            switch (Client?.MissingLocations.Contains(loc))
-            {
-                case true when LocationClosedIconOverride.ContainsKey(loc):
-                    if (ItemImageLoader.TryGet(LocationClosedIconOverride[loc], out var closedImg))
-                        List.SetItemIcon(i, closedImg);
-                    break;
-                case false when LocationOpenedIconOverride.ContainsKey(loc):
-                    if (ItemImageLoader.TryGet(LocationOpenedIconOverride[loc], out var openedImg))
-                        List.SetItemIcon(i, openedImg);
-                    break;
-                default:
-                    if (group is null) continue;
-                    var icon = Client is not null && Client.MissingLocations.Contains(loc) ? group!.AvailableIcon
-                        : group!.CollectedIcon;
-                    if (icon is "" || !ItemImageLoader.TryGet(icon, out var img))
-                    {
-                        if (icon is not "") GD.PrintErr($"Missing icon for [{icon}]");
-                        return;
-                    }
-                    List.SetItemIcon(i, img);
-                    break;
-            }
-        }
+        location.SetList(List);
     }
 
     public void EditMap()
@@ -321,6 +293,13 @@ public partial class MapLoader : Control
         );
     }
 
+    public void RightClickedNode(EntranceLocation location)
+    {
+        if (!IsInEditMode) return;
+        RightClickSelectedEntranceNode = location;
+        CreatePopup(menu => menu.AddItem("Edit Entrance", 7));
+    }
+
     public void RightClickedMap()
     {
         if (!IsInEditMode) return;
@@ -358,6 +337,11 @@ public partial class MapLoader : Control
                 RemoveSelectedLocation(CopyTargetNode);
                 CopyTargetNode = null;
                 break;
+            case 6:
+                var map = GetCurrentMap();
+                AddEntranceNode(map.CreateNewEntranceNode(map.ToLocalPos(PopupPos), new Vector2(256, 32), ""));
+                break;
+            case 7: EditEntranceNode(RightClickSelectedEntranceNode); break;
         }
 
         ResetRightClickSelectedNode();
@@ -398,7 +382,12 @@ public partial class MapLoader : Control
         OptionMenu = menu;
     }
 
-    public void ResetRightClickSelectedNode() => RightClickSelectedNode = null;
+    public void ResetRightClickSelectedNode()
+    {
+        RightClickSelectedNode = null;
+        RightClickSelectedEntranceNode = null;
+    }
+
     public void UpdateNodes(Hint[] hints) => UpdateNodes();
 
     public void UpdateNodes()
@@ -414,13 +403,19 @@ public partial class MapLoader : Control
     }
 
     public void AddNode(MapLocation loc)
-        => EditMapNodePopup.OpenPopup<EditNodeDataPopup>(this, p => p.Setup(this, loc, false));
+        => EditMapNodePopup.OpenPopup<EditNodeDataPopup>(this, p => p.Setup(this, loc, true));
+
+    public void AddEntranceNode(EntranceLocation loc)
+        => EditEntranceNodePopup.OpenPopup<EditEntranceNodePopup>(this, p => p.Setup(this, loc, true));
 
     public void EditNode()
     {
         if (SelectedMapLocation is null) return;
         EditMapNodePopup.OpenPopup<EditNodeDataPopup>(this, p => p.Setup(this, SelectedMapLocation, false));
     }
+
+    public void EditEntranceNode(EntranceLocation loc)
+        => EditEntranceNodePopup.OpenPopup<EditEntranceNodePopup>(this, p => p.Setup(this, loc, false));
 
     public void AddLocations()
     {

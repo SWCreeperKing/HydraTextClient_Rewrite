@@ -77,8 +77,7 @@ public partial class Highlighter : ColorRect
 
     public void OnGuiInput(InputEvent @event)
     {
-        if (!Selectable) return;
-        if (!IsIn)
+        if (!IsIn && Selectable)
         {
             if (!Selected) Exit();
             return;
@@ -92,8 +91,8 @@ public partial class Highlighter : ColorRect
             case MouseButton.Middle when DetectMiddleClick: EmitSignalOnMiddleClick(); break;
             case MouseButton.Left when DetectLeftClick: EmitSignalOnLeftClick(); break;
         }
-        if (button.ButtonIndex is not MouseButton.Left) return;
-
+        
+        if (!Selectable || button.ButtonIndex is not MouseButton.Left) return;
         Selected = !Selected;
         if (Selected) EmitSignalOnSelected();
         else EmitSignalOnUnSelected();

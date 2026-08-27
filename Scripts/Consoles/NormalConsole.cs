@@ -29,7 +29,7 @@ public partial class NormalConsole : RichTextLabel
         SelectionEnabled = true;
         SaveType<double>.AddIndividualEvent(ChildLimiter.QueueSaveId, SetLimit);
     }
-    
+
     private void SetLimit(double d)
     {
         Messages.SetLimit((int)d);
@@ -49,7 +49,8 @@ public partial class NormalConsole : RichTextLabel
         if (split.Length == 0) return;
 
         StringBuilder sb = new();
-        SlotLogs.WriteLine($"{DateTime.Now:[HH:mm:ss]} [{(error ? "ERROR" : "Info")}] [{Name}] {split[0]}");
+        try { SlotLogs.WriteLine($"{DateTime.Now:[HH:mm:ss]} [{(error ? "ERROR" : "Info")}] [{Name}] {split[0]}"); }
+        catch (OverflowException) { }
         sb.Append(GetTimestamp()).Append("[color=").Append(error ? "red" : "white").Append(']')
           .Append(split[0].Replace("[", "[lb]"));
         if (split.Length > 1)
@@ -57,7 +58,11 @@ public partial class NormalConsole : RichTextLabel
             sb.Append('\n').Append(BLOCK).Append(string.Join($"\n{BLOCK}", split.Skip(1)).Replace("[", "[lb]"));
             SlotLogs.WriteLine($"\n{BLOCK}{string.Join($"\n{BLOCK}", split.Skip(1))}");
         }
-        if (error) SlotLogs.Flush();
+        try
+        {
+            if (error) SlotLogs.Flush();
+        }
+        catch (ArgumentOutOfRangeException) { }
 
         CallDeferred("AddLine", sb.ToString());
     }

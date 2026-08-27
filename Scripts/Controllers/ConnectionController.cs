@@ -118,6 +118,8 @@ public partial class ConnectionController : Control
                 SlotView.SetPortraitStatus(originalName, ConnectionStatus.Error);
             };
 
+            client.OnDataStorageListenerError += e => GD.PrintErr(e);
+
             Task.Run(() =>
                 {
                     try

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Archipelago.MultiClient.Net.Enums;
+using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using HydraTextClient.Scripts.Utility;
 
@@ -37,6 +38,9 @@ public partial class MapLocation : TextureRect
 
     public List<string> Locations => RawNodeData.Locations;
     public string Group => RawNodeData.LocationGroup;
+    public MapLoader Loader => Map.Loader;
+    public ApClient Client => Loader.Client;
+    private Dictionary<string, int> LocationValueDict;
 
     [Signal] public delegate void OnSelectedEventHandler();
 
@@ -55,7 +59,7 @@ public partial class MapLocation : TextureRect
     public void SetImage(string image)
     {
         QueueUpdate = true;
-        Texture = image is not "" ? Map.Loader.ItemImageLoader[image] : BaseCheckImage;
+        Texture = image is not "" ? Loader.ItemImageLoader[image] : BaseCheckImage;
         QueueRedraw();
     }
 
@@ -74,12 +78,12 @@ public partial class MapLocation : TextureRect
         if (QueueUpdate) LocationUpdate();
     }
 
-    // 0: in logic (hinted) <- 1: in logic <- 2: not logic (hinted) <- 3: not in logic <- 4: nothing, location checked
+    // 0: in logic (hinted) <- 1: in logic <- 2: not logic (hinted) <- 3: not in logic <- 4: nothing, location checked <- 5 doesn't exist
     private void LocationUpdate()
     {
         QueueUpdate = false;
-        var client = Map.Loader.Client;
-        var page = Map.Loader.Page;
+        var client = Loader.Client;
+        var page = Loader.Page;
         var applicableHints = client is null ? []
             : client.Hints
                     .Where(hint => hint.FindingPlayer
@@ -89,19 +93,21 @@ public partial class MapLocation : TextureRect
                     .Select(hint => hint.LocationName)
                     .ToArray();
 
-        var color = 4;
-        foreach (var loc in Locations.ToArray())
-        {
-            if (client is not null && !client.MissingLocations.Contains(loc)) continue;
-            var locColor = 3;
-            if (page is not null && page.LocationNamesInLogic.Contains(loc)) locColor = 1;
-            if (applicableHints.Contains(loc)) locColor -= 1;
-            color = Math.Min(color, locColor);
-            if (color is 0) break;
-            if (applicableHints.Length == 0 && color is 1) break;
-        }
+        LocationValueDict = Locations.ToDictionary(
+            l => l, l =>
+            {
+                if (client is null && Loader.IsInEditMode) return 4;
+                if (client is null || !Loader.IsInEditMode && client.Locations.All(kv => kv.Key != l)) return 4;
+                if (!client.MissingLocations.Contains(l)) return 4;
+                var locColor = 3;
+                if (page is not null && page.LocationNamesInLogic.Contains(l)) locColor = 1;
+                if (applicableHints.Contains(l)) locColor -= 1;
+                return locColor;
+            }
+        );
 
-        NodeColor = color switch
+        var min = LocationValueDict.Count == 0 ? 4 : LocationValueDict.MinBy(kv => kv.Value).Value;
+        NodeColor = min switch
         {
             0 => ColorIdConstants.ColorConstant.InLogicHinted.Color(),
             1 => ColorIdConstants.ColorConstant.InLogic.Color(),
@@ -109,6 +115,51 @@ public partial class MapLocation : TextureRect
             3 => ColorIdConstants.ColorConstant.NotInLogic.Color(),
             4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(), _ => NodeColor,
         };
+    }
+
+    public void SetList(ItemList list)
+    {
+        var group = Group is "" || !Loader.LocationGroupingMap.TryGetValue(Group, out var tGroup) ? null : tGroup;
+        foreach (var (loc, status) in LocationValueDict.OrderBy(kv => kv.Value))
+        {
+            if (status is 5 && !Loader.IsInEditMode) continue;
+            if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
+            var i = list.AddItem(loc);
+
+            if (group is not null && status < 5)
+            {
+                var icon = status < 4 ? group!.AvailableIcon : group!.CollectedIcon;
+                if (icon is "" || !Loader.ItemImageLoader.TryGet(icon, out var img))
+                {
+                    if (icon is not "") GD.PrintErr($"Missing icon for [{icon}]");
+                }
+                else list.SetItemIcon(i, img);
+            }
+
+            switch (status)
+            {
+                case < 4: SetListIcon(Loader.LocationClosedIconOverride, loc, i); break;
+                case 4: SetListIcon(Loader.LocationOpenedIconOverride, loc, i); break;
+            }
+
+            if (Loader.IsInEditMode) continue;
+            switch (status)
+            {
+                case 0: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.InLogicHinted.Color()); break;
+                case 1: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.InLogic.Color()); break;
+                case 2: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.NotInLogicHinted.Color()); break;
+                case 3: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.NotInLogic.Color()); break;
+                case 4: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.LocationsChecked.Color()); break;
+            }
+        }
+        return;
+
+        void SetListIcon(Dictionary<string, string> iconOverride, string loc, int index)
+        {
+            if (!iconOverride.TryGetValue(loc, out var value)) return;
+            if (!Loader.ItemImageLoader.TryGet(value, out var closedImg)) return;
+            list.SetItemIcon(index, closedImg);
+        }
     }
 
     public void EmitUnSelect() => EmitSignalOnUnSelectHighlighter();

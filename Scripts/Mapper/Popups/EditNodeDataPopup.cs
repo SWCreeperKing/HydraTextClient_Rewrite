@@ -17,19 +17,17 @@ public partial class EditNodeDataPopup : WindowSetter
     private MapLoader Loader;
     private MapLocation Node;
     private string[] Groups;
-    private bool IsNewNode;
 
     public void Setup(MapLoader loader, MapLocation selectedNode, bool isNew)
     {
         Loader = loader;
         Node = selectedNode;
         Groups = [.. Loader.LocationGroupingMap.Keys.Order()];
-        IsNewNode = isNew;
 
         if (isNew)
         {
-            Saver.BuildSavable(Width, "MapTracker/New/MapNode/W", 32);
-            Saver.BuildSavable(Height, "MapTracker/New/MapNode/H", 32);
+            Saver.BuildSavable(Width, "MapTracker/New/MapNode/W", 32d);
+            Saver.BuildSavable(Height, "MapTracker/New/MapNode/H", 32d);
             Node.SetNodeSize(new Vector2((float)Width.Value, (float)Height.Value));
         }
         

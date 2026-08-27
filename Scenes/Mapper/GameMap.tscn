@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://daejcfoohctjw" path="res://Scenes/Mapper/Popups/EditLocationGroups.tscn" id="6_2nwgb"]
 [ext_resource type="PackedScene" uid="uid://d15rng0n3v6ed" path="res://Scenes/Mapper/Popups/LocationIconOverride.tscn" id="7_0a5q4"]
 [ext_resource type="PackedScene" uid="uid://lobbvevspn8f" path="res://Scenes/Mapper/Popups/EditNodePopup.tscn" id="8_ov35l"]
+[ext_resource type="PackedScene" uid="uid://fkodvymae5ad" path="res://Scenes/Mapper/Popups/EditEntranceNodePopup.tscn" id="9_i61o8"]
 [ext_resource type="PackedScene" uid="uid://8ib67dxo0ieh" path="res://Scenes/Mapper/Popups/EntrnaceManagerPopup.tscn" id="9_yu0wl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ajsmo"]
@@ -54,6 +55,7 @@ ManageTabPopup = ExtResource("5_epac1")
 LocationGroupsManagerPopup = ExtResource("6_2nwgb")
 LocationIconOverridePopup = ExtResource("7_0a5q4")
 EditMapNodePopup = ExtResource("8_ov35l")
+EditEntranceNodePopup = ExtResource("9_i61o8")
 EntranceManagerPopup = ExtResource("9_yu0wl")
 metadata/_tab_index = 0
 

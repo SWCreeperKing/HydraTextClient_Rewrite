@@ -34,6 +34,7 @@ public partial class MapNavigator : ScrollContainer
         SetMapName(map.MapName);
         SetImage(map.ImageName);
         foreach (var loc in map.Nodes) CreateLocationNode(loc);
+        foreach (var entrance in map.Entrances) CreateEntranceNode(entrance);
     }
 
     public void SetMapName(string name)
@@ -76,6 +77,13 @@ public partial class MapNavigator : ScrollContainer
         return CreateLocationNode(nodeData);
     }
 
+    public EntranceLocation CreateNewEntranceNode(Vector2 pos, Vector2 size, string entrance)
+    {
+        var nodeData = new EntranceNode(pos.X, pos.Y, size.X, size.Y, entrance);
+        CoreMap.Entrances.Add(nodeData);
+        return CreateEntranceNode(nodeData);
+    }
+
     public void DeleteNode(MapLocation node)
     {
         CoreMap.Nodes.Remove(node.RawNodeData);
@@ -83,31 +91,37 @@ public partial class MapNavigator : ScrollContainer
         Locations.Remove(node);
         node.QueueFree();
     }
-    
+
     public void DeleteNode(EntranceLocation node)
     {
         CoreMap.Entrances.Remove(node.RawNodeData);
         Container.MapImage.CallDeferred("remove_child", node);
-        Loader.EntranceNodes[node.RawNodeData.Entrance].Remove(node);
+        if (Loader.EntranceNodes.TryGetValue(node.RawNodeData.Entrance, out var value)) value.Remove(node);
         Entrances.Remove(node);
         node.QueueFree();
     }
 
-    private void CreateEntranceNode(EntranceNode loc)
+    private EntranceLocation CreateEntranceNode(EntranceNode loc)
     {
         var node = EntranceLocation.Instantiate<EntranceLocation>();
         node.RawNodeData = loc;
-        node.SetText(Loader.IsInEditMode ? Loader.EntranceMap[loc.Entrance] : null);
+        node.SetData(this);
+        node.SetText(Loader.IsInEditMode && loc.Entrance.Trim() is not "" ? Loader.EntranceMap[loc.Entrance] : null);
+        node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
 
-        // node.OnRightClick += () => Loader.RightClickedNode(node);
+        node.OnRightClick += () => Loader.RightClickedNode(node);
 
-        if (!Loader.EntranceNodes.ContainsKey(loc.Entrance)) Loader.EntranceNodes[loc.Entrance] = [];
-        Loader.EntranceNodes[loc.Entrance].Add(node);
-            
+        if (loc.Entrance is not "")
+        {
+            if (!Loader.EntranceNodes.ContainsKey(loc.Entrance)) Loader.EntranceNodes[loc.Entrance] = [];
+            Loader.EntranceNodes[loc.Entrance].Add(node);
+        }
+
         try { Container.MapImage.AddChild(node); }
         catch { Container.MapImage.CallDeferred("add_child", node); }
         Entrances.Add(node);
         node.Pos = new Vector2(loc.X, loc.Y);
+        return node;
     }
 
     private MapLocation CreateLocationNode(MapNode loc)
