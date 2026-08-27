@@ -193,7 +193,7 @@ public partial class PoptrackerImporter : WindowSetter
 
                 if (loc.MapLocations is not null)
                 {
-                    foreach (var mapLoc in loc.MapLocations)
+                    foreach (var mapLoc in loc.MapLocations.Where(m => MapIdNameToMapName.ContainsKey(m.MapName)))
                     {
                         var size = mapLoc.Size + DefaultMapLocationThickness[mapLoc.MapName] * 2;
                         if (mapLoc.Size is 0) size += DefaultMapLocationSize[mapLoc.MapName];

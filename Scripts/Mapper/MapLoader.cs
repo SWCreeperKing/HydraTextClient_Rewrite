@@ -87,10 +87,10 @@ public partial class MapLoader : Control
         Parent = parent;
         MapsList = JsonConvert.DeserializeObject<List<Maps>>(File.ReadAllText($"{path}/atlas.json"));
         Structure = JsonConvert.DeserializeObject<TabStructure>(File.ReadAllText($"{path}/tabs.json"));
-        EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+        
+        if (File.Exists($"{path}/entrance_rando_names.json")) EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
             File.ReadAllText($"{path}/entrance_rando_names.json")
         );
-
         if (File.Exists($"{path}/locationiconopen.json"))
             LocationOpenedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
                 File.ReadAllText($"{path}/locationiconopen.json")
