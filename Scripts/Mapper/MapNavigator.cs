@@ -105,7 +105,7 @@ public partial class MapNavigator : ScrollContainer
     {
         var node = EntranceLocation.Instantiate<EntranceLocation>();
         node.RawNodeData = loc;
-        node.SetData(this);
+        node.SetData(this, loc.Entrance);
         node.SetText(Loader.IsInEditMode && loc.Entrance.Trim() is not "" ? Loader.EntranceMap[loc.Entrance] : null);
         node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
 

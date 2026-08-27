@@ -26,6 +26,9 @@ public partial class EntranceLocation : PanelContainer
 
     public MapNavigator Map;
     public EntranceNode RawNodeData;
+    public string EntranceId;
+    public bool UpdateEntrance = true;
+    public MapLoader Loader => Map.Loader;
 
     [Signal] public delegate void OnRightClickEventHandler();
 
@@ -33,8 +36,25 @@ public partial class EntranceLocation : PanelContainer
 
     [Signal] public delegate void OnMiddleClickEventHandler();
 
-    public void SetData(MapNavigator map) => Map = map;
-    
+    public override void _Process(double delta)
+    {
+        if (Loader.IsInEditMode || !UpdateEntrance) return;
+        UpdateEntrance = false;
+        if (Loader.FoundEntrances.Contains(EntranceId)
+            && Loader.TrueEntranceMap.TryGetValue(EntranceId, out var foundId)
+            && Loader.EntranceNodes.TryGetValue(foundId, out var nodes) && nodes.Count > 0)
+        {
+            SetText(nodes[0].Map.CoreMap.MapName);
+            return;
+        }
+    }
+
+    public void SetData(MapNavigator map, string id)
+    {
+        Map = map;
+        EntranceId = id;
+    }
+
     public void SetNodeSize(Vector2 size)
     {
         Size = size;

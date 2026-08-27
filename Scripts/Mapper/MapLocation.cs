@@ -29,7 +29,7 @@ public partial class MapLocation : TextureRect
         }
     }
 
-    public Color NodeColor { get => SelfModulate; set => SelfModulate = Colors.White.Lerp(value, .75f); }
+    public Color NodeColor { get => SelfModulate; set => SelfModulate = Colors.White.Lerp(value, .85f); }
 
     public bool HasCustomImage;
     public bool QueueUpdate;

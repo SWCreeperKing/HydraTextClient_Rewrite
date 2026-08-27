@@ -57,10 +57,7 @@ public partial class Highlighter : ColorRect
         IsIn = true;
         if (Selectable && Selected) return;
         EmitSignalOnEntered();
-        Tween?.Kill();
-        Tween = CreateTween();
-        Tween.SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.Out);
-        Tween.TweenProperty(this, "color", Hover, 1);
+        EnterAnimation();
     }
 
     public void Exit()
@@ -69,12 +66,25 @@ public partial class Highlighter : ColorRect
         if (Selectable && Selected) return;
         try { EmitSignalOnExited(); }
         catch { }
+        ExitAnimation();
+    }
+    
+    public void EnterAnimation(Color? color = null)
+    {
+        Tween?.Kill();
+        Tween = CreateTween();
+        Tween.SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.Out);
+        Tween.TweenProperty(this, "color", color ?? Hover, 1);
+    }
+
+    public void ExitAnimation()
+    {
         Tween?.Kill();
         Tween = CreateTween();
         Tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
         Tween.TweenProperty(this, "color", Idle, 1);
-    }
-
+    } 
+    
     public void OnGuiInput(InputEvent @event)
     {
         if (!IsIn && Selectable)
@@ -91,7 +101,7 @@ public partial class Highlighter : ColorRect
             case MouseButton.Middle when DetectMiddleClick: EmitSignalOnMiddleClick(); break;
             case MouseButton.Left when DetectLeftClick: EmitSignalOnLeftClick(); break;
         }
-        
+
         if (!Selectable || button.ButtonIndex is not MouseButton.Left) return;
         Selected = !Selected;
         if (Selected) EmitSignalOnSelected();

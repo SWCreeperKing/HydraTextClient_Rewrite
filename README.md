@@ -86,6 +86,7 @@
     - Can have multiple circle trackers opened with multiple slots
     - Any slot's tracker can be popped out into a popup window (top right)
   - Map Tracker
+    - Requires you to use the circle tracker for a slot 
     - Ability to render checks on a map
     - Ability to map entrances
     - Has auto tabbing support

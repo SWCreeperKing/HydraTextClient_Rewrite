@@ -12,6 +12,7 @@ using HydraTextClient.Scripts.Mapper.Popups;
 using HydraTextClient.Scripts.Utility;
 using HydraTextClient.Scripts.Utility.UIHelpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace HydraTextClient.Scripts.Mapper;
 
@@ -52,8 +53,11 @@ public partial class MapLoader : Control
     public Dictionary<string, string> LocationClosedIconOverride = [];
     public Dictionary<string, string> LocationOpenedIconOverride = [];
     public Dictionary<string, string> EntranceMap = [];
+    public Dictionary<string, string> TrueEntranceMap = [];
     public Dictionary<string, List<EntranceLocation>> EntranceNodes = [];
+    public HashSet<string> FoundEntrances = [];
     public bool UpdateUI;
+    public bool IsEntranceRando;
     private string TrackerName;
     private string MapPath;
     private EmptyRichLabelInteractor LocationPopupList;
@@ -65,6 +69,7 @@ public partial class MapLoader : Control
     private MapLocation CopyTargetNode;
     private MapLocation MoveTargetNode;
     private Vector2 PopupPos;
+    private bool AutoTrackEntrances;
 
     public void Setup(string path, string trackerName, Control parent)
     {
@@ -102,6 +107,7 @@ public partial class MapLoader : Control
             ((MapTracker)parent).UnloadMap(trackerName);
             return;
         }
+
         if (IsInEditMode)
         {
             PopoutWindow.HideButton();
@@ -113,6 +119,7 @@ public partial class MapLoader : Control
                 CollectedLocations.Add(Client.LocationIdToLocationName(packet.Item.Location, player));
             };
         }
+
         SaveMap.Visible = IsInEditMode;
         ListEditControls.Visible = IsInEditMode;
 
@@ -160,6 +167,64 @@ public partial class MapLoader : Control
         }
 
         foreach (var map in MapsList) CreateMap(path, map);
+
+        if (IsInEditMode || !CheckIfEntranceRandoEnabled(out AutoTrackEntrances)) return;
+        IsEntranceRando = true;
+
+        if (Client!.SlotData.TryGetValue("Entrance Rando", out var value))
+        {
+            try
+            {
+                TrueEntranceMap = ((JObject)value).ToObject<Dictionary<string, string>>();
+                foreach (var (entrance, dest) in TrueEntranceMap.ToArray()) TrueEntranceMap.TryAdd(dest, entrance);
+            }
+            catch (Exception e) { GD.PrintErr("Entrance Map not in correct format", e); }
+        }
+
+        if (!AutoTrackEntrances) return;
+        foreach (var (entranceId, _) in EntranceMap)
+        {
+            Client.GetFromStorageAsync(
+                entranceId, val =>
+                {
+                    if (val) CallDeferred("EntranceFound", entranceId);
+                }, def: false
+            );
+            
+            Client!.AddDataStorageListener(
+                entranceId, (_, newValue, _) =>
+                {
+                    try
+                    {
+                        if ((bool)newValue) CallDeferred("EntranceFound", entranceId);
+                    }
+                    catch { Client!.RemoveDataStorageListeners(entranceId); }
+                }, Scope.Slot
+            );
+        }
+        GD.Print($"found stick? [{FoundEntrances.Contains("Overworld Redux, Sword Cave_")}]");
+    }
+
+    public bool CheckIfEntranceRandoEnabled(out bool autoTracking)
+    {
+        autoTracking = false;
+        if (!Client!.SlotData.ContainsKey("entrance_rando")) return true;
+        try { return autoTracking = (long)Client!.SlotData["entrance_rando"] == 1; }
+        catch
+        {
+            try { return autoTracking = (bool)Client!.SlotData["entrance_rando"]; }
+            catch (Exception e) { GD.PrintErr("check for entrance_rando failed", e); }
+        }
+        return false;
+    }
+
+    public void EntranceFound(string entranceId)
+    {
+        GD.Print($"Entrance found: [{entranceId}] [({EntranceMap[entranceId]})]");
+        Client?.RemoveDataStorageListeners(entranceId, Scope.Slot);
+        FoundEntrances.Add(entranceId);
+        if (!EntranceNodes.TryGetValue(entranceId, out var entranceNode)) return;
+        foreach (var node in entranceNode) node.UpdateEntrance = true;
     }
 
     public override void _Process(double delta)
@@ -261,7 +326,11 @@ public partial class MapLoader : Control
     public void SelectMap(string mapId)
     {
         if (!AutoTab.ButtonPressed) return;
-        if (!TryGetMapWithId(mapId, out var map)) return;
+        if (!TryGetMapWithId(mapId, out var map))
+        {
+            GD.Print($"Auto Tabbing map not found: [{mapId}]");
+            return;
+        }
         var container = (Control)map.GetParent();
         map.Visible = true;
         Control parent;
@@ -592,5 +661,8 @@ public partial class MapLoader : Control
         Client?.HintsTrackedEvent -= UpdateNodes;
         Client?.RemoveDataStorageListeners("Current Map", Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;
+
+        if (!IsEntranceRando || !AutoTrackEntrances || IsInEditMode || Client is null) return;
+        foreach (var (id, _) in EntranceMap) Client!.RemoveDataStorageListeners(id, Scope.Slot);
     }
 }
