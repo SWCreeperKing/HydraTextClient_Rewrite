@@ -183,8 +183,10 @@
   - You might need to clean up the locations in the map editor since poptracker locations don't often match ap ones
 - Auto Tabbing
   - For Devs:
-    - Each map should have a unique id (ids can be non-numerical) 
+    - Each map should have a unique id (ids can be non-numerical)
+      - If a Map Id does not match any ids, it will try matching against the map name 
     - Update the slot data storage "Current Map" with the map id when the player moves from one map to another
+    - If you have entrance rando, while entrance rando is on, hydra will use the "Entrance Tracker Map" slot data storage key
   - For Map Makers:
     - map id by default is the name, can override, maps with multiple ids will not work
 - Entrance Tracker (Auto Tracking)

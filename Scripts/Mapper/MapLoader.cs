@@ -59,6 +59,7 @@ public partial class MapLoader : Control
     public HashSet<string> FoundEntrances = [];
     public bool UpdateUI;
     public bool IsEntranceRando;
+    public bool UseEntranceRandoMaps;
     private string TrackerName;
     private string MapPath;
     private EmptyRichLabelInteractor LocationPopupList;
@@ -79,9 +80,6 @@ public partial class MapLoader : Control
         MapPath = path;
         IsInEditMode = parent is not MapTracker;
         Client?.HintsTrackedEvent += UpdateNodes;
-        Client?.AddDataStorageListener(
-            "Current Map", (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
-        );
 
         TrackerName = trackerName;
         Parent = parent;
@@ -170,7 +168,12 @@ public partial class MapLoader : Control
 
         foreach (var map in MapsList) CreateMap(path, map);
 
-        if (IsInEditMode || !CheckIfEntranceRandoEnabled(out AutoTrackEntrances)) return;
+        UseEntranceRandoMaps = CheckIfEntranceRandoEnabled(out AutoTrackEntrances); 
+        Client?.AddDataStorageListener(
+            UseEntranceRandoMaps ? "Entrance Tracker Map" : "Current Map", (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
+        );
+        
+        if (IsInEditMode || !UseEntranceRandoMaps) return;
         IsEntranceRando = true;
 
         if (Client!.SlotData.TryGetValue("Entrance Rando", out var value))
@@ -365,7 +368,9 @@ public partial class MapLoader : Control
     public bool TryGetMapWithId(string id, out MapNavigator? foundMap)
     {
         foundMap = MapNavigators.FirstOrDefault(map => map.MapId == id, null);
-        return foundMap is not null;
+        if (foundMap is not null) return true;
+        foundMap = MapNavigators.FirstOrDefault(map => map.CoreMap.MapName == id, null);
+        return foundMap is null;
     }
 
     public void ResetSelectedNodes() => SetSelectedLocation(null);
@@ -597,7 +602,7 @@ public partial class MapLoader : Control
     public void RemoveSelectedLocations()
     {
         if (SelectedMapLocation is null) return;
-        var locationNamesToRemove = List.GetSelectedItems().Select(i => SelectedMapLocation.Locations[i]).ToArray();
+        var locationNamesToRemove = List.GetSelectedItems().Where(i => i >= 0).Select(i => SelectedMapLocation.Locations[i]).ToArray();
         SelectedMapLocation.Locations.RemoveAll(loc => locationNamesToRemove.Contains(loc));
         UpdateUI = true;
         UpdateNodes();
@@ -744,7 +749,7 @@ public partial class MapLoader : Control
     protected override void Dispose(bool disposing)
     {
         Client?.HintsTrackedEvent -= UpdateNodes;
-        Client?.RemoveDataStorageListeners("Current Map", Scope.Slot);
+        Client?.RemoveDataStorageListeners(UseEntranceRandoMaps ? "Entrance Tracker Map" : "Current Map", Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;
 
         if (!IsEntranceRando || !AutoTrackEntrances || IsInEditMode || Client is null) return;

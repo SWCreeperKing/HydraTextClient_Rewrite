@@ -166,8 +166,8 @@ public partial class HintTable : TextTable
                   .Where(hint =>
                        {
                            if (!SaveType<bool>.Load("hint_table/show_hidden", false)
-                               && (mw!.HiddenHints.TryGetValue(hint.GetHash(), out var isVisible)
-                                   && isVisible)) return false;
+                               && mw!.HiddenHints.TryGetValue(hint.GetHash(), out var isVisible)
+                               && isVisible) return false;
 
                            // not obvious, remove hints where finder and receiver are not in hydra
                            var order1 = GetOrderSlot(hint.FindingPlayer);
