@@ -17,7 +17,7 @@ public partial class EntranceManagerPopup : SelectionEditWindow<string[]> // nam
     public void Setup(MapLoader loader)
     {
         Loader = loader;
-        EntranceTable.ItemClicked += (l, _, _) =>
+        EntranceTable.ItemActivated += l =>
         {
             if (l is -1 || l % 2 is not 0) return;
             SwitchToEdit(EntranceList[l / 2]);
@@ -56,8 +56,10 @@ public partial class EntranceManagerPopup : SelectionEditWindow<string[]> // nam
     {
         EntranceList = [.. Loader.EntranceMap.Select(kv => (string[])[kv.Value, kv.Key]).OrderBy(t => t[0])];
         EntranceTable.Clear();
-        foreach (var (id, entrance) in Loader.EntranceMap)
+        foreach (var item in EntranceList)
         {
+            var entrance = item[0];
+            var id = item[1];
             EntranceTable.AddItem(entrance);
             EntranceTable.AddItem(id == entrance ? "" : id);
         }

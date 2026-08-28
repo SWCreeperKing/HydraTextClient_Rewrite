@@ -104,13 +104,18 @@ public partial class Highlighter : ColorRect
 
         if (!Selectable || button.ButtonIndex is not MouseButton.Left) return;
         Selected = !Selected;
-        if (Selected) EmitSignalOnSelected();
+        if (Selected)
+        {
+            EnterAnimation();
+            EmitSignalOnSelected();
+        }
         else EmitSignalOnUnSelected();
     }
 
     public void ResetPressed()
     {
         Selected = false;
-        Exit();
+        if (!IsIn) Exit();
+        ExitAnimation();
     }
 }

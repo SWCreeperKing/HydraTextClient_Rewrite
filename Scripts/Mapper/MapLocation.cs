@@ -40,6 +40,7 @@ public partial class MapLocation : TextureRect
     public string Group => RawNodeData.LocationGroup;
     public MapLoader Loader => Map.Loader;
     public ApClient Client => Loader.Client;
+    public List<string> DisplayedLocations = [];
     private Dictionary<string, int> LocationValueDict;
 
     [Signal] public delegate void OnSelectedEventHandler();
@@ -82,12 +83,11 @@ public partial class MapLocation : TextureRect
     private void LocationUpdate()
     {
         QueueUpdate = false;
-        var client = Loader.Client;
         var page = Loader.Page;
-        var applicableHints = client is null ? []
-            : client.Hints
+        var applicableHints = Client is null ? []
+            : Client.Hints
                     .Where(hint => hint.FindingPlayer
-                         == client.PlayerSlot && !hint.Found
+                         == Client.PlayerSlot && !hint.Found
                                               && hint.Status is HintStatus.Priority
                      )
                     .Select(hint => hint.LocationName)
@@ -96,9 +96,9 @@ public partial class MapLocation : TextureRect
         LocationValueDict = Locations.DistinctBy(s => s).ToDictionary(
             l => l, l =>
             {
-                if (client is null && Loader.IsInEditMode) return 4;
-                if (client is null || !Loader.IsInEditMode && client.Locations.All(kv => kv.Key != l)) return 4;
-                if (!client.MissingLocations.Contains(l)) return 4;
+                if (Client is null && Loader.IsInEditMode) return 4;
+                if (Client is null || Client.Locations.All(kv => kv.Key != l)) return 5;
+                if (!Client.MissingLocations.Contains(l)) return 4;
                 var locColor = 3;
                 if (page is not null && page.LocationNamesInLogic.Contains(l)) locColor = 1;
                 if (applicableHints.Contains(l)) locColor -= 1;
@@ -106,26 +106,33 @@ public partial class MapLocation : TextureRect
             }
         );
 
-        var min = LocationValueDict.Count == 0 ? 4 : LocationValueDict.MinBy(kv => kv.Value).Value;
+        var min = LocationValueDict.Count == 0 ? 5 : LocationValueDict.MinBy(kv => kv.Value).Value;
+
+        if (Loader.IsInEditMode) min = min is 5 ? 4 : 1;
         NodeColor = min switch
         {
             0 => ColorIdConstants.ColorConstant.InLogicHinted.Color(),
             1 => ColorIdConstants.ColorConstant.InLogic.Color(),
             2 => ColorIdConstants.ColorConstant.NotInLogicHinted.Color(),
             3 => ColorIdConstants.ColorConstant.NotInLogic.Color(),
-            4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(), _ => NodeColor,
+            4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(), _ => Colors.Transparent,
         };
     }
 
     public void SetList(ItemList list)
     {
+        DisplayedLocations.Clear();
         var group = Group is "" || !Loader.LocationGroupingMap.TryGetValue(Group, out var tGroup) ? null : tGroup;
         foreach (var (loc, status) in LocationValueDict.OrderBy(kv => kv.Value))
         {
-            if (status is 5 && !Loader.IsInEditMode) continue;
-            if (Client is not null && Client.Locations.All(kv => kv.Key != loc)) continue;
             var i = list.AddItem(loc);
-
+            DisplayedLocations.Add(loc);
+            if (status is 5 && !Loader.IsInEditMode || Client is not null && Client.Locations.All(kv => kv.Key != loc))
+            {
+                list.SetItemCustomBgColor(i, Colors.DarkRed);
+                continue;
+            }
+            
             if (group is not null && status < 5)
             {
                 var icon = status < 4 ? group!.AvailableIcon : group!.CollectedIcon;
@@ -142,8 +149,9 @@ public partial class MapLocation : TextureRect
                 case 4: SetListIcon(Loader.LocationOpenedIconOverride, loc, i); break;
             }
 
-            if (Loader.IsInEditMode) continue;
-            switch (status)
+            var colorStatus = status;
+            if (Loader.IsInEditMode) { colorStatus = status is 5 ? 5 : 3; }
+            switch (colorStatus)
             {
                 case 0: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.InLogicHinted.Color()); break;
                 case 1: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.InLogic.Color()); break;
@@ -152,6 +160,7 @@ public partial class MapLocation : TextureRect
                 case 4: list.SetItemCustomFgColor(i, ColorIdConstants.ColorConstant.LocationsChecked.Color()); break;
             }
         }
+        QueueUpdate = true;
         return;
 
         void SetListIcon(Dictionary<string, string> iconOverride, string loc, int index)

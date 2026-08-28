@@ -25,7 +25,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
 
-[node name="Game" type="MarginContainer" unique_id=235484884 node_paths=PackedStringArray("SaveMap", "Container", "List", "ListContainer", "ListEditControls", "LocationPanel", "LocationPanelText", "PopoutWindow", "AutoTab", "OpenConfig")]
+[node name="Game" type="MarginContainer" unique_id=235484884 node_paths=PackedStringArray("SaveMap", "Container", "List", "ListContainer", "ListEditControls", "MapEditorControls", "LocationPanel", "LocationPanelText", "PopoutWindow", "AutoTab", "OpenConfig")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,17 +38,18 @@ theme_override_constants/margin_left = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("1_ajsmo")
-SaveMap = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button4")
+SaveMap = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button4")
 Container = NodePath("HSplitContainer/VBoxContainer/Popout/Control/MapContainer")
 List = NodePath("HSplitContainer/VBoxContainer2/ItemList")
 ListContainer = NodePath("HSplitContainer/VBoxContainer2")
 ListEditControls = NodePath("HSplitContainer/VBoxContainer2/EditControls")
+MapEditorControls = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer")
 LocationPanel = NodePath("HSplitContainer/VBoxContainer/Popout/Control/PopupPanel")
 LocationPanelText = NodePath("HSplitContainer/VBoxContainer/Popout/Control/PopupPanel/RichTextLabel")
 PopoutWindow = NodePath("HSplitContainer/VBoxContainer/Popout")
 AutoTab = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer2/CheckBox")
 MapContainer = ExtResource("3_ajsmo")
-OpenConfig = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/CheckBox")
+OpenConfig = NodePath("HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/CheckBox")
 AddLocationsPopup = ExtResource("4_tesqn")
 EditMapPopup = ExtResource("4_epac1")
 ManageTabPopup = ExtResource("5_epac1")
@@ -82,47 +83,51 @@ layout_mode = 2
 button_pressed = true
 text = "Auto Tab"
 
-[node name="HFlowContainer" type="HFlowContainer" parent="HSplitContainer/VBoxContainer/HBoxContainer" unique_id=1751141079]
+[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/VBoxContainer/HBoxContainer" unique_id=359534289]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HFlowContainer" type="HFlowContainer" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1751141079]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="Button7" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1808208216]
+[node name="Button7" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1808208216]
 layout_mode = 2
 text = "Open Folder"
 script = ExtResource("4_1xhnn")
 
-[node name="Button4" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=576456530]
+[node name="Button4" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=576456530]
 layout_mode = 2
 text = "Save Map Data"
 script = ExtResource("4_1xhnn")
 
-[node name="Button5" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1385862180]
+[node name="Button5" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1385862180]
 layout_mode = 2
 text = "Edit Map Tab"
 script = ExtResource("4_1xhnn")
 
-[node name="Button6" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=870290117]
+[node name="Button6" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=870290117]
 layout_mode = 2
 text = "Location Groups"
 script = ExtResource("4_1xhnn")
 
-[node name="Button8" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1487482360]
+[node name="Button8" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1487482360]
 layout_mode = 2
 text = "Manage Tabs"
 script = ExtResource("4_1xhnn")
 
-[node name="Button" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1512730927]
+[node name="Button" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1512730927]
 layout_mode = 2
 text = "Location Icons"
 script = ExtResource("4_1xhnn")
 
-[node name="Button2" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1049533912]
+[node name="Button2" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1049533912]
 layout_mode = 2
 text = "Entrances"
 script = ExtResource("4_1xhnn")
 
-[node name="CheckBox" type="CheckBox" parent="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer" unique_id=1042946624]
+[node name="CheckBox" type="CheckBox" parent="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1042946624]
 layout_mode = 2
 button_pressed = true
 text = "Creation Popups"
@@ -217,18 +222,18 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_ajsmo")
-select_mode = 2
+select_mode = 1
 allow_search = false
 fixed_icon_size = Vector2i(16, 16)
 
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer2/Button2" to="." method="ResetZoom"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button7" to="." method="OpenFolder"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button4" to="." method="SaveMapData"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button5" to="." method="EditMap"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button6" to="." method="EditLocationGroup"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button8" to="." method="ManageTabs"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button" to="." method="EditLocationIconOverrides"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer/Button2" to="." method="ManageEntrances"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button7" to="." method="OpenFolder"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button4" to="." method="SaveMapData"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button5" to="." method="EditMap"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button6" to="." method="EditLocationGroup"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button8" to="." method="ManageTabs"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button" to="." method="EditLocationIconOverrides"]
+[connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button2" to="." method="ManageEntrances"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer/HBoxContainer/HFlowContainer3/Button" to="." method="StopAndClose"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/Button3" to="." method="ResetSelectedNodes"]
 [connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button3" to="." method="EditNode"]

@@ -62,6 +62,7 @@ text = "Clear Selected Last Locations After Adding"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+select_mode = 1
 
 [node name="TextEdit" type="TextEdit" parent="Panel/VBoxContainer/HSplitContainer" unique_id=297281460]
 layout_mode = 2

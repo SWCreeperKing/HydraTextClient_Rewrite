@@ -24,6 +24,7 @@ public partial class MapLoader : Control
     [Export] public ItemList List;
     [Export] public Control ListContainer;
     [Export] public Control ListEditControls;
+    [Export] public Control MapEditorControls;
     [Export] public PopupPanel LocationPanel;
     [Export] public RichTextLabel LocationPanelText;
     [Export] public PopoutWindow PopoutWindow;
@@ -85,10 +86,11 @@ public partial class MapLoader : Control
         Parent = parent;
         MapsList = JsonConvert.DeserializeObject<List<Maps>>(File.ReadAllText($"{path}/atlas.json"));
         Structure = JsonConvert.DeserializeObject<TabStructure>(File.ReadAllText($"{path}/tabs.json"));
-        
-        if (File.Exists($"{path}/entrance_rando_names.json")) EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
-            File.ReadAllText($"{path}/entrance_rando_names.json")
-        );
+
+        if (File.Exists($"{path}/entrance_rando_names.json"))
+            EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                File.ReadAllText($"{path}/entrance_rando_names.json")
+            );
         if (File.Exists($"{path}/locationiconopen.json"))
             LocationOpenedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
                 File.ReadAllText($"{path}/locationiconopen.json")
@@ -122,6 +124,7 @@ public partial class MapLoader : Control
 
         SaveMap.Visible = IsInEditMode;
         ListEditControls.Visible = IsInEditMode;
+        MapEditorControls.Visible = IsInEditMode;
 
         ItemImageLoader = new MapItemImageLoader(path);
         Page?.OnLogicUpdated += UpdateNodes;
@@ -168,11 +171,12 @@ public partial class MapLoader : Control
 
         foreach (var map in MapsList) CreateMap(path, map);
 
-        UseEntranceRandoMaps = CheckIfEntranceRandoEnabled(out AutoTrackEntrances); 
+        UseEntranceRandoMaps = CheckIfEntranceRandoEnabled(out AutoTrackEntrances);
         Client?.AddDataStorageListener(
-            UseEntranceRandoMaps ? "Entrance Tracker Map" : "Current Map", (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
+            UseEntranceRandoMaps ? "Entrance Tracker Map" : "Current Map",
+            (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
         );
-        
+
         if (IsInEditMode || !UseEntranceRandoMaps) return;
         IsEntranceRando = true;
 
@@ -181,7 +185,8 @@ public partial class MapLoader : Control
             try
             {
                 TrueEntranceMap = ((JObject)value).ToObject<Dictionary<string, string>>();
-                foreach (var (entrance, dest) in TrueEntranceMap.ToArray()) TrueEntranceMap.TryAdd(dest, entrance);
+                foreach (var (entrance, dest) in TrueEntranceMap.ToArray())
+                    TrueEntranceMap.TryAdd(dest, entrance); // fill in, just in case
                 var saveEntranceData = false;
                 foreach (var key in TrueEntranceMap.Keys.Where(key => !EntranceMap.ContainsKey(key)))
                 {
@@ -221,6 +226,7 @@ public partial class MapLoader : Control
     public bool CheckIfEntranceRandoEnabled(out bool autoTracking)
     {
         autoTracking = false;
+        if (Client is null) return false;
         if (!Client!.SlotData.ContainsKey("entrance_rando")) return true;
         try { return autoTracking = (long)Client!.SlotData["entrance_rando"] == 1; }
         catch
@@ -486,14 +492,26 @@ public partial class MapLoader : Control
             case 2: CopyTargetNode = RightClickSelectedNode; break;
             case 3: CreateNewNodAtMouse(true); break;
             case 4:
-                CreateNewNodAtMouse(false, MoveTargetNode.Size, MoveTargetNode.Group, [.. MoveTargetNode.Locations]);
-                RemoveSelectedLocation(MoveTargetNode);
-                MoveTargetNode.Map.DeleteNode(MoveTargetNode);
+                try
+                {
+                    CreateNewNodAtMouse(
+                        false, MoveTargetNode.Size, MoveTargetNode.Group, [.. MoveTargetNode.Locations]
+                    );
+                    RemoveSelectedLocation(MoveTargetNode);
+                    MoveTargetNode.Map.DeleteNode(MoveTargetNode);
+                }
+                catch { }
                 MoveTargetNode = null;
                 break;
             case 5:
-                CreateNewNodAtMouse(false, CopyTargetNode.Size, CopyTargetNode.Group, [.. CopyTargetNode.Locations]);
-                RemoveSelectedLocation(CopyTargetNode);
+                try
+                {
+                    CreateNewNodAtMouse(
+                        false, CopyTargetNode.Size, CopyTargetNode.Group, [.. CopyTargetNode.Locations]
+                    );
+                    RemoveSelectedLocation(CopyTargetNode);
+                }
+                catch { }
                 CopyTargetNode = null;
                 break;
             case 6:
@@ -602,9 +620,10 @@ public partial class MapLoader : Control
     public void RemoveSelectedLocations()
     {
         if (SelectedMapLocation is null) return;
-        var locationNamesToRemove = List.GetSelectedItems().Where(i => i >= 0).Select(i => SelectedMapLocation.Locations[i]).ToArray();
+        var locationNamesToRemove = List.GetSelectedItems().Where(i => i >= 0)
+                                        .Select(i => SelectedMapLocation.DisplayedLocations[i]).ToArray();
         SelectedMapLocation.Locations.RemoveAll(loc => locationNamesToRemove.Contains(loc));
-        UpdateUI = true;
+        SetDeferred("UpdateUI", true);
         UpdateNodes();
     }
 
