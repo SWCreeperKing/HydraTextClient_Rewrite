@@ -34,6 +34,7 @@ public partial class MapNavigator : ScrollContainer
         SetMapName(map.MapName);
         SetImage(map.ImageName);
         foreach (var loc in map.Nodes) CreateLocationNode(loc);
+        if (!Loader.IsEntranceRando) return;
         foreach (var entrance in map.Entrances) CreateEntranceNode(entrance);
     }
 
