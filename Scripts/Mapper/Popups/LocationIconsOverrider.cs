@@ -23,7 +23,7 @@ public partial class LocationIconsOverrider : SelectionEditWindow<string>
         Images = [.. Loader.ItemImageLoader.GetImageNames().Order()];
         Locations =
         [
-            .. loader.MapNavigators.SelectMany(map => map.Locations.SelectMany(loc => loc.Locations))
+            .. loader.MapNavigators.SelectMany(map => map.Locations.SelectMany(loc => loc.RawNodeData.Locations))
                      .DistinctBy(s => s).Order(),
         ];
         SetImages(ClosedImage);

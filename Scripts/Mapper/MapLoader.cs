@@ -63,6 +63,7 @@ public partial class MapLoader : Control
     public bool UpdateUI;
     public bool IsEntranceRando;
     public bool UseEntranceRandoMaps;
+    public List<string> AllLocations = [];
     private string TrackerName;
     private string MapPath;
     private EmptyRichLabelInteractor LocationPopupList;
@@ -133,7 +134,10 @@ public partial class MapLoader : Control
                 if (Client is null) return;
                 var player = packet.Item.Player;
                 if (Client.PlayerSlot != player) return;
-                CollectedLocations.Add(Client.LocationIdToLocationName(packet.Item.Location, player));
+                var locName = Client.LocationIdToLocationName(packet.Item.Location, player);
+                if (AllLocations.Contains(locName)) return;
+                CollectedLocations.Add(locName);
+                AllLocations.Add(locName);
             };
         }
 
@@ -286,18 +290,30 @@ public partial class MapLoader : Control
             LocationPanel.Hide();
             return;
         }
-        StringBuilder sb = new();
-        foreach (var loc in HoveredMapLocation.Locations.Where(l => Client is null
-                                                                    || Client.Locations.Any(kv => kv.Key == l)
-                 ))
+
+        var missing = Client is not null ? [.. HoveredMapLocation.OrderedLocations.Where(Client.IsMissingLocation)]
+            : HoveredMapLocation.OrderedLocations;
+
+        switch (missing.Length)
         {
-            if (loc.Trim() is "") continue;
+            case 0: return;
+            case > 10:
+                SetHoverPopupText("Too many to display");
+                return;
+        }
+        StringBuilder sb = new();
+        foreach (var loc in missing.Where(loc => loc.Trim() is not ""))
+        {
             if (sb.Length != 0) sb.Append('\n');
             sb.Append(loc);
         }
 
-        if (sb.Length == 0) return;
+        SetHoverPopupText(sb.ToString());
+    }
 
+    private void SetHoverPopupText(string text)
+    {
+        if (text.Trim() is "" || HoveredMapLocation is null) return;
         LocationPanelText.Text = "";
         LocationPanel.Position = Vector2I.Zero;
         LocationPanelText.Size = Vector2.Zero;
@@ -306,7 +322,7 @@ public partial class MapLoader : Control
             new Rect2I(new Vector2I((int)rect.Position.X, (int)(rect.Position.Y + rect.Size.Y)), Vector2I.Zero)
         );
 
-        LocationPanelText.Text = sb.ToString();
+        LocationPanelText.Text = text;
     }
 
     private void CreateMap(string path, Maps map)
@@ -524,7 +540,7 @@ public partial class MapLoader : Control
                 try
                 {
                     CreateNewNodAtMouse(
-                        false, MoveTargetNode.Size, MoveTargetNode.Group, [.. MoveTargetNode.Locations]
+                        false, MoveTargetNode.Size, MoveTargetNode.Group, [.. MoveTargetNode.OrderedLocations]
                     );
                     RemoveSelectedLocation(MoveTargetNode);
                     MoveTargetNode.Map.DeleteNode(MoveTargetNode);
@@ -536,7 +552,7 @@ public partial class MapLoader : Control
                 try
                 {
                     CreateNewNodAtMouse(
-                        false, CopyTargetNode.Size, CopyTargetNode.Group, [.. CopyTargetNode.Locations]
+                        false, CopyTargetNode.Size, CopyTargetNode.Group, [.. CopyTargetNode.OrderedLocations]
                     );
                     RemoveSelectedLocation(CopyTargetNode);
                 }
@@ -605,7 +621,8 @@ public partial class MapLoader : Control
     public void CopyLocations()
     {
         if (SelectedMapLocation is null) return;
-        var locationNamesToCopy = List.GetSelectedItems().Select(i => SelectedMapLocation.Locations[i]).ToArray();
+        var locationNamesToCopy = List.GetSelectedItems().Select(i => SelectedMapLocation.OrderedLocations[i])
+                                      .ToArray();
         DisplayServer.ClipboardSet(string.Join('\n', locationNamesToCopy));
     }
 
@@ -639,9 +656,9 @@ public partial class MapLoader : Control
                     locs =
                     [
                         .. locs.Select(l => l.Trim())
-                               .Where(l => l is not "" && !SelectedMapLocation.Locations.Contains(l)),
+                               .Where(l => l is not "" && !SelectedMapLocation.OrderedLocations.Contains(l)),
                     ];
-                    SelectedMapLocation.Locations.AddRange(locs.DistinctBy(s => s));
+                    SelectedMapLocation.AddLocations([.. locs.DistinctBy(s => s)]);
                     UpdateUI = true;
                     UpdateNodes();
                 };
@@ -654,7 +671,7 @@ public partial class MapLoader : Control
         if (SelectedMapLocation is null) return;
         var locationNamesToRemove = List.GetSelectedItems().Where(i => i >= 0)
                                         .Select(i => SelectedMapLocation.DisplayedLocations[i]).ToArray();
-        SelectedMapLocation.Locations.RemoveAll(loc => locationNamesToRemove.Contains(loc));
+        SelectedMapLocation.RemoveLocations(locationNamesToRemove);
         SetDeferred("UpdateUI", true);
         UpdateNodes();
     }

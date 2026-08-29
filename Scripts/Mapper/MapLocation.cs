@@ -35,11 +35,12 @@ public partial class MapLocation : TextureRect
     public MapNavigator Map;
     public MapNode RawNodeData;
 
-    public List<string> Locations => RawNodeData.Locations;
+    // public List<string> Locations => RawNodeData.Locations;
     public string Group => RawNodeData.LocationGroup;
     public MapLoader Loader => Map.Loader;
     public ApClient Client => Loader.Client;
     public List<string> DisplayedLocations = [];
+    public string[] OrderedLocations;
     private Dictionary<string, int> LocationValueDict;
 
     [Signal] public delegate void OnSelectedEventHandler();
@@ -54,8 +55,24 @@ public partial class MapLocation : TextureRect
 
     [Signal] public delegate void OnRightClickEventHandler();
 
-    public void SetData(MapNavigator map) => Map = map;
+    public void SetData(MapNavigator map)
+    {
+        OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
+        Map = map;
+    }
 
+    public void AddLocations(params string[] locs)
+    {
+        RawNodeData.Locations.AddRange(locs);
+        OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
+    }
+    
+    public void RemoveLocations(params string[] locs)
+    {
+        RawNodeData.Locations.RemoveAll(l => locs.Contains(l));
+        OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
+    }
+    
     public void SetImage(string image)
     {
         QueueUpdate = true;
@@ -92,7 +109,7 @@ public partial class MapLocation : TextureRect
                     .Select(hint => hint.LocationName)
                     .ToArray();
 
-        LocationValueDict = Locations.DistinctBy(s => s).ToDictionary(
+        LocationValueDict = OrderedLocations.ToDictionary(
             l => l, l =>
             {
                 if (Client is null && Loader.IsInEditMode) return 4;
@@ -129,7 +146,7 @@ public partial class MapLocation : TextureRect
                 list.SetItemCustomBgColor(i, Colors.DarkRed);
                 continue;
             }
-            
+
             if (group is not null && status < 5)
             {
                 var icon = status < 4 ? group!.AvailableIcon : group!.CollectedIcon;

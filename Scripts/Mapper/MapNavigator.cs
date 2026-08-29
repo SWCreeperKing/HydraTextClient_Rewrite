@@ -133,6 +133,7 @@ public partial class MapNavigator : ScrollContainer
 
     private MapLocation CreateLocationNode(MapNode loc)
     {
+        if (Loader.IsInEditMode) Loader.AllLocations.AddRange(loc.Locations);
         var node = MapLocation.Instantiate<MapLocation>();
         node.RawNodeData = loc;
 
