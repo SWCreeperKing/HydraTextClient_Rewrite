@@ -2,8 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="1_4kwl7"]
 [ext_resource type="Script" uid="uid://mf5nh4begg5g" path="res://Scripts/Mapper/Popups/EntranceManagerPopup.cs" id="1_pe3fg"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_sgoni"]
 
-[node name="EntranceManager" type="Window" unique_id=1969874574 node_paths=PackedStringArray("EntranceTable", "AddEntranceName", "AddEntranceID", "EditEntranceName", "EditEntranceID", "MainContainer")]
+[node name="EntranceManager" type="Window" unique_id=1969874574 node_paths=PackedStringArray("EntranceTable", "AddEntranceName", "AddEntranceID", "EditEntranceName", "EditEntranceID", "EditEntranceNickName", "MainContainer")]
 oversampling_override = 1.0
 title = "Manage Entrances"
 size = Vector2i(550, 300)
@@ -13,6 +14,7 @@ AddEntranceName = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer/LineE
 AddEntranceID = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer/LineEdit2")
 EditEntranceName = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit")
 EditEntranceID = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit2")
+EditEntranceNickName = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit3")
 MainContainer = NodePath("Panel/TabContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=1323930821]
@@ -52,6 +54,7 @@ placeholder_text = "ID (leave blank if Name=ID)"
 [node name="Button" type="Button" parent="Panel/TabContainer/VBoxContainer/HBoxContainer" unique_id=1583767061]
 layout_mode = 2
 text = "Add"
+script = ExtResource("2_sgoni")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer/VBoxContainer" unique_id=1394724783]
 layout_mode = 2
@@ -74,6 +77,7 @@ metadata/_tab_index = 1
 [node name="Button" type="Button" parent="Panel/TabContainer/VBoxContainer2" unique_id=1617237965]
 layout_mode = 2
 text = "Save"
+script = ExtResource("2_sgoni")
 
 [node name="HSeparator" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=609470039]
 layout_mode = 2
@@ -82,9 +86,19 @@ layout_mode = 2
 layout_mode = 2
 placeholder_text = "Edit Entrance Name"
 
+[node name="HSeparator4" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=1180359310]
+layout_mode = 2
+
 [node name="LineEdit2" type="LineEdit" parent="Panel/TabContainer/VBoxContainer2" unique_id=335710857]
 layout_mode = 2
 placeholder_text = "Edit Entrance ID"
+
+[node name="HSeparator5" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=166571381]
+layout_mode = 2
+
+[node name="LineEdit3" type="LineEdit" parent="Panel/TabContainer/VBoxContainer2" unique_id=1932616383]
+layout_mode = 2
+placeholder_text = "Entrance Display Nickname"
 
 [node name="HSeparator2" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=2000892382]
 modulate = Color(1, 1, 1, 0)
@@ -98,6 +112,7 @@ layout_mode = 2
 modulate = Color(1, 0.52, 0.52, 1)
 layout_mode = 2
 text = "DELETE"
+script = ExtResource("2_sgoni")
 
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("1_4kwl7")]
 visible = true
@@ -106,5 +121,6 @@ Controls = {
 "entrance_manager_popup": NodePath("..")
 }
 
+[connection signal="pressed" from="Panel/TabContainer/VBoxContainer/HBoxContainer/Button" to="." method="AddDataFromPage"]
 [connection signal="pressed" from="Panel/TabContainer/VBoxContainer2/Button" to="." method="SaveAndSwitchBack"]
 [connection signal="pressed" from="Panel/TabContainer/VBoxContainer2/Button2" to="." method="DeleteAndSwitchBack"]

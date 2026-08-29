@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://megqjjecsvfo"]
 
 [ext_resource type="Script" uid="uid://b0hv42jsry375" path="res://Scripts/Mapper/Popups/TabManager.cs" id="1_l0sj6"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_0aqj5"]
 
 [node name="Window" type="Window" unique_id=1137080991 node_paths=PackedStringArray("Action", "NameEdit", "Destination")]
 oversampling_override = 1.0
@@ -69,11 +70,13 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Confirm"
+script = ExtResource("2_0aqj5")
 
 [node name="Button2" type="Button" parent="Panel/VBoxContainer/HBoxContainer2" unique_id=194435867]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
+script = ExtResource("2_0aqj5")
 
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Button" to="." method="Confirm"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]

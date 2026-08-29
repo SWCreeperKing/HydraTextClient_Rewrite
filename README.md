@@ -185,15 +185,14 @@
   - For Devs:
     - Each map should have a unique id (ids can be non-numerical)
       - If a Map Id does not match any ids, it will try matching against the map name 
-    - Update the slot data storage "Current Map" with the map id when the player moves from one map to another
-    - If you have entrance rando, while entrance rando is on, hydra will use the "Entrance Tracker Map" slot data storage key
+    - Update the slot data storage with the map id when the player moves from one map to another
   - For Map Makers:
     - map id by default is the name, can override, maps with multiple ids will not work
 - Entrance Tracker (Auto Tracking)
   - For Devs:
     - Each entrance needs to have a unique id (ids can be non-numerical) 
-    - The slot data key "Entrance Rando" needs to consist of a map of entrance id to destination entrance id
-    - The slot data key "entrance_rando" signifies if entrance rando is enabled or not 
+    - Slot data storage needs to have a map of entrance id to destination entrance id
+    - Slot data storage needs to have an indicator if entrance rando is enabled or not 
     - The slot data storage key of the entrance id needs to be false, then set to true when the entrance is found
   - For Map Makers:
     - The Entrance IDs might need to be mapped to a correct entrance name

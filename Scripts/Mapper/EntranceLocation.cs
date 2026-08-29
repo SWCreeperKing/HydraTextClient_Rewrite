@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CreepyUtil.Archipelago.ApClient;
 using Godot;
@@ -45,6 +46,7 @@ public partial class EntranceLocation : PanelContainer
     {
         if (Loader.IsInEditMode || !UpdateEntrance) return;
         UpdateEntrance = false;
+        SetText("?");
         if (Loader.FoundEntrances.Contains(EntranceId)
             && Loader.TrueEntranceMap.TryGetValue(EntranceId, out var foundId))
         {
@@ -67,8 +69,9 @@ public partial class EntranceLocation : PanelContainer
 
         return;
 
-        void SetEntranceName(EntranceLocation node)
-            => SetText(node.Map.CoreMap.MapName); // maybe later have overrides? idk
+        void SetEntranceName(EntranceLocation node) => SetText(
+            Loader.EntranceNicknames.GetValueOrDefault(node.EntranceId, node.Map.CoreMap.MapName)
+        );
     }
 
     public void SetData(MapNavigator map, string id)

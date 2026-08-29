@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://5yn5klpca2j3"]
+
+[ext_resource type="Script" uid="uid://dbpxtpaalq0p4" path="res://Scripts/Mapper/Popups/AutoTrackingInputPopup.cs" id="1_ctit2"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_cyqh6"]
+
+[node name="AutoTrackingPopup" type="Window" unique_id=312272736 node_paths=PackedStringArray("MapKey", "OnOffKey", "TruthMapKey")]
+oversampling_override = 1.0
+title = "Map Auto Tracking"
+size = Vector2i(400, 240)
+script = ExtResource("1_ctit2")
+MapKey = NodePath("Panel/VBoxContainer/HBoxContainer/LineEdit")
+OnOffKey = NodePath("Panel/VBoxContainer/HBoxContainer2/LineEdit")
+TruthMapKey = NodePath("Panel/VBoxContainer/HBoxContainer3/LineEdit")
+
+[node name="Panel" type="Panel" parent="." unique_id=533659689]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=943352692]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer" unique_id=1664564826]
+modulate = Color(1, 0.37, 0.37, 1)
+layout_mode = 2
+text = "The Map will need to be reopened for the changes to take effect"
+autowrap_mode = 3
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer" unique_id=1402321042]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=1218364223]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer" unique_id=588862257]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Map Tabbing Key"
+
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer" unique_id=1542698914]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer" unique_id=1994613503]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=756136574]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer2" unique_id=1947885066]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ER On/Off Key"
+
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer2" unique_id=931789230]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/VBoxContainer" unique_id=1310912357]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=831581756]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer3" unique_id=1169390629]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ER Truth Map Key"
+
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer3" unique_id=263953098]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator4" type="HSeparator" parent="Panel/VBoxContainer" unique_id=823773315]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSeparator5" type="HSeparator" parent="Panel/VBoxContainer" unique_id=474800331]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/VBoxContainer" unique_id=1343469497]
+layout_mode = 2
+text = "Save and Close"
+script = ExtResource("2_cyqh6")
+
+[connection signal="pressed" from="Panel/VBoxContainer/Button" to="." method="Save"]

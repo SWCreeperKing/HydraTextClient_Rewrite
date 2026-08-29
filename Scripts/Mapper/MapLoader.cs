@@ -39,6 +39,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene EditMapNodePopup;
     [Export] private PackedScene EditEntranceNodePopup;
     [Export] private PackedScene EntranceManagerPopup;
+    [Export] private PackedScene AutoTrackingPopup;
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -55,6 +56,7 @@ public partial class MapLoader : Control
     public Dictionary<string, string> LocationClosedIconOverride = [];
     public Dictionary<string, string> LocationOpenedIconOverride = [];
     public Dictionary<string, string> EntranceMap = [];
+    public Dictionary<string, string> EntranceNicknames = [];
     public Dictionary<string, string> TrueEntranceMap = [];
     public Dictionary<string, List<EntranceLocation>> EntranceNodes = [];
     public HashSet<string> FoundEntrances = [];
@@ -73,6 +75,8 @@ public partial class MapLoader : Control
     private MapLocation CopyTargetNode;
     private MapLocation MoveTargetNode;
     private Vector2 PopupPos;
+    private AutoTrackingData AutoTrackingData;
+    private bool HasAutoTrackingData;
     private bool AutoTrackEntrances;
 
     public void Setup(string path, string trackerName, Control parent)
@@ -91,6 +95,10 @@ public partial class MapLoader : Control
             EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
                 File.ReadAllText($"{path}/entrance_rando_names.json")
             );
+        if (File.Exists($"{path}/entrance_rando_display_names.json"))
+            EntranceNicknames = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                File.ReadAllText($"{path}/entrance_rando_display_names.json")
+            );
         if (File.Exists($"{path}/locationiconopen.json"))
             LocationOpenedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
                 File.ReadAllText($"{path}/locationiconopen.json")
@@ -99,6 +107,13 @@ public partial class MapLoader : Control
             LocationClosedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
                 File.ReadAllText($"{path}/locationiconclose.json")
             );
+        if (File.Exists($"{path}/autotracking.json"))
+        {
+            AutoTrackingData = JsonConvert.DeserializeObject<AutoTrackingData>(
+                File.ReadAllText($"{path}/autotracking.json")
+            );
+            HasAutoTrackingData = true;
+        }
 
         LocationGroups = JsonConvert.DeserializeObject<List<LocationGroup>>(
             File.ReadAllText($"{path}/locationgroups.json")
@@ -171,16 +186,17 @@ public partial class MapLoader : Control
 
         foreach (var map in MapsList) CreateMap(path, map);
 
-        UseEntranceRandoMaps = CheckIfEntranceRandoEnabled(out AutoTrackEntrances);
-        Client?.AddDataStorageListener(
-            UseEntranceRandoMaps ? "Entrance Tracker Map" : "Current Map",
-            (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
-        );
+        if (HasAutoTrackingData && AutoTrackingData.MapKey is not "")
+            Client?.AddDataStorageListener(
+                AutoTrackingData.MapKey, (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
+            );
 
-        if (IsInEditMode || !UseEntranceRandoMaps) return;
+        if (IsInEditMode || !CheckIfEntranceRandoEnabled(out AutoTrackEntrances)) return;
         IsEntranceRando = true;
 
-        if (Client!.SlotData.TryGetValue("Entrance Rando", out var value))
+        if (HasAutoTrackingData && AutoTrackingData.EntranceRandoTrueMapKey is not "" && Client!.SlotData.TryGetValue(
+                AutoTrackingData.EntranceRandoTrueMapKey, out var value
+            ))
         {
             try
             {
@@ -198,6 +214,7 @@ public partial class MapLoader : Control
             }
             catch (Exception e) { GD.PrintErr("Entrance Map not in correct format", e); }
         }
+        else AutoTrackEntrances = false;
 
         if (!AutoTrackEntrances) return;
         foreach (var (entranceId, _) in EntranceMap)
@@ -220,13 +237,12 @@ public partial class MapLoader : Control
                 }, Scope.Slot
             );
         }
-        GD.Print($"found stick? [{FoundEntrances.Contains("Overworld Redux, Sword Cave_")}]");
     }
 
     public bool CheckIfEntranceRandoEnabled(out bool autoTracking)
     {
         autoTracking = false;
-        if (Client is null) return false;
+        if (!HasAutoTrackingData || AutoTrackingData.EntranceRandoIndicatorKey is "" || Client is null) return false;
         if (!Client!.SlotData.ContainsKey("entrance_rando")) return true;
         try { return autoTracking = (long)Client!.SlotData["entrance_rando"] == 1; }
         catch
@@ -356,7 +372,8 @@ public partial class MapLoader : Control
     public void SelectMap(string mapId)
     {
         if (!AutoTab.ButtonPressed) return;
-        if (!TryGetMapWithId(mapId, out var map))
+        if ((!TryGetMapWithId(mapId, out var map) || map is null)
+            && (!TryGetMapWithName(mapId, out map) || map is null))
         {
             GD.Print($"Auto Tabbing map not found: [{mapId}]");
             return;
@@ -374,9 +391,13 @@ public partial class MapLoader : Control
     public bool TryGetMapWithId(string id, out MapNavigator? foundMap)
     {
         foundMap = MapNavigators.FirstOrDefault(map => map.MapId == id, null);
-        if (foundMap is not null) return true;
-        foundMap = MapNavigators.FirstOrDefault(map => map.CoreMap.MapName == id, null);
-        return foundMap is null;
+        return foundMap is not null;
+    }
+
+    public bool TryGetMapWithName(string name, out MapNavigator? foundMap)
+    {
+        foundMap = MapNavigators.FirstOrDefault(map => map.Name == name, null);
+        return foundMap is not null;
     }
 
     public void ResetSelectedNodes() => SetSelectedLocation(null);
@@ -412,13 +433,17 @@ public partial class MapLoader : Control
     {
         var switchTo = "";
 
+        var mw = ConnectionController.GetCurrentMultiworld;
         if (FoundEntrances.Contains(loc.EntranceId))
         {
             if (!Input.IsKeyPressed(Key.Shift))
             {
                 if (TrueEntranceMap.TryGetValue(loc.EntranceId, out var foundId)
-                    && EntranceNodes.TryGetValue(foundId, out var nodes)
-                    && nodes.Count > 0) CallDeferred("SelectMap", nodes[0].Map.MapId);
+                    && EntranceNodes.TryGetValue(foundId, out var nodes) && nodes.Count > 0)
+                {
+                    CallDeferred("SelectMap", nodes[0].Map.MapId);
+                    nodes[0].Highlighter.EnterAnimation();
+                }
             }
             else
             {
@@ -426,7 +451,10 @@ public partial class MapLoader : Control
                     kv => kv.Value == loc.EntranceId, new KeyValuePair<string, string>(null, null)
                 ).Key;
                 if (backwards is not null && EntranceNodes.TryGetValue(backwards, out var nodes) && nodes.Count > 0)
+                {
                     CallDeferred("SelectMap", nodes[0].Map.MapId);
+                    nodes[0].Highlighter.EnterAnimation();
+                }
             }
         }
 
@@ -434,6 +462,7 @@ public partial class MapLoader : Control
         if (switchTo is "" || !EntranceNodes.TryGetValue(switchTo, out var entranceNodes)
                            || entranceNodes.Count == 0) return;
         CallDeferred("SelectMap", entranceNodes[0].Map.MapId);
+        entranceNodes[0].Highlighter.EnterAnimation();
     }
 
     public string FindLinkingEntrance(string entranceId, bool forward)
@@ -527,7 +556,8 @@ public partial class MapLoader : Control
         void CreateNewNodAtMouse(bool isNew, Vector2? size = null, string group = "", params List<string> locs)
         {
             var map = GetCurrentMap();
-            var node = map.CreateNewNode(map.ToLocalPos(PopupPos), size ?? new Vector2(32, 32), group, locs);
+            size ??= new Vector2(32, 32);
+            var node = map.CreateNewNode(map.ToLocalPos(PopupPos) - size!.Value / 2f, size!.Value, group, locs);
             if (OpenConfig.ButtonPressed && isNew) AddNode(node);
         }
     }
@@ -593,6 +623,8 @@ public partial class MapLoader : Control
 
     public void EditEntranceNode(EntranceLocation loc)
         => EditEntranceNodePopup.OpenPopup<EditEntranceNodePopup>(this, p => p.Setup(this, loc, false));
+
+    public void EditAutoTracking() => AutoTrackingPopup.OpenPopup<AutoTrackingInputPopup>(this, p => p.Setup(MapPath));
 
     public void AddLocations()
     {
@@ -755,6 +787,9 @@ public partial class MapLoader : Control
         File.WriteAllText($"{MapPath}/locationiconopen.json", JsonConvert.SerializeObject(LocationOpenedIconOverride));
         File.WriteAllText($"{MapPath}/locationiconclose.json", JsonConvert.SerializeObject(LocationClosedIconOverride));
         File.WriteAllText($"{MapPath}/entrance_rando_names.json", JsonConvert.SerializeObject(EntranceMap));
+        File.WriteAllText(
+            $"{MapPath}/entrance_rando_display_names.json", JsonConvert.SerializeObject(EntranceNicknames)
+        );
     }
 
     public void OpenFolder() => OS.ShellOpen(MapPath);
@@ -768,7 +803,8 @@ public partial class MapLoader : Control
     protected override void Dispose(bool disposing)
     {
         Client?.HintsTrackedEvent -= UpdateNodes;
-        Client?.RemoveDataStorageListeners(UseEntranceRandoMaps ? "Entrance Tracker Map" : "Current Map", Scope.Slot);
+        if (HasAutoTrackingData && AutoTrackingData.MapKey is not "")
+            Client?.RemoveDataStorageListeners(AutoTrackingData.MapKey, Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;
 
         if (!IsEntranceRando || !AutoTrackEntrances || IsInEditMode || Client is null) return;

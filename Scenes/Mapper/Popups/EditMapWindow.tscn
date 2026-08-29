@@ -2,6 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="1_kfaqn"]
 [ext_resource type="Script" uid="uid://c4xmwtw5navbv" path="res://Scripts/Mapper/Popups/EditMapWindow.cs" id="2_cjjud"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="3_gbwu6"]
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_nmvjy"]
 
 [node name="EditMapWindow" type="Window" unique_id=1427444570 node_paths=PackedStringArray("MapName", "MapImage", "MapAutoTabId")]
@@ -104,11 +105,13 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Edit"
+script = ExtResource("3_gbwu6")
 
 [node name="Button2" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=2027019982]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
+script = ExtResource("3_gbwu6")
 
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_nmvjy")]
 Prefix = "window_nodes"

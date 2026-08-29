@@ -21,8 +21,10 @@ public partial class MapLocation : TextureRect
         {
             var mapSize = Map.GetMapSize;
             Position = new Vector2(
-                Math.Clamp(value.X, Size.X / 2f, mapSize.X - Size.X / 2f),
-                Math.Clamp(value.Y, Size.Y / 2f, mapSize.Y - Size.Y / 2f)
+                // Math.Clamp(value.X, Size.X / 2f, mapSize.X - Size.X / 2f),
+                // Math.Clamp(value.Y, Size.Y / 2f, mapSize.Y - Size.Y / 2f)
+                Math.Clamp(value.X, 0, mapSize.X - Size.X),
+                Math.Clamp(value.Y, 0, mapSize.Y - Size.Y)
             );
             RawNodeData.X = Position.X;
             RawNodeData.Y = Position.Y;

@@ -114,7 +114,8 @@ public partial class MapNavigator : ScrollContainer
             node.OnRightClick += () => Loader.EntranceLink(node);
             node.OnMiddleClick += () => Loader.BreakLink(node);
             node.OnLeftClick += () => Loader.NavigateEntrance(node);
-        } else node.OnRightClick += () => Loader.RightClickedNode(node);
+        }
+        else node.OnRightClick += () => Loader.RightClickedNode(node);
 
         if (loc.Entrance is not "")
         {
@@ -136,7 +137,7 @@ public partial class MapNavigator : ScrollContainer
 
         node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
         node.SetData(this);
-        if (UpdateLocationGroup(node)) return null; // return if slot data doesn't match
+        if (!UpdateLocationGroup(node)) return null; // return if slot data doesn't match
         node.OnEntered += () => Loader.SetHoverLocation(node);
         node.OnExited += () => Loader.RemoveHoverLocation(node);
         node.OnSelected += () => Loader.SetSelectedLocation(node);
@@ -156,8 +157,8 @@ public partial class MapNavigator : ScrollContainer
         {
             if (group.SlotDataKey is not ("" or null) && !Loader.IsInEditMode)
             {
-                if (Loader.Client!.SlotData.TryGetValue(group.SlotDataKey, out var slotDataVal)
-                    && !group.CompareDataValue(slotDataVal)) return true;
+                if (Loader.Client!.SlotData.TryGetValue(group.SlotDataKey, out var slotDataVal))
+                    return group.CompareDataValue(slotDataVal);
                 GD.PrintErr($"Slot data key is invalid: [{group.SlotDataKey}]");
             }
 
@@ -174,7 +175,7 @@ public partial class MapNavigator : ScrollContainer
             }
         }
         else node.SetImage("");
-        return false;
+        return true;
     }
 
     public Vector2 ToLocalPos(Vector2 pos) => (pos - Container.MapImage.GlobalPosition) / Container.MapImage.Scale;

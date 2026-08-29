@@ -15,7 +15,8 @@ public struct TabStructure(string name = "", params List<TabStructure> subTabs)
     public override int GetHashCode() => HashCode.Combine(Name, SubTabs);
 }
 
-public class Maps(string mapName, string imageName, string tab = "", string mapId = "", List<EntranceNode>? entrances = null, params List<MapNode> nodes)
+public class Maps(string mapName, string imageName, string tab = "", string mapId = "",
+    List<EntranceNode>? entrances = null, params List<MapNode> nodes)
 {
     public string MapName = mapName;
     public string MapId = mapId;
@@ -50,6 +51,7 @@ public class EntranceNode(float x, float y, float w, float h, string entrance)
 public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
 {
     public const float Tolerance = .00001f;
+
     public enum DataStorageType { Bool, Number, Text }
 
     [Flags]
@@ -85,17 +87,32 @@ public class LocationGroup(string name, string mapIcon, string openIcon = "", st
                 case DataStorageType.Number:
                     var num = (long)val;
                     if (CompareType is NumberCompareType.NotEqualTo) return Math.Abs(num - NumberCompare) > Tolerance;
-                    if (CompareType.HasFlag(NumberCompareType.EqualTo)) return Math.Abs(num - NumberCompare) < Tolerance;
+                    if (CompareType.HasFlag(NumberCompareType.EqualTo))
+                        return Math.Abs(num - NumberCompare) < Tolerance;
                     if (CompareType.HasFlag(NumberCompareType.GreaterThan)) return num > NumberCompare;
                     if (CompareType.HasFlag(NumberCompareType.LessThan)) return num < NumberCompare;
                     return false;
-                case DataStorageType.Bool: return (bool)val == BoolCompare;
+                case DataStorageType.Bool:
+                {
+                    try { return (bool)val == BoolCompare; }
+                    catch (InvalidCastException)
+                    {
+                        return (long)val == 1;
+                    }
+                }
                 default: return false;
             }
         }
         catch (Exception e) { GD.PrintErr($"Error with reading [{SlotDataKey}]", e); }
         return false;
     }
+}
+
+public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKey = "", string entranceMapKey = "")
+{
+    public string MapKey = mapKey;
+    public string EntranceRandoIndicatorKey = entranceRandoEnabledKey;
+    public string EntranceRandoTrueMapKey = entranceMapKey;
 }
 
 #region ugly poptracker imports
