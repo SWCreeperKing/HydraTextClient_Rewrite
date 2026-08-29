@@ -97,7 +97,7 @@ public partial class MapLocation : TextureRect
             {
                 if (Client is null && Loader.IsInEditMode) return 4;
                 if (Client is null || Client.Locations.All(kv => kv.Key != l)) return 5;
-                if (!Client.MissingLocations.Contains(l)) return 4;
+                if (!Client.IsMissingLocation(l)) return 4;
                 var locColor = 3;
                 if (page is not null && page.LocationNamesInLogic.Contains(l)) locColor = 1;
                 if (applicableHints.Contains(l)) locColor -= 1;

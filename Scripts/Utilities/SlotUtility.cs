@@ -64,11 +64,7 @@ public partial class SlotUtility : HSplitContainer
 
         ItemList.SetItems([.. client.Items.Select(kv => kv.Key)]);
         ItemList.List.FixedIconSize = new Vector2I(fontSize, fontSize);
-
-        LocationList.SetItems(
-            [.. client.Locations.Select(kv => kv.Key).Where(loc => client.MissingLocations.Contains(loc))]
-        );
-
+        LocationList.SetItems([.. client.Locations.Select(kv => kv.Key).Where(client.IsMissingLocation)]);
         ItemList.OnItemPressed += s => CallDeferred("CreateDialog", "Hint Item", $"Hint for\n{s}?", $"!hint {s}");
         LocationList.OnItemPressed += s => CallDeferred(
             "CreateDialog", "Hint Location", $"Hint for whats at\n{s}?", $"!hint_location {s}"

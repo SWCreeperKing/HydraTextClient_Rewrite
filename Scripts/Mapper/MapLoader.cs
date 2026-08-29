@@ -137,6 +137,7 @@ public partial class MapLoader : Control
             };
         }
 
+        IsEntranceRando = CheckIfEntranceRandoEnabled(out AutoTrackEntrances);
         SaveMap.Visible = IsInEditMode;
         ListEditControls.Visible = IsInEditMode;
         MapEditorControls.Visible = IsInEditMode;
@@ -191,8 +192,7 @@ public partial class MapLoader : Control
                 AutoTrackingData.MapKey, (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
             );
 
-        if (IsInEditMode || !CheckIfEntranceRandoEnabled(out AutoTrackEntrances)) return;
-        IsEntranceRando = true;
+        if (IsInEditMode || !IsEntranceRando) return; // entrance tracker
 
         if (HasAutoTrackingData && AutoTrackingData.EntranceRandoTrueMapKey is not "" && Client!.SlotData.TryGetValue(
                 AutoTrackingData.EntranceRandoTrueMapKey, out var value
@@ -242,7 +242,7 @@ public partial class MapLoader : Control
     public bool CheckIfEntranceRandoEnabled(out bool autoTracking)
     {
         autoTracking = false;
-        if (!HasAutoTrackingData || AutoTrackingData.EntranceRandoIndicatorKey is "" || Client is null) return false;
+        if (!HasAutoTrackingData || AutoTrackingData.EntranceRandoIndicatorKey is "" || Client is null) return true;
         if (!Client!.SlotData.ContainsKey("entrance_rando")) return true;
         try { return autoTracking = (long)Client!.SlotData["entrance_rando"] == 1; }
         catch
@@ -250,7 +250,7 @@ public partial class MapLoader : Control
             try { return autoTracking = (bool)Client!.SlotData["entrance_rando"]; }
             catch (Exception e) { GD.PrintErr("check for entrance_rando failed", e); }
         }
-        return false;
+        return true;
     }
 
     public void EntranceFound(string entranceId)
