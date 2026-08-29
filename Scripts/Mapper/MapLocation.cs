@@ -12,7 +12,6 @@ public partial class MapLocation : TextureRect
 {
     [Export] public Texture2D BaseCheckImage;
     [Export] public Highlighter Highlighter;
-    [Export] private ColorRect ColorTarget;
 
     public Vector2 Pos
     {
@@ -21,8 +20,6 @@ public partial class MapLocation : TextureRect
         {
             var mapSize = Map.GetMapSize;
             Position = new Vector2(
-                // Math.Clamp(value.X, Size.X / 2f, mapSize.X - Size.X / 2f),
-                // Math.Clamp(value.Y, Size.Y / 2f, mapSize.Y - Size.Y / 2f)
                 Math.Clamp(value.X, 0, mapSize.X - Size.X),
                 Math.Clamp(value.Y, 0, mapSize.Y - Size.Y)
             );
@@ -108,16 +105,14 @@ public partial class MapLocation : TextureRect
             }
         );
 
-        var min = LocationValueDict.Count == 0 ? 5 : LocationValueDict.MinBy(kv => kv.Value).Value;
-
-        if (Loader.IsInEditMode) min = min is 5 ? 4 : 1;
+        var min = Math.Clamp(LocationValueDict.Count == 0 ? 4 : LocationValueDict.MinBy(kv => kv.Value).Value, 0, 4);
         NodeColor = min switch
         {
             0 => ColorIdConstants.ColorConstant.InLogicHinted.Color(),
             1 => ColorIdConstants.ColorConstant.InLogic.Color(),
             2 => ColorIdConstants.ColorConstant.NotInLogicHinted.Color(),
             3 => ColorIdConstants.ColorConstant.NotInLogic.Color(),
-            4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(), _ => Colors.Transparent,
+            4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(),
         };
     }
 

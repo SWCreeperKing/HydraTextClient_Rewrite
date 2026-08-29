@@ -137,7 +137,11 @@ public partial class MapNavigator : ScrollContainer
 
         node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
         node.SetData(this);
-        if (!UpdateLocationGroup(node)) return null; // return if slot data doesn't match
+        if (!UpdateLocationGroup(node))
+        {
+            node.QueueFree();
+            return null; // return if slot data doesn't match
+        }
         node.OnEntered += () => Loader.SetHoverLocation(node);
         node.OnExited += () => Loader.RemoveHoverLocation(node);
         node.OnSelected += () => Loader.SetSelectedLocation(node);
@@ -155,13 +159,6 @@ public partial class MapNavigator : ScrollContainer
     {
         if (Loader.LocationGroupingMap.TryGetValue(node.Group, out var group))
         {
-            if (group.SlotDataKey is not ("" or null) && !Loader.IsInEditMode)
-            {
-                if (Loader.Client!.SlotData.TryGetValue(group.SlotDataKey, out var slotDataVal))
-                    return group.CompareDataValue(slotDataVal);
-                GD.PrintErr($"Slot data key is invalid: [{group.SlotDataKey}]");
-            }
-
             if (Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img))
             {
                 node.Texture = img;
@@ -172,6 +169,12 @@ public partial class MapNavigator : ScrollContainer
             {
                 node.SetImage("");
                 GD.PrintErr($"Location Icon not found for: [{group.MappedIcon}]");
+            }
+            
+            if (group.SlotDataKey is not ("" or null) && !Loader.IsInEditMode)
+            {
+                if (Loader.Client!.SlotData.TryGetValue(group.SlotDataKey, out var slotDataVal)) return group.CompareDataValue(slotDataVal);
+                GD.PrintErr($"Slot data key is invalid: [{group.SlotDataKey}]");
             }
         }
         else node.SetImage("");
