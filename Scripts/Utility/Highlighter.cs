@@ -83,7 +83,18 @@ public partial class Highlighter : ColorRect
         Tween = CreateTween();
         Tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
         Tween.TweenProperty(this, "color", Idle, 1);
-    } 
+    }
+
+    public void Blink()
+    {
+        Tween?.Kill();
+        Tween = CreateTween();
+        Tween.SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.Out);
+        Tween.TweenProperty(this, "color", Hover, 1);
+        Tween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+        Tween.TweenProperty(this, "color", Idle, 1);
+        Tween.SetLoops();
+    }
     
     public void OnGuiInput(InputEvent @event)
     {

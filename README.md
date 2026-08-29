@@ -98,6 +98,7 @@
         - Holding Shift will break the destination entrance only
       - Left Click to go to where the entrance leads
         - Hold Shift to go to where the entrance leads from 
+        - The linked entrance will blink, just hover over it to have it stop
   - Displays inventory (view an item to see who sent you those items)
   - Has sorting and some filtering capabilities
   - Can view the history of all items received (based on the order you received them)

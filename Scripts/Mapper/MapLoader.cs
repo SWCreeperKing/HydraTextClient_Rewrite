@@ -458,7 +458,7 @@ public partial class MapLoader : Control
                     && EntranceNodes.TryGetValue(foundId, out var nodes) && nodes.Count > 0)
                 {
                     CallDeferred("SelectMap", nodes[0].Map.MapId);
-                    nodes[0].Highlighter.EnterAnimation();
+                    nodes[0].Highlighter.Blink();
                 }
             }
             else
@@ -469,7 +469,7 @@ public partial class MapLoader : Control
                 if (backwards is not null && EntranceNodes.TryGetValue(backwards, out var nodes) && nodes.Count > 0)
                 {
                     CallDeferred("SelectMap", nodes[0].Map.MapId);
-                    nodes[0].Highlighter.EnterAnimation();
+                    nodes[0].Highlighter.Blink();
                 }
             }
         }
@@ -621,8 +621,7 @@ public partial class MapLoader : Control
     public void CopyLocations()
     {
         if (SelectedMapLocation is null) return;
-        var locationNamesToCopy = List.GetSelectedItems().Select(i => SelectedMapLocation.OrderedLocations[i])
-                                      .ToArray();
+        var locationNamesToCopy = (string[])[.. List.GetSelectedItems().Select(List.GetItemText)];
         DisplayServer.ClipboardSet(string.Join('\n', locationNamesToCopy));
     }
 
@@ -669,8 +668,7 @@ public partial class MapLoader : Control
     public void RemoveSelectedLocations()
     {
         if (SelectedMapLocation is null) return;
-        var locationNamesToRemove = List.GetSelectedItems().Where(i => i >= 0)
-                                        .Select(i => SelectedMapLocation.DisplayedLocations[i]).ToArray();
+        var locationNamesToRemove = (string[])[.. List.GetSelectedItems().Where(i => i >= 0).Select(List.GetItemText)];
         SelectedMapLocation.RemoveLocations(locationNamesToRemove);
         SetDeferred("UpdateUI", true);
         UpdateNodes();
