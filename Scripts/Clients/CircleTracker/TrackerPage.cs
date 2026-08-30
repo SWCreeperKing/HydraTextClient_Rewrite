@@ -189,10 +189,12 @@ public partial class TrackerPage : Control
             if (CircleItems[circle].Length != 0)
                 sb.Append("[center]").Append(CircleItems[circle]).Append("[/center]\n");
 
+            var important = false;
             foreach (var entrance in uniqueEntrances)
             {
                 sb.Append("[color=").Append(ColorIdConstants.ColorConstant.EntranceColor.Color().ToHtml()).Append(']')
                   .Append(entrance).Append("[/color]\n");
+                important = true;
             }
 
             if (uniqueLocations.Length == 0) continue;
@@ -203,7 +205,6 @@ public partial class TrackerPage : Control
             var use2ndColumn = hints.Keys.Any(id => orderedLocations.Contains((ulong)id));
             sb.Append("[table=").Append(use2ndColumn ? 2 : 1).Append("][cell bg=#00000069] Locations [/cell]");
             if (use2ndColumn) sb.Append("[cell bg=#00000069] Hinted Items [/cell]");
-            var important = false;
 
             for (var i = 0; i < orderedLocations.Length; i++)
             {
@@ -223,7 +224,7 @@ public partial class TrackerPage : Control
                 sb.Append(" [/cell]");
             }
             sb.Append("[/table]\n");
-            if (!firstEnd || important) break;
+            if (!firstEnd && !important) break;
         }
 
         if (sb.ToString().Trim() is "") sb.Append("Super BK :(\nEither that or there was an error from UT");
