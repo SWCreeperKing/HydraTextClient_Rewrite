@@ -223,7 +223,7 @@ public partial class TrackerPage : Control
                 sb.Append(" [/cell]");
             }
             sb.Append("[/table]\n");
-            if (!firstEnd && important) break;
+            if (!firstEnd || important) break;
         }
 
         if (sb.ToString().Trim() is "") sb.Append("Super BK :(\nEither that or there was an error from UT");
