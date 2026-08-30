@@ -213,7 +213,11 @@ public partial class TrackerPage : Control
                     var colColor = i % 2 == 0 ? "[cell bg=#00000044]" : "[cell]";
                     sb.Append(colColor).Append(" {{loc;").Append(id).Append(';').Append(Client.PlayerSlot)
                       .Append("}} [/cell]");
-                    if (!use2ndColumn) continue;
+                    if (!use2ndColumn)
+                    {
+                        important = true;
+                        continue;
+                    }
 
                     sb.Append(colColor);
                     if (hints.TryGetValue((long)id, out var item))
