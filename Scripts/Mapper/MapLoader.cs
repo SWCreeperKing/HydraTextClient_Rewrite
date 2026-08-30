@@ -19,6 +19,8 @@ namespace HydraTextClient.Scripts.Mapper;
 
 public partial class MapLoader : Control
 {
+    public static bool IsEditorOpen;
+
     [Export] public ButtonAnimation SaveMap;
     [Export] public Control Container;
     [Export] public ItemList List;
@@ -79,12 +81,23 @@ public partial class MapLoader : Control
     private AutoTrackingData AutoTrackingData;
     private bool HasAutoTrackingData;
     private bool AutoTrackEntrances;
+    private string FunctionIdString;
 
     public void Setup(string path, string trackerName, Control parent)
     {
+        IsInEditMode = parent is not MapTracker;
+        switch (IsInEditMode)
+        {
+            case true when IsEditorOpen:
+                ((MapTracker)parent).UnloadMap(trackerName);
+                return;
+            case true: IsEditorOpen = true; break;
+        }
+
+        FunctionIdString = $"Map_Tracker_{(IsInEditMode ? "Editor" : Client?.PlayerName)}";
+
         ListContainer.Visible = false;
         MapPath = path;
-        IsInEditMode = parent is not MapTracker;
         Client?.HintsTrackedEvent += UpdateNodes;
 
         TrackerName = trackerName;
@@ -193,7 +206,8 @@ public partial class MapLoader : Control
 
         if (HasAutoTrackingData && AutoTrackingData.MapKey is not "")
             Client?.AddDataStorageListener(
-                AutoTrackingData.MapKey, (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
+                AutoTrackingData.MapKey, FunctionIdString,
+                (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
             );
 
         if (IsInEditMode || !IsEntranceRando) return; // entrance tracker
@@ -231,13 +245,13 @@ public partial class MapLoader : Control
             );
 
             Client!.AddDataStorageListener(
-                entranceId, (_, newValue, _) =>
+                entranceId, FunctionIdString, (_, newValue, _) =>
                 {
                     try
                     {
                         if ((bool)newValue) CallDeferred("EntranceFound", entranceId);
                     }
-                    catch { Client!.RemoveDataStorageListeners(entranceId); }
+                    catch { Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot); }
                 }, Scope.Slot
             );
         }
@@ -259,7 +273,7 @@ public partial class MapLoader : Control
 
     public void EntranceFound(string entranceId)
     {
-        Client?.RemoveDataStorageListeners(entranceId, Scope.Slot);
+        Client?.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
         FoundEntrances.Add(entranceId);
         if (!EntranceNodes.TryGetValue(entranceId, out var entranceNode)) return;
         foreach (var node in entranceNode) node.UpdateEntrance = true;
@@ -817,12 +831,13 @@ public partial class MapLoader : Control
 
     protected override void Dispose(bool disposing)
     {
+        if (IsInEditMode && IsEditorOpen) IsEditorOpen = false;
         Client?.HintsTrackedEvent -= UpdateNodes;
         if (HasAutoTrackingData && AutoTrackingData.MapKey is not "")
-            Client?.RemoveDataStorageListeners(AutoTrackingData.MapKey, Scope.Slot);
+            Client?.RemoveDataStorageListeners(AutoTrackingData.MapKey, FunctionIdString, Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;
 
         if (!IsEntranceRando || !AutoTrackEntrances || IsInEditMode || Client is null) return;
-        foreach (var (id, _) in EntranceMap) Client!.RemoveDataStorageListeners(id, Scope.Slot);
+        foreach (var (id, _) in EntranceMap) Client!.RemoveDataStorageListeners(id, FunctionIdString, Scope.Slot);
     }
 }

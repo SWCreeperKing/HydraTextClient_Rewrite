@@ -69,7 +69,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=784012794]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Pack Map"
+text = "Pack Maps.json"
 
 [node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=747087869]
 layout_mode = 2

@@ -219,9 +219,9 @@ public partial class TrackerPage : Control
         ItemEffect.OnUpdate -= CallReload;
         LocationEffect.OnUpdate -= CallReload;
         ExternalAppController.EndProcess(ProcessId);
-        Client.CheckedLocationsUpdated -= OnLocationsChecked;
-        Client.HintsTrackedEvent -= OnHintsUpdated;
-        Client.ItemHandler.OnNewItemsReceived -= OnItemsReceived;
+        Client?.CheckedLocationsUpdated -= OnLocationsChecked;
+        Client?.HintsTrackedEvent -= OnHintsUpdated;
+        Client?.ItemHandler.OnNewItemsReceived -= OnItemsReceived;
         SaveType<bool>.OnSaveEvent -= OnBoolSaveDataUpdated;
         SaveType<FilterType>.OnSaveEvent -= OnFilterDataUpdated;
     }

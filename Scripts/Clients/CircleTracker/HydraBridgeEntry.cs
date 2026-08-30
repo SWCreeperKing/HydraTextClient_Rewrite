@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CreepyUtil.Archipelago.ApClient;
 using HydraTextClient.Scripts.Controllers;
@@ -99,5 +100,18 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
             WriteError(console, $"Error with [{text}]", e);
             Task.Delay(120).Wait();
         }
+    }
+
+    private struct CircleData
+    {
+        [JsonPropertyName("circle")] public int Circle;
+        [JsonPropertyName("location_list")] public LocationData[] AllAvailableLocations;
+        
+    }
+    
+    private struct LocationData
+    {
+        [JsonPropertyName("id")] private ulong Id;
+        [JsonPropertyName("is_excluded")] private bool IsExcluded;
     }
 }

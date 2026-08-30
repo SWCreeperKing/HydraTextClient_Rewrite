@@ -89,32 +89,39 @@ public partial class PoptrackerImporter : WindowSetter
         {
             if (!layoutPath.ToLower().EndsWith(".json")) continue;
 
-            var parentLayout = JsonConvert.DeserializeObject<PoptrackerLayout>(File.ReadAllText(layoutPath));
-            Queue<PoptrackerLayout> searchQueue = [];
-            if (parentLayout.DefaultLayout is not null) searchQueue.Enqueue(parentLayout.DefaultLayout);
-            if (parentLayout.HorizontalLayout is not null) searchQueue.Enqueue(parentLayout.HorizontalLayout);
-            searchQueue.Enqueue(parentLayout);
-
-            while (searchQueue.Count != 0)
+            try
             {
-                var layout = searchQueue.Dequeue();
+                var parentLayout = JsonConvert.DeserializeObject<PoptrackerLayout>(File.ReadAllText(layoutPath));
+                Queue<PoptrackerLayout> searchQueue = [];
+                if (parentLayout.DefaultLayout is not null) searchQueue.Enqueue(parentLayout.DefaultLayout);
+                if (parentLayout.HorizontalLayout is not null) searchQueue.Enqueue(parentLayout.HorizontalLayout);
+                searchQueue.Enqueue(parentLayout);
 
-                if (IsLayoutAMapTab(layout))
+                while (searchQueue.Count != 0)
                 {
-                    var map = GenerateLayout(layout, out var data);
-                    var id = map.GetHashCode();
-                    LayoutCandidates[id] = map;
-                    LayoutCandidateMaps[id] = data;
-                    LayoutNames[id] = Path.GetFileNameWithoutExtension(layoutPath);
-                    LayoutOptions.AddItem(LayoutNames[id], optionItem);
-                    OptionItemMap[optionItem] = id;
-                    optionItem++;
+                    var layout = searchQueue.Dequeue();
 
-                    searchQueue.Clear();
-                    break;
+                    if (IsLayoutAMapTab(layout))
+                    {
+                        var map = GenerateLayout(layout, out var data);
+                        var id = map.GetHashCode();
+                        LayoutCandidates[id] = map;
+                        LayoutCandidateMaps[id] = data;
+                        LayoutNames[id] = Path.GetFileNameWithoutExtension(layoutPath);
+                        LayoutOptions.AddItem(LayoutNames[id], optionItem);
+                        OptionItemMap[optionItem] = id;
+                        optionItem++;
+
+                        searchQueue.Clear();
+                        break;
+                    }
+
+                    foreach (var child in layout.Content) searchQueue.Enqueue(child);
                 }
-
-                foreach (var child in layout.Content) searchQueue.Enqueue(child);
+            }
+            catch (Exception e)
+            {
+                GD.Print($"Json parse fail for: [{layoutPath}], layout not in correct format.", e.Message);
             }
         }
 
