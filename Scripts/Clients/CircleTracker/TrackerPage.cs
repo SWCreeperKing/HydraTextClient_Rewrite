@@ -58,11 +58,11 @@ public partial class TrackerPage : Control
 
     public void Setup(string name, ApClient client, HydraBridgeEntry entry)
     {
-        FunctionIdString = $"Circle_Tracker_{Client?.PlayerName}";
         Client = client;
         Name = name;
         PopoutWindow.Title = name;
         Entry = entry;
+        FunctionIdString = $"Circle_Tracker_{Client?.PlayerName}";
 
         ProcessId = ExternalAppController.StartProcess(name, entry);
 
@@ -261,7 +261,7 @@ public partial class TrackerPage : Control
     public void QueueCircle(int circle, params ItemInfo[] items)
     {
         if (!RawCircleItems.ContainsKey(circle))
-            RawCircleItems[circle] = [.. items.Skip(TrackedCount).Select(i => i.ItemId)];
+            RawCircleItems[circle] = [.. items.Select(i => i.ItemId)];
 
         CircleItems[circle] = $"{string.Join(", ", items.Skip(TrackedCount).Select(item => item.GetEffectText()))}";
         Entry.ItemsQueued.Enqueue((circle, [.. items.Select(item => item.ItemId)]));
@@ -283,7 +283,7 @@ public partial class TrackerPage : Control
     protected override void Dispose(bool disposing)
     {
         foreach (var entranceId in ListeningEntrances)
-            Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+            Client?.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
 
         EntranceEffect.OnUpdate -= CallReload;
         ItemEffect.OnUpdate -= CallReload;

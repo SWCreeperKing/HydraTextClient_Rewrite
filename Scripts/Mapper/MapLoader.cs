@@ -96,11 +96,11 @@ public partial class MapLoader : Control
             case true: IsEditorOpen = true; break;
         }
 
-        FunctionIdString = $"Map_Tracker_{(IsInEditMode ? "Editor" : Client?.PlayerName)}";
 
         ListContainer.Visible = false;
         MapPath = path;
         Client?.HintsTrackedEvent += UpdateNodes;
+        FunctionIdString = $"Map_Tracker_{(IsInEditMode ? "Editor" : Client?.PlayerName)}";
 
         TrackerName = trackerName;
         Parent = parent;
