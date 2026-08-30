@@ -56,9 +56,9 @@ vertical_alignment = 1
 
 [node name="Godot" type="Button" parent="ScrollContainer/VBoxContainer" unique_id=471164744]
 layout_mode = 2
-text = "Godot 4.8 (dev 2)"
+text = "Godot 4.8 (dev 4)"
 script = ExtResource("2_22rij")
-Link = "https://godotengine.org/article/dev-snapshot-godot-4-8-dev-2/"
+Link = "https://godotengine.org/article/dev-snapshot-godot-4-8-dev-4/"
 
 [node name="MultiCLient" type="Button" parent="ScrollContainer/VBoxContainer" unique_id=1727853997]
 layout_mode = 2

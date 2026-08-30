@@ -34,19 +34,22 @@ text = "Import Pack"
 layout_mode = 2
 text = "Pack Editor"
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=993470166]
-custom_minimum_size = Vector2(0.03, 0.035)
-layout_mode = 2
-text = "Only shows slots that are loaded in in the Circle Tracker"
-autowrap_mode = 3
-
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1208423874]
+[node name="HSeparator3" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1252904152]
 layout_mode = 2
 
 [node name="LinkButton" type="LinkButton" parent="MarginContainer/VBoxContainer" unique_id=236701665]
 layout_mode = 2
 text = "Map Pack Discussions"
 uri = "https://github.com/SWCreeperKing/HydraTextClient_Rewrite/discussions/categories/map-packs"
+
+[node name="HSeparator4" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1171883762]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=993470166]
+custom_minimum_size = Vector2(0.03, 0.035)
+layout_mode = 2
+text = "Only shows slots that are loaded in in the Circle Tracker"
+autowrap_mode = 3
 
 [node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=134173061]
 layout_mode = 2

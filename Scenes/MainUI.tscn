@@ -51,7 +51,7 @@ size_flags_vertical = 3
 theme = ExtResource("1_yd0xa")
 theme_override_styles/panel = SubResource("StyleBoxFlat_yd0xa")
 script = ExtResource("1_8dqd8")
-VersionNumber = "v0.7.0-beta.1"
+VersionNumber = "v0.7.0-beta.2"
 ErrorWindow = ExtResource("8_uwgue")
 ItemFilterWindow = ExtResource("4_p6tld")
 ItemFilterDisplay = ExtResource("5_dc4qw")
@@ -91,9 +91,10 @@ expand_mode = 1
 [node name="Main Container" type="TabContainer" parent="." unique_id=534411987]
 layout_mode = 2
 theme = ExtResource("1_yd0xa")
-current_tab = 0
+current_tab = 3
 
 [node name="Connection" type="TabContainer" parent="Main Container" unique_id=2072097402]
+visible = false
 layout_mode = 2
 current_tab = 1
 metadata/_tab_index = 0
@@ -138,7 +139,6 @@ visible = false
 layout_mode = 2
 
 [node name="Utilities" parent="Main Container" unique_id=1245487862 node_paths=PackedStringArray("InventoryContainer") instance=ExtResource("14_i5ty2")]
-visible = false
 layout_mode = 2
 current_tab = 1
 InventoryContainer = NodePath("Inventories")

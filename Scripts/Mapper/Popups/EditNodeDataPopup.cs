@@ -20,50 +20,56 @@ public partial class EditNodeDataPopup : WindowSetter
 
     public void Setup(MapLoader loader, MapLocation selectedNode, bool isNew)
     {
-        Loader = loader;
-        Node = selectedNode;
-        Groups = [.. Loader.LocationGroupingMap.Keys.Order()];
-
-        if (isNew)
+        try
         {
-            Saver.BuildSavable(Width, "MapTracker/New/MapNode/W", 32d);
-            Saver.BuildSavable(Height, "MapTracker/New/MapNode/H", 32d);
-            Node.SetNodeSize(new Vector2((float)Width.Value, (float)Height.Value));
+            Loader = loader;
+            Node = selectedNode;
+            Groups = [.. Loader.LocationGroupingMap.Keys.Order()];
+
+            if (isNew)
+            {
+                Saver.BuildSavable(Width, "MapTracker/New/MapNode/W", 32d);
+                Saver.BuildSavable(Height, "MapTracker/New/MapNode/H", 32d);
+                Node.SetNodeSize(new Vector2((float)Width.Value, (float)Height.Value));
+            }
+
+            LocationGroup.ItemSelected += l => SetGroup(Groups[l]);
+            LocationGroup.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
+            foreach (var groupName in Groups)
+            {
+                var group = Loader.LocationGroupingMap[groupName];
+                if (!Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img)) continue;
+                LocationGroup.AddIconItem(img, groupName);
+            }
+            LocationGroup.Selected = Groups.IndexOf(Node.Group);
+
+            Xposition.ValueChanged += d =>
+            {
+                Node.Pos = Node.Pos with { X = (int)d };
+                Reload();
+            };
+
+            Yposition.ValueChanged += d =>
+            {
+                Node.Pos = Node.Pos with { Y = (int)d };
+                Reload();
+            };
+
+            Width.ValueChanged += d =>
+            {
+                Node.SetNodeSize(Node.Size with { X = (int)d });
+                Reload();
+            };
+
+            Height.ValueChanged += d =>
+            {
+                Node.SetNodeSize(Node.Size with { Y = (int)d });
+                Reload();
+            };
+
         }
-        
-        LocationGroup.ItemSelected += l => SetGroup(Groups[l]);
-        LocationGroup.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
-        foreach (var groupName in Groups)
-        {
-            var group = Loader.LocationGroupingMap[groupName];
-            LocationGroup.AddIconItem(Loader.ItemImageLoader[group.MappedIcon], groupName);
-        }
-        LocationGroup.Selected = Groups.IndexOf(Node.Group);
+        catch (Exception e) { GD.PrintErr(e); }
 
-        Xposition.ValueChanged += d =>
-        {
-            Node.Pos = Node.Pos with { X = (int)d };
-            Reload();
-        };
-
-        Yposition.ValueChanged += d =>
-        {
-            Node.Pos = Node.Pos with { Y = (int)d };
-            Reload();
-        };
-
-        Width.ValueChanged += d =>
-        {
-            Node.SetNodeSize(Node.Size with { X = (int)d });
-            Reload();
-        };
-
-        Height.ValueChanged += d =>
-        {
-            Node.SetNodeSize(Node.Size with { Y = (int)d });
-            Reload();
-        };
-        
         Reload();
     }
 
@@ -75,14 +81,14 @@ public partial class EditNodeDataPopup : WindowSetter
         Node.Map.DeleteNode(Node);
         Close();
     }
-    
+
     public void SetGroup(string groupName)
     {
         Node.RawNodeData.LocationGroup = groupName;
         Node.SetImage(Loader.LocationGroupingMap[groupName].MappedIcon);
         Loader.UpdateUI = true;
     }
-    
+
     public void Reload()
     {
         Xposition.Value = Node.Pos.X;
