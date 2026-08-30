@@ -34,6 +34,7 @@ public partial class TrackerPage : Control
     public ConcurrentDictionary<int, string> CircleItems = [];
     public ConcurrentDictionary<int, string[]> Entrances = [];
     public ConcurrentDictionary<string, int> EntranceEarliestCircle = [];
+    public string[] InLogicEntrances = [];
     public ulong[] LocationsInLogic = [];
     public string[] LocationNamesInLogic = [];
     public event Action? OnLogicUpdated;
@@ -101,6 +102,7 @@ public partial class TrackerPage : Control
 
         if (recompile)
         {
+            InLogicEntrances = [.. Entrances.SelectMany(kv => kv.Value).DistinctBy(s => s)];
             CompiledMessage = RenderCirclePage().CompileRichText(GetCompileEffects(), true);
             NextProgressionLabel.QueueUiRefresh(true);
             CircleTracker.Singleton.SendTrackerNotify();

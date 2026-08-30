@@ -163,6 +163,7 @@ public partial class MapLoader : Control
 
         ItemImageLoader = new MapItemImageLoader(path);
         Page?.OnLogicUpdated += UpdateNodes;
+        Page?.OnLogicUpdated += UpdateEntrances;
         foreach (var group in LocationGroups) LocationGroupingMap[group.GroupName] = group;
 
         Queue<TabStructure> structures = [];
@@ -634,6 +635,11 @@ public partial class MapLoader : Control
         foreach (var map in MapNavigators) map.UpdateNodes();
     }
 
+    public void UpdateEntrances()
+    {
+        foreach (var map in MapNavigators) map.UpdateEntranceColors();
+    }
+
     public void CopyLocations()
     {
         if (SelectedMapLocation is null) return;
@@ -838,6 +844,7 @@ public partial class MapLoader : Control
         if (HasAutoTrackingData && AutoTrackingData.MapKey is not "")
             Client?.RemoveDataStorageListeners(AutoTrackingData.MapKey, FunctionIdString, Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;
+        Page?.OnLogicUpdated -= UpdateEntrances;
 
         if (!IsEntranceRando || !AutoTrackEntrances || IsInEditMode || Client is null) return;
         foreach (var (id, _) in EntranceMap) Client!.RemoveDataStorageListeners(id, FunctionIdString, Scope.Slot);

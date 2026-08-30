@@ -35,6 +35,7 @@ public partial class EntranceLocation : PanelContainer
     public bool UpdateEntrance = true;
     public MapLoader Loader => Map.Loader;
     public ApClient Client => Loader.Client;
+    public bool QueueUpdate;
 
     [Signal] public delegate void OnRightClickEventHandler();
 
@@ -44,7 +45,15 @@ public partial class EntranceLocation : PanelContainer
 
     public override void _Process(double delta)
     {
-        if (Loader.IsInEditMode || !UpdateEntrance) return;
+        if (Loader.IsInEditMode) return;
+
+        if (QueueUpdate)
+        {
+            QueueUpdate = false;
+            UpdateEntranceColor();
+        }
+        
+        if(!UpdateEntrance) return;
         UpdateEntrance = false;
         SetText("?");
         if (Loader.FoundEntrances.Contains(EntranceId)
@@ -93,8 +102,16 @@ public partial class EntranceLocation : PanelContainer
     {
         Label.Text = text ?? "?";
         if (Label.Text.Trim() is "") Label.Text = "?";
+        UpdateEntranceColor();
     }
 
+    public void UpdateEntranceColor()
+    {
+        if (!Loader.EntranceMap.TryGetValue(RawNodeData.Entrance, out var entranceName) || Loader.IsInEditMode) return;
+        Label.Modulate = Label.Text is "?" && Loader.Page!.InLogicEntrances.Contains(entranceName)
+            ? ColorIdConstants.ColorConstant.InLogic.Color() : Colors.White;
+    }
+    
     public void EmitOnRightClick() => EmitSignalOnRightClick();
     public void EmitOnLeftClick() => EmitSignalOnLeftClick();
     public void EmitOnMiddleClick() => EmitSignalOnMiddleClick();

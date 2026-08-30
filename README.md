@@ -91,6 +91,7 @@
     - Requires you to use the circle tracker for a slot 
     - Ability to render checks on a map
     - Has auto tabbing support
+    - Has support for `Deferred Entrances` 
     - For more, advanced info visit the [Map Tracker/Maker](#map-trackermaker) Section
     - Entrance Tracker (manual controls, more info at [Map Tracker/Maker](#map-trackermaker))
       - Automatically tracked entrances will have priority over manually tracked ones and can not be modified 
@@ -199,7 +200,8 @@
     - The slot data storage key of the entrance id needs to be false, then set to true when the entrance is found
   - For Map Makers:
     - The Entrance IDs might need to be mapped to a correct entrance name
-    - When opening the map outside the editor with ER on, any id's in the slot data not found in the map data will be written 
+    - When opening the map outside the editor with ER on, any id's in the slot data not found in the map data will be written
+    - If the deferred entrances is supported, the name of the entrance needs to match for the deferred entrance support to work properly
 - For those who don't want to use the UI
   - The folder of the pack should be named the game's name as it appears in ap
   - You can use other maps as a template on how to write the 3 json files 

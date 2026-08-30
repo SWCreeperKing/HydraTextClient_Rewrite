@@ -25,6 +25,11 @@ public partial class MapNavigator : ScrollContainer
         foreach (var node in Locations) node.QueueUpdate = true;
     }
 
+    public void UpdateEntranceColors()
+    {
+        foreach (var node in Entrances) node.QueueUpdate = true;
+    }
+
     public void SetupMap(MapLoader loader, Maps map, string packPath)
     {
         Loader = loader;
