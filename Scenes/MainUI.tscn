@@ -75,7 +75,8 @@ Prefix = "MainMenuUI"
 Controls = {
 "ClientsTabContainer": NodePath("../Main Container/Clients"),
 "ConnectionsTabContainer": NodePath("../Main Container/Connection"),
-"SettingsTabContainer": NodePath("../Main Container/Settings")
+"SettingsTabContainer": NodePath("../Main Container/Settings"),
+"UtilitiesTabContainer": NodePath("../Main Container/Utilities")
 }
 
 [node name="ConnectionController" type="Control" parent="." unique_id=777625357]
@@ -140,16 +141,16 @@ layout_mode = 2
 
 [node name="Utilities" parent="Main Container" unique_id=1245487862 node_paths=PackedStringArray("InventoryContainer") instance=ExtResource("14_i5ty2")]
 layout_mode = 2
-current_tab = 1
+current_tab = 0
 InventoryContainer = NodePath("Inventories")
 metadata/_tab_index = 3
 
 [node name="Circle Tracker" parent="Main Container/Utilities" unique_id=1192745647 instance=ExtResource("13_ncyvy")]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="Map Tracker" parent="Main Container/Utilities" unique_id=1830903005 instance=ExtResource("19_ow5w7")]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 

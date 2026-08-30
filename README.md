@@ -76,7 +76,9 @@
       - Special Items are treated higher than progression items and can have their own colors
   - Circle Tracker
     - Uses [Universal Tracker](https://discord.com/channels/731205301247803413/1367270230635839539) to display locations in order based on the order of items received for any connected slot
-    - Has Next Progression support (calculates after all the circles are done)
+    - Has `Next Progression` support (calculates after all the circles are done)
+    - Has Limited support for `Deferred Entrances`
+      - `Deferred Entrances` will only work if the recorded data storage key values are bool  
     - Disclaimer: this is NOT a sphere tracker
     - Displays any hinted items next to the location
     - Moves priority hinted locations to the top of a circle

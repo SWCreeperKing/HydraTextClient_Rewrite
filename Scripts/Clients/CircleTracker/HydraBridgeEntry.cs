@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CreepyUtil.Archipelago.ApClient;
+using Godot;
 using HydraTextClient.Scripts.Controllers;
 using Newtonsoft.Json;
 
@@ -13,8 +15,11 @@ namespace HydraTextClient.Scripts.Clients.CircleTracker;
 public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, bool useDebug)
     : CoreAppEntry($"{apDir}/ArchipelagoLauncher{(useDebug ? "Debug" : "")}", "HydraUTBridge")
 {
+    public readonly ConcurrentDictionary<string, string> EntranceKeyMap = [];
     public readonly ConcurrentQueue<(int, long[])> ItemsQueued = [];
+    public readonly ConcurrentQueue<string> EntrancesQueued = [];
     public bool CheckNextProg;
+
 
     public override void Interactor(string text, StreamWriter input, string console)
     {
@@ -35,6 +40,12 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
                     input.WriteLine(string.Join(',', client.Locations.Select(kv => kv.Value))); break;
 
                 default:
+                    if (text.StartsWith("sending_data_store_keys "))
+                    {
+                        page.ListenForEntrances(JsonConvert.DeserializeObject<string[]>(text[24..]));
+                        return;
+                    }
+
                     if (text.StartsWith("exit")) return;
                     if (text.StartsWith("ERROR: "))
                     {
@@ -45,31 +56,40 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
 
                     if (text.StartsWith("Circle "))
                     {
-                        var split = text.Split('|');
-                        var circle = int.Parse(split[0].Replace("Circle ", ""));
-                        var remaining = split[1][1..^1];
-                        if (remaining.Trim().Length is 0) return;
-                        var ids = remaining.Split(',').Select(id => ulong.Parse(id.Trim())).ToArray();
-                        page.Circles.TryAdd(circle, ids);
+                        var circleData = JsonConvert.DeserializeObject<CircleData>(text[7..]);
+                        page.Circles[circleData.Circle] = [.. circleData.AllAvailableLocations.Select(loc => loc.Id)];
+
+                        if (page.Entrances.TryGetValue(circleData.Circle, out var entrances) && entrances.Length > 0)
+                        {
+                            foreach (var entrance in entrances)
+                            {
+                                if (!page.EntranceEarliestCircle.TryGetValue(entrance, out var value)
+                                    || value <= circleData.Circle) continue;
+                                page.EntranceEarliestCircle.Remove(entrance, out _);
+                            }
+                        }
+
+                        page.Entrances[circleData.Circle] = circleData.EntranceNames;
+
+                        foreach (var entrance in circleData.EntranceNames)
+                        {
+                            if (page.EntranceEarliestCircle.ContainsKey(entrance)
+                                && page.EntranceEarliestCircle[entrance] <= circleData.Circle) continue;
+                            page.EntranceEarliestCircle[entrance] = circleData.Circle;
+                        }
                         page.QueueUpdate();
                     }
 
                     if (text.StartsWith("counts "))
                     {
-                        var counts = text.Replace("counts ", "").Trim().Split(
-                            " ", StringSplitOptions.RemoveEmptyEntries
+                        page.NextProgression = new ConcurrentDictionary<long, int>(
+                            JsonConvert.DeserializeObject<Dictionary<long, int>>(text[7..])
                         );
-                        page.NextProgression.Clear();
-                        foreach (var entry in counts)
-                        {
-                            var split = entry.Split('=');
-                            page.NextProgression[long.Parse(split[0])] = int.Parse(split[1]);
-                        }
-                        WriteLine(console, $"Got counts: [{counts.Length}]");
+                        WriteLine(console, $"Got next progression counts: [{page.NextProgression.Count}]");
                         page.QueueUpdate();
                     }
 
-                    if (text.StartsWith("Circle ") || text is "start" || text.StartsWith("counts "))
+                    if (text.StartsWith("Circle ") || text is "start" || text.StartsWith("counts ")) // respond
                     {
                         if (ItemsQueued.IsEmpty && CheckNextProg)
                         {
@@ -81,13 +101,38 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
                             return;
                         }
 
-                        while (ItemsQueued.IsEmpty) Task.Delay(20).Wait();
-                        ItemsQueued.TryDequeue(out var next);
-                        CheckNextProg = true;
-                        WriteLine(
-                            console, $"Requesting Data for circle [{next.Item1}] with [{next.Item2.Length}] total items"
-                        );
-                        input.WriteLine($"{next.Item1}|{string.Join(',', next.Item2)}");
+                        while (ItemsQueued.IsEmpty && EntrancesQueued.IsEmpty) Task.Delay(50).Wait();
+
+                        if (!EntrancesQueued.IsEmpty)
+                        {
+                            List<string> entranceList = [];
+                            while (!EntrancesQueued.IsEmpty)
+                            {
+                                EntrancesQueued.TryDequeue(out var entrance);
+                                entranceList.Add(entrance);
+                            }
+
+                            var earliestCircle = page.EntranceEarliestCircle.Values.Min();
+                            ItemsQueued.Clear(); // only re-calc circles if entrance was in logic
+                            for (var i = earliestCircle; i <= page.RawCircleItems.Keys.Max(); i++)
+                            {
+                                if (!page.RawCircleItems.TryGetValue(i, out var item)) continue;
+                                ItemsQueued.Enqueue((i, item));
+                            }
+
+                            input.WriteLine($"entrance {JsonConvert.SerializeObject(entranceList)}");
+                        }
+
+                        if (!ItemsQueued.IsEmpty)
+                        {
+                            ItemsQueued.TryDequeue(out var next);
+                            CheckNextProg = true;
+                            WriteLine(
+                                console,
+                                $"Requesting Data for circle [{next.Item1}] with [{next.Item2.Length}] total items"
+                            );
+                            input.WriteLine($"{next.Item1}|{string.Join(',', next.Item2)}");
+                        }
                         return;
                     }
 
@@ -104,14 +149,15 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
 
     private struct CircleData
     {
-        [JsonPropertyName("circle")] public int Circle;
-        [JsonPropertyName("location_list")] public LocationData[] AllAvailableLocations;
-        
+        [JsonProperty("circle")] public int Circle;
+        [JsonProperty("location_list")] public LocationData[] AllAvailableLocations;
+        [JsonProperty("glitched_list")] public ulong[] GlitchedLocations;
+        [JsonProperty("entrances")] public string[] EntranceNames;
     }
-    
+
     private struct LocationData
     {
-        [JsonPropertyName("id")] private ulong Id;
-        [JsonPropertyName("is_excluded")] private bool IsExcluded;
+        [JsonProperty("id")] public ulong Id;
+        [JsonProperty("is_excluded")] public bool IsExcluded;
     }
 }

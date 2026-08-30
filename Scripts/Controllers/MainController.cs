@@ -99,10 +99,16 @@ public partial class MainController : Control
     public override void _Notification(int what)
     {
         if (what != NotificationWMCloseRequest) return;
-        ExternalAppController.CloseAll();
-        SaveType<Vector2I>.Save($"{WindowSaveId}_pos", GetWindow().Position, true);
-        Save();
-        OnExit?.Invoke();
+        try { ExternalAppController.CloseAll(); }
+        catch (Exception e) { GD.PrintErr(e); }
+        try
+        {
+            SaveType<Vector2I>.Save($"{WindowSaveId}_pos", GetWindow().Position, true);
+            Save();
+        }
+        catch (Exception e) { GD.PrintErr(e); }
+        try { OnExit?.Invoke(); }
+        catch (Exception e) { GD.PrintErr(e); }
     }
 
     public bool RunAutoUpdater()

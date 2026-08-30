@@ -15,7 +15,7 @@ namespace HydraTextClient.Scripts.Clients.CircleTracker;
 
 public partial class CircleTracker : Control
 {
-    private const string HydraUTBridgeFileHash = "A0C83298DBC2D2D6B84BA7032C15A7FE0F7CC2E95872C7CF210E39B881AE3670";
+    private const string HydraUTBridgeFileHash = "93FEFB7801E36ECDB2601851E5E44F204F917EAAC2540F4EDF04DA3609B48633";
     public static CircleTracker Singleton;
     public static event Action? OnTrackerUpdate;
     [Export] private PackedScene TrackerScene;
@@ -50,11 +50,9 @@ public partial class CircleTracker : Control
     {
         Clients.Remove(name, out _);
         if (Buttons.Remove(name, out var button)) ButtonContainer.CallDeferred("remove_child", button);
-        if (Pages.Remove(name, out var page))
-        {
-            page.Stop();
-            PageContainer.CallDeferred("remove_child", page);
-        }
+        if (!Pages.Remove(name, out var page)) return;
+        page.Stop();
+        PageContainer.CallDeferred("remove_child", page);
     }
 
     public bool OpenTracker(string name)

@@ -42,6 +42,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene EditEntranceNodePopup;
     [Export] private PackedScene EntranceManagerPopup;
     [Export] private PackedScene AutoTrackingPopup;
+    
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -66,6 +67,7 @@ public partial class MapLoader : Control
     public bool IsEntranceRando;
     public bool UseEntranceRandoMaps;
     public List<string> AllLocations = [];
+    
     private string TrackerName;
     private string MapPath;
     private EmptyRichLabelInteractor LocationPopupList;

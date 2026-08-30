@@ -27,15 +27,18 @@ public partial class TrackerPage : Control
     [Export] private PopoutWindow PopoutWindow;
     [Export] private EmptyRichLabelInteractor Label;
     [Export] private ProgressionItemTable NextProgressionLabel;
-    
+
+    public ConcurrentDictionary<int, long[]> RawCircleItems = [];
     public ConcurrentDictionary<long, int> NextProgression = [];
     public ConcurrentDictionary<int, ulong[]> Circles = [];
     public ConcurrentDictionary<int, string> CircleItems = [];
+    public ConcurrentDictionary<int, string[]> Entrances = [];
+    public ConcurrentDictionary<string, int> EntranceEarliestCircle = [];
     public ulong[] LocationsInLogic = [];
     public string[] LocationNamesInLogic = [];
     public event Action? OnLogicUpdated;
     public ApClient Client;
-    
+
     private int ProcessId;
     private Dictionary<string, Action<RichTextLabel, string[]>>? CompileEffects;
     private IPrintableObj[] CompiledMessage;
@@ -47,11 +50,14 @@ public partial class TrackerPage : Control
     private Action<string, bool> OnBoolSaveDataUpdated;
     private Action<string, FilterType> OnFilterDataUpdated;
     private HydraBridgeEntry Entry;
+    private string FunctionIdString;
+    private string[] ListeningEntrances = [];
 
     [Signal] public delegate void OnStopCalledEventHandler();
 
     public void Setup(string name, ApClient client, HydraBridgeEntry entry)
     {
+        FunctionIdString = $"Circle_Tracker_{Client?.PlayerName}";
         Client = client;
         Name = name;
         PopoutWindow.Title = name;
@@ -81,7 +87,7 @@ public partial class TrackerPage : Control
         ItemEffect.OnUpdate += CallReload;
         LocationEffect.OnUpdate += CallReload;
         OnStopCalled += QueueFree;
-        
+
         NextProgressionLabel.SetPage(this);
     }
 
@@ -104,11 +110,42 @@ public partial class TrackerPage : Control
         Label.ApplyCompiledPrintableObjs(CompiledMessage);
     }
 
+    public void ListenForEntrances(string[] entrances)
+    {
+        foreach (var rawEntranceId in entrances)
+        {
+            var entranceId = rawEntranceId.Split(':')[^1];
+            Entry.EntranceKeyMap[entranceId] = rawEntranceId;
+            Client.GetFromStorageAsync(
+                entranceId, val =>
+                {
+                    if (!val) return;
+                    Entry.EntrancesQueued.Enqueue(entranceId);
+                    Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+                }, def: false
+            );
+
+            Client!.AddDataStorageListener(
+                entranceId, FunctionIdString, (_, newValue, _) =>
+                {
+                    try
+                    {
+                        if (!(bool)newValue) return;
+                        Entry.EntrancesQueued.Enqueue(entranceId);
+                        Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+                    }
+                    catch { Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot); }
+                }, Scope.Slot
+            );
+        }
+    }
+
     public string RenderCirclePage()
     {
         StringBuilder sb = new();
         var font = (int)SaveType<double>.Load(GlobalThemeSettings.GlobalFontSize, 20d);
         List<ulong> recordedLocations = [];
+        List<string> recordedEntrances = [];
         var localHints = Client.Hints.Where(hint => hint.FindingPlayer == Client.PlayerSlot).ToArray();
         var hints = localHints.ToDictionary(hint => hint.LocationId, hint => hint.GetItemEffectText());
         var hintImportance = localHints.ToDictionary(
@@ -118,7 +155,7 @@ public partial class TrackerPage : Control
                                  .ToArray();
         var firstEnd = SaveType<bool>.Load(ShowFutureCircles, false);
         LocationsInLogic = [.. Circles.Values.SelectMany(arr => arr)];
-        LocationNamesInLogic = [.. LocationsInLogic.Select(loc => Client.Locations[(long)loc])]; 
+        LocationNamesInLogic = [.. LocationsInLogic.Select(loc => Client.Locations[(long)loc])];
 
         foreach (var circle in Circles.Keys.Order())
         {
@@ -132,7 +169,12 @@ public partial class TrackerPage : Control
             recordedLocations.AddRange(uniqueLocations);
             uniqueLocations = [.. uniqueLocations.Where(id => Client.MissingRawLocations.Contains((long)id))];
 
-            if (uniqueLocations.Length == 0 && !SaveType<bool>.Load(ShowEmptyCircles, true)) continue;
+            string[] uniqueEntrances = Entrances.TryGetValue(circle, out var entrances)
+                ? [.. entrances.Except(recordedEntrances)] : [];
+            recordedEntrances.AddRange(uniqueEntrances);
+
+            if (uniqueLocations.Length == 0 && !SaveType<bool>.Load(ShowEmptyCircles, true)
+                                            && uniqueEntrances.Length == 0) continue;
 
             sb.Append("[center][font_size=").Append(font * (uniqueLocations.Length == 0 ? 1 : 2))
               .Append("]Circle #").Append($"{circle:###,###}").Append("[/font_size]");
@@ -145,19 +187,31 @@ public partial class TrackerPage : Control
             if (CircleItems[circle].Length != 0)
                 sb.Append("[center]").Append(CircleItems[circle]).Append("[/center]\n");
 
+            foreach (var entrance in uniqueEntrances)
+            {
+                sb.Append("[color=").Append(ColorIdConstants.ColorConstant.EntranceColor.Color().ToHtml()).Append(']')
+                  .Append(entrance).Append("[/color]\n");
+            }
+
             if (uniqueLocations.Length == 0) continue;
             var orderedLocations = uniqueLocations
                                   .OrderByDescending(id => priority.Contains((long)id))
                                   .ThenBy(id => Client.Locations[(long)id]).ToArray();
 
-            sb.Append("[table=2][cell bg=#00000069] Locations [/cell][cell bg=#00000069] Hinted Items [/cell]");
+            var use2ndColumn = hints.Keys.Any(id => orderedLocations.Contains((ulong)id));
+            sb.Append("[table=").Append(use2ndColumn ? 2 : 1).Append("][cell bg=#00000069] Locations [/cell]");
+            if (use2ndColumn) sb.Append("[cell bg=#00000069] Hinted Items [/cell]");
             var important = false;
+
             for (var i = 0; i < orderedLocations.Length; i++)
             {
                 var id = orderedLocations[i];
                 var colColor = i % 2 == 0 ? "[cell bg=#00000044]" : "[cell]";
                 sb.Append(colColor).Append(" {{loc;").Append(id).Append(';').Append(Client.PlayerSlot)
-                  .Append("}} [/cell]").Append(colColor);
+                  .Append("}} [/cell]");
+                if (!use2ndColumn) continue;
+
+                sb.Append(colColor);
                 if (hints.TryGetValue((long)id, out var item))
                 {
                     sb.Append(item);
@@ -196,6 +250,9 @@ public partial class TrackerPage : Control
 
     public void QueueCircle(int circle, params ItemInfo[] items)
     {
+        if (!RawCircleItems.ContainsKey(circle))
+            RawCircleItems[circle] = [.. items.Skip(TrackedCount).Select(i => i.ItemId)];
+
         CircleItems[circle] = $"{string.Join(", ", items.Skip(TrackedCount).Select(item => item.GetEffectText()))}";
         Entry.ItemsQueued.Enqueue((circle, [.. items.Select(item => item.ItemId)]));
         TrackedCount = items.Length;
@@ -215,6 +272,9 @@ public partial class TrackerPage : Control
 
     protected override void Dispose(bool disposing)
     {
+        foreach (var entranceId in ListeningEntrances)
+            Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+
         EntranceEffect.OnUpdate -= CallReload;
         ItemEffect.OnUpdate -= CallReload;
         LocationEffect.OnUpdate -= CallReload;
