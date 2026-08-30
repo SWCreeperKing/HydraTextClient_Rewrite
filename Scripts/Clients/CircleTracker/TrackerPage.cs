@@ -197,34 +197,37 @@ public partial class TrackerPage : Control
                 important = true;
             }
 
-            if (uniqueLocations.Length == 0) continue;
-            var orderedLocations = uniqueLocations
-                                  .OrderByDescending(id => priority.Contains((long)id))
-                                  .ThenBy(id => Client.Locations[(long)id]).ToArray();
-
-            var use2ndColumn = hints.Keys.Any(id => orderedLocations.Contains((ulong)id));
-            sb.Append("[table=").Append(use2ndColumn ? 2 : 1).Append("][cell bg=#00000069] Locations [/cell]");
-            if (use2ndColumn) sb.Append("[cell bg=#00000069] Hinted Items [/cell]");
-
-            for (var i = 0; i < orderedLocations.Length; i++)
+            if (uniqueLocations.Length != 0)
             {
-                var id = orderedLocations[i];
-                var colColor = i % 2 == 0 ? "[cell bg=#00000044]" : "[cell]";
-                sb.Append(colColor).Append(" {{loc;").Append(id).Append(';').Append(Client.PlayerSlot)
-                  .Append("}} [/cell]");
-                if (!use2ndColumn) continue;
+                var orderedLocations = uniqueLocations
+                                      .OrderByDescending(id => priority.Contains((long)id))
+                                      .ThenBy(id => Client.Locations[(long)id]).ToArray();
 
-                sb.Append(colColor);
-                if (hints.TryGetValue((long)id, out var item))
+                var use2ndColumn = hints.Keys.Any(id => orderedLocations.Contains((ulong)id));
+                sb.Append("[table=").Append(use2ndColumn ? 2 : 1).Append("][cell bg=#00000069] Locations [/cell]");
+                if (use2ndColumn) sb.Append("[cell bg=#00000069] Hinted Items [/cell]");
+
+                for (var i = 0; i < orderedLocations.Length; i++)
                 {
-                    sb.Append(item);
-                    important = important || hintImportance[(long)id];
+                    var id = orderedLocations[i];
+                    var colColor = i % 2 == 0 ? "[cell bg=#00000044]" : "[cell]";
+                    sb.Append(colColor).Append(" {{loc;").Append(id).Append(';').Append(Client.PlayerSlot)
+                      .Append("}} [/cell]");
+                    if (!use2ndColumn) continue;
+
+                    sb.Append(colColor);
+                    if (hints.TryGetValue((long)id, out var item))
+                    {
+                        sb.Append(item);
+                        important = important || hintImportance[(long)id];
+                    }
+                    else important = true;
+                    sb.Append(" [/cell]");
                 }
-                else important = true;
-                sb.Append(" [/cell]");
+                sb.Append("[/table]\n");
             }
-            sb.Append("[/table]\n");
-            if (!firstEnd && !important) break;
+            
+            if (!firstEnd && important) break;
         }
 
         if (sb.ToString().Trim() is "") sb.Append("Super BK :(\nEither that or there was an error from UT");
