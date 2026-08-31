@@ -59,7 +59,8 @@ public partial class MapNavigator : ScrollContainer
     {
         if (CoreMap is null) return;
         if (CoreMap!.MapName != name) CoreMap.MapName = name;
-        Name = CoreMap.MapName is "" ? "Default Map" : CoreMap.MapName;
+        if (CoreMap.MapName is "") CoreMap.MapName = "Default Map";
+        Name = CoreMap.MapName;
     }
 
     public void SetImage(string name)
