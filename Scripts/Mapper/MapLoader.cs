@@ -42,7 +42,7 @@ public partial class MapLoader : Control
     [Export] private PackedScene EditEntranceNodePopup;
     [Export] private PackedScene EntranceManagerPopup;
     [Export] private PackedScene AutoTrackingPopup;
-    
+
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
@@ -67,7 +67,7 @@ public partial class MapLoader : Control
     public bool IsEntranceRando;
     public bool UseEntranceRandoMaps;
     public List<string> AllLocations = [];
-    
+
     private string TrackerName;
     private string MapPath;
     private EmptyRichLabelInteractor LocationPopupList;
@@ -308,24 +308,26 @@ public partial class MapLoader : Control
             return;
         }
 
-        var missing = Client is not null ? [.. HoveredMapLocation.OrderedLocations.Where(Client.IsMissingLocation)]
-            : HoveredMapLocation.OrderedLocations;
-
-        switch (missing.Length)
+        try
         {
-            case 0: return;
-            case > 10:
-                SetHoverPopupText("Too many to display");
-                return;
-        }
-        StringBuilder sb = new();
-        foreach (var loc in missing.Where(loc => loc.Trim() is not ""))
-        {
-            if (sb.Length != 0) sb.Append('\n');
-            sb.Append(loc);
-        }
+            var missing = Client is not null ? [.. HoveredMapLocation.OrderedLocations.Where(Client.IsMissingLocation)]
+                : HoveredMapLocation.OrderedLocations;
 
-        SetHoverPopupText(sb.ToString());
+            switch (missing.Length)
+            {
+                case 0: return;
+                case > 10: missing = [.. missing[.. 10], "Too many to display"]; break;
+            }
+            StringBuilder sb = new();
+            foreach (var loc in missing.Where(loc => loc.Trim() is not ""))
+            {
+                if (sb.Length != 0) sb.Append('\n');
+                sb.Append(loc);
+            }
+
+            SetHoverPopupText(sb.ToString());
+        }
+        catch (Exception e) { GD.PrintErr($"Error with map node [{HoveredMapLocation?.Pos}]", e); }
     }
 
     private void SetHoverPopupText(string text)

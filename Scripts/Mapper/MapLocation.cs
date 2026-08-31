@@ -42,6 +42,7 @@ public partial class MapLocation : TextureRect
     public List<string> DisplayedLocations = [];
     public string[] OrderedLocations;
     private Dictionary<string, int> LocationValueDict;
+    private bool NodeDead = false;
 
     [Signal] public delegate void OnSelectedEventHandler();
 
@@ -65,14 +66,15 @@ public partial class MapLocation : TextureRect
     {
         RawNodeData.Locations.AddRange(locs);
         OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
+        NodeDead = false;
     }
-    
+
     public void RemoveLocations(params string[] locs)
     {
         RawNodeData.Locations.RemoveAll(l => locs.Contains(l));
         OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
     }
-    
+
     public void SetImage(string image)
     {
         QueueUpdate = true;
@@ -92,13 +94,15 @@ public partial class MapLocation : TextureRect
     public override void _Process(double delta)
     {
         if (Map is null) return;
-        if (QueueUpdate) LocationUpdate();
+        if (!QueueUpdate) return;
+        QueueUpdate = false;
+        LocationUpdate();
     }
 
     // 0: in logic (hinted) <- 1: in logic <- 2: not logic (hinted) <- 3: not in logic <- 4: nothing, location checked <- 5 doesn't exist
     private void LocationUpdate()
     {
-        QueueUpdate = false;
+        if (NodeDead) return;
         var page = Loader.Page;
         var applicableHints = Client is null ? []
             : Client.Hints
@@ -131,6 +135,8 @@ public partial class MapLocation : TextureRect
             3 => ColorIdConstants.ColorConstant.NotInLogic.Color(),
             4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(),
         };
+
+        NodeDead = min is 4;
     }
 
     public void SetList(ItemList list)
