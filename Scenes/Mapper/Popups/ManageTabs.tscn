@@ -8,9 +8,9 @@ oversampling_override = 1.0
 title = "Manage Tabs"
 size = Vector2i(400, 150)
 script = ExtResource("1_l0sj6")
-Action = NodePath("Panel/VBoxContainer/HBoxContainer/OptionButton")
-NameEdit = NodePath("Panel/VBoxContainer/LineEdit")
-Destination = NodePath("Panel/VBoxContainer/LineEdit2")
+Action = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
+NameEdit = NodePath("Panel/ScrollContainer/VBoxContainer/LineEdit")
+Destination = NodePath("Panel/ScrollContainer/VBoxContainer/LineEdit2")
 
 [node name="Panel" type="Panel" parent="." unique_id=1111119635]
 anchors_preset = 15
@@ -19,7 +19,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=1264299188]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=1831798285]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,15 +27,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=720113675]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer" unique_id=1264299188]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=720113675]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer" unique_id=1210665836]
+[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1210665836]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Action:"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/VBoxContainer/HBoxContainer" unique_id=1121975106]
+[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1121975106]
 layout_mode = 2
 selected = 0
 item_count = 6
@@ -52,31 +57,31 @@ popup/item_4/id = 4
 popup/item_5/text = "Delete Tab"
 popup/item_5/id = 5
 
-[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer" unique_id=768561163]
+[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/VBoxContainer" unique_id=768561163]
 layout_mode = 2
 placeholder_text = "Name"
 
-[node name="LineEdit2" type="LineEdit" parent="Panel/VBoxContainer" unique_id=1189538408]
+[node name="LineEdit2" type="LineEdit" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1189538408]
 layout_mode = 2
 placeholder_text = "Tab Destination"
 
-[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer" unique_id=1649373570]
+[node name="HSeparator" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1649373570]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=866672403]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=866672403]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Panel/VBoxContainer/HBoxContainer2" unique_id=781152489]
+[node name="Button" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=781152489]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Confirm"
 script = ExtResource("2_0aqj5")
 
-[node name="Button2" type="Button" parent="Panel/VBoxContainer/HBoxContainer2" unique_id=194435867]
+[node name="Button2" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=194435867]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
 script = ExtResource("2_0aqj5")
 
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Button" to="." method="Confirm"]
-[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]
+[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer2/Button" to="." method="Confirm"]
+[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]

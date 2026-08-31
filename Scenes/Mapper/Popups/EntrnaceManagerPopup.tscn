@@ -9,13 +9,13 @@ oversampling_override = 1.0
 title = "Manage Entrances"
 size = Vector2i(550, 300)
 script = ExtResource("1_pe3fg")
-EntranceTable = NodePath("Panel/TabContainer/VBoxContainer/ScrollContainer/ItemList")
-AddEntranceName = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer/LineEdit")
-AddEntranceID = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer/LineEdit2")
-EditEntranceName = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit")
-EditEntranceID = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit2")
-EditEntranceNickName = NodePath("Panel/TabContainer/VBoxContainer2/LineEdit3")
-MainContainer = NodePath("Panel/TabContainer")
+EntranceTable = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer/ScrollContainer/ItemList")
+AddEntranceName = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer/LineEdit")
+AddEntranceID = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer/LineEdit2")
+EditEntranceName = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer2/LineEdit")
+EditEntranceID = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer2/LineEdit2")
+EditEntranceNickName = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer2/LineEdit3")
+MainContainer = NodePath("Panel/ScrollContainer/TabContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=1323930821]
 anchors_preset = 15
@@ -24,43 +24,48 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TabContainer" type="TabContainer" parent="Panel" unique_id=1936006757]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=584609346]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="Panel/ScrollContainer" unique_id=1936006757]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 current_tab = 0
 tabs_visible = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/TabContainer" unique_id=2063800532]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer" unique_id=2063800532]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/TabContainer/VBoxContainer" unique_id=1359381772]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=1359381772]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="Panel/TabContainer/VBoxContainer/HBoxContainer" unique_id=564411056]
+[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer" unique_id=564411056]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Entrance Name"
 
-[node name="LineEdit2" type="LineEdit" parent="Panel/TabContainer/VBoxContainer/HBoxContainer" unique_id=2129265354]
+[node name="LineEdit2" type="LineEdit" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer" unique_id=2129265354]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "ID (leave blank if Name=ID)"
 
-[node name="Button" type="Button" parent="Panel/TabContainer/VBoxContainer/HBoxContainer" unique_id=1583767061]
+[node name="Button" type="Button" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer" unique_id=1583767061]
 layout_mode = 2
 text = "Add"
 script = ExtResource("2_sgoni")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer/VBoxContainer" unique_id=1394724783]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=1394724783]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ItemList" type="ItemList" parent="Panel/TabContainer/VBoxContainer/ScrollContainer" unique_id=2058000489]
+[node name="ItemList" type="ItemList" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/ScrollContainer" unique_id=2058000489]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -69,46 +74,46 @@ wraparound_items = false
 max_columns = 2
 same_column_width = true
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/TabContainer" unique_id=1109631592]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer" unique_id=1109631592]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Button" type="Button" parent="Panel/TabContainer/VBoxContainer2" unique_id=1617237965]
+[node name="Button" type="Button" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=1617237965]
 layout_mode = 2
 text = "Save"
 script = ExtResource("2_sgoni")
 
-[node name="HSeparator" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=609470039]
+[node name="HSeparator" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=609470039]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="Panel/TabContainer/VBoxContainer2" unique_id=1105922157]
+[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=1105922157]
 layout_mode = 2
 placeholder_text = "Edit Entrance Name"
 
-[node name="HSeparator4" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=1180359310]
+[node name="HSeparator4" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=1180359310]
 layout_mode = 2
 
-[node name="LineEdit2" type="LineEdit" parent="Panel/TabContainer/VBoxContainer2" unique_id=335710857]
+[node name="LineEdit2" type="LineEdit" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=335710857]
 layout_mode = 2
 placeholder_text = "Edit Entrance ID"
 
-[node name="HSeparator5" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=166571381]
+[node name="HSeparator5" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=166571381]
 layout_mode = 2
 
-[node name="LineEdit3" type="LineEdit" parent="Panel/TabContainer/VBoxContainer2" unique_id=1932616383]
+[node name="LineEdit3" type="LineEdit" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=1932616383]
 layout_mode = 2
 placeholder_text = "Entrance Display Nickname"
 
-[node name="HSeparator2" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=2000892382]
+[node name="HSeparator2" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=2000892382]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSeparator3" type="HSeparator" parent="Panel/TabContainer/VBoxContainer2" unique_id=457670143]
+[node name="HSeparator3" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=457670143]
 layout_mode = 2
 
-[node name="Button2" type="Button" parent="Panel/TabContainer/VBoxContainer2" unique_id=231612820]
+[node name="Button2" type="Button" parent="Panel/ScrollContainer/TabContainer/VBoxContainer2" unique_id=231612820]
 modulate = Color(1, 0.52, 0.52, 1)
 layout_mode = 2
 text = "DELETE"
@@ -121,6 +126,6 @@ Controls = {
 "entrance_manager_popup": NodePath("..")
 }
 
-[connection signal="pressed" from="Panel/TabContainer/VBoxContainer/HBoxContainer/Button" to="." method="AddDataFromPage"]
-[connection signal="pressed" from="Panel/TabContainer/VBoxContainer2/Button" to="." method="SaveAndSwitchBack"]
-[connection signal="pressed" from="Panel/TabContainer/VBoxContainer2/Button2" to="." method="DeleteAndSwitchBack"]
+[connection signal="pressed" from="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer/Button" to="." method="AddDataFromPage"]
+[connection signal="pressed" from="Panel/ScrollContainer/TabContainer/VBoxContainer2/Button" to="." method="SaveAndSwitchBack"]
+[connection signal="pressed" from="Panel/ScrollContainer/TabContainer/VBoxContainer2/Button2" to="." method="DeleteAndSwitchBack"]

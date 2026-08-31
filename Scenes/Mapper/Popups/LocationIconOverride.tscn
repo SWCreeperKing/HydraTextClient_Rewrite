@@ -8,11 +8,11 @@
 oversampling_override = 1.0
 size = Vector2i(300, 200)
 script = ExtResource("1_i3pcj")
-LocationView = NodePath("Panel/TabContainer/ScrollContainer/ItemList")
-ClosedImage = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer2/OptionButton")
-OpenedImage = NodePath("Panel/TabContainer/VBoxContainer/HBoxContainer3/OptionButton")
-LocationName = NodePath("Panel/TabContainer/VBoxContainer/Label2")
-MainContainer = NodePath("Panel/TabContainer")
+LocationView = NodePath("Panel/ScrollContainer/TabContainer/ScrollContainer/ItemList")
+ClosedImage = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer2/OptionButton")
+OpenedImage = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer3/OptionButton")
+LocationName = NodePath("Panel/ScrollContainer/TabContainer/VBoxContainer/Label2")
+MainContainer = NodePath("Panel/ScrollContainer/TabContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=42482944]
 anchors_preset = 15
@@ -21,21 +21,26 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TabContainer" type="TabContainer" parent="Panel" unique_id=1992831730]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=1705083127]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="Panel/ScrollContainer" unique_id=1992831730]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 current_tab = 0
 tabs_visible = false
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer" unique_id=208762560]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/ScrollContainer/TabContainer" unique_id=208762560]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="ItemList" type="ItemList" parent="Panel/TabContainer/ScrollContainer" unique_id=269744829]
+[node name="ItemList" type="ItemList" parent="Panel/ScrollContainer/TabContainer/ScrollContainer" unique_id=269744829]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -45,52 +50,52 @@ max_columns = 3
 same_column_width = true
 fixed_icon_size = Vector2i(16, 16)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/TabContainer" unique_id=632945007]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer" unique_id=632945007]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Label2" type="Label" parent="Panel/TabContainer/VBoxContainer" unique_id=1926559624]
+[node name="Label2" type="Label" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=1926559624]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Location Name"
 
-[node name="HSeparator3" type="HSeparator" parent="Panel/TabContainer/VBoxContainer" unique_id=1523624489]
+[node name="HSeparator3" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=1523624489]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/TabContainer/VBoxContainer" unique_id=1610425813]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=1610425813]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/TabContainer/VBoxContainer/HBoxContainer2" unique_id=792251648]
+[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer2" unique_id=792251648]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Closed Image"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/VBoxContainer/HBoxContainer2" unique_id=1097606283]
+[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer2" unique_id=1097606283]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator2" type="HSeparator" parent="Panel/TabContainer/VBoxContainer" unique_id=433029929]
+[node name="HSeparator2" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=433029929]
 layout_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/TabContainer/VBoxContainer" unique_id=1586274339]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=1586274339]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/TabContainer/VBoxContainer/HBoxContainer3" unique_id=94749790]
+[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer3" unique_id=94749790]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Opened Image"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/VBoxContainer/HBoxContainer3" unique_id=1918746409]
+[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/TabContainer/VBoxContainer/HBoxContainer3" unique_id=1918746409]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator" type="HSeparator" parent="Panel/TabContainer/VBoxContainer" unique_id=382707434]
+[node name="HSeparator" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=382707434]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Button2" type="Button" parent="Panel/TabContainer/VBoxContainer" unique_id=1673940091]
+[node name="Button2" type="Button" parent="Panel/ScrollContainer/TabContainer/VBoxContainer" unique_id=1673940091]
 layout_mode = 2
 text = "Save"
 script = ExtResource("2_2guyp")
@@ -101,4 +106,4 @@ Controls = {
 "location_icon_override": NodePath("..")
 }
 
-[connection signal="pressed" from="Panel/TabContainer/VBoxContainer/Button2" to="." method="SaveAndSwitchBack"]
+[connection signal="pressed" from="Panel/ScrollContainer/TabContainer/VBoxContainer/Button2" to="." method="SaveAndSwitchBack"]
