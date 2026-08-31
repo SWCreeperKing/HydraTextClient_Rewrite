@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://vx4hkccykw0s"]
+
+[ext_resource type="Script" uid="uid://bvk0i3283dwhs" path="res://Scripts/Utility/UIHelpers/EmptyRichLabelInteractor.cs" id="1_bcilp"]
+[ext_resource type="Script" uid="uid://b5ixfra8ew847" path="res://Scripts/Clients/CircleTracker/CircleTrackerLabel.cs" id="1_plgjt"]
+
+[node name="CircleTrackerLabel" type="VBoxContainer" unique_id=1132068914 node_paths=PackedStringArray("Header", "Entrances", "Locations", "Folder")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_plgjt")
+Header = NodePath("RichTextLabel")
+Entrances = NodePath("FoldableContainer/VBoxContainer/RichTextLabel2")
+Locations = NodePath("FoldableContainer/VBoxContainer/RichTextLabel3")
+Folder = NodePath("FoldableContainer")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="." unique_id=1869328899]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+script = ExtResource("1_bcilp")
+
+[node name="FoldableContainer" type="FoldableContainer" parent="." unique_id=664146643]
+layout_mode = 2
+title = "Entrances & Locations"
+title_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FoldableContainer" unique_id=2062455976]
+layout_mode = 2
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="FoldableContainer/VBoxContainer" unique_id=1860310306]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+script = ExtResource("1_bcilp")
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="FoldableContainer/VBoxContainer" unique_id=921500837]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+script = ExtResource("1_bcilp")

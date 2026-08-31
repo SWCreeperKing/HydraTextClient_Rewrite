@@ -21,12 +21,17 @@ namespace HydraTextClient.Scripts.Clients.CircleTracker;
 
 public partial class TrackerPage : Control
 {
-    private const string ShowEmptyCircles = "circle_tracker/show_empty";
-    private const string ShowFutureCircles = "circle_tracker/spoil_future";
+    public const string ShowEmptyCircles = "circle_tracker/show_empty";
+    public const string ShowFutureCircles = "circle_tracker/spoil_future";
+    public const string ShowExcludedLocations = "circle_tracker/exclude_locations";
     private ConcurrentQueue<bool> UpdateQueue = [];
+
     [Export] private PopoutWindow PopoutWindow;
-    [Export] private EmptyRichLabelInteractor Label;
+    [Export] private Label RenderProgressLabel;
+    [Export] private ProgressBar RenderProgressProgress;
     [Export] private ProgressionItemTable NextProgressionLabel;
+    [Export] private Control CircleLabelContainer;
+    [Export] private PackedScene CircleLabel;
 
     public ConcurrentDictionary<int, long[]> RawCircleItems = [];
     public ConcurrentDictionary<long, int> NextProgression = [];
@@ -34,6 +39,7 @@ public partial class TrackerPage : Control
     public ConcurrentDictionary<int, string> CircleItems = [];
     public ConcurrentDictionary<int, string[]> Entrances = [];
     public ConcurrentDictionary<string, int> EntranceEarliestCircle = [];
+    public HashSet<ulong> ExcludedLocations = [];
     public string[] InLogicEntrances = [];
     public ulong[] LocationsInLogic = [];
     public string[] LocationNamesInLogic = [];
@@ -45,6 +51,7 @@ public partial class TrackerPage : Control
     private IPrintableObj[] CompiledMessage;
     private int TrackedCount;
     private int CurrentCircle;
+    private int LastRenderedCircleProgress = -1;
     private Action<ItemInfo[], int> OnItemsReceived;
     private Action<ReadOnlyCollection<long>> OnLocationsChecked;
     private Action<Hint[]> OnHintsUpdated;
@@ -52,7 +59,8 @@ public partial class TrackerPage : Control
     private Action<string, FilterType> OnFilterDataUpdated;
     private HydraBridgeEntry Entry;
     private string FunctionIdString;
-    private string[] ListeningEntrances = [];
+    private HashSet<string> ListeningEntrances = [];
+    private Dictionary<int, CircleTrackerLabel> CircleLabels = [];
 
     [Signal] public delegate void OnStopCalledEventHandler();
 
@@ -78,7 +86,7 @@ public partial class TrackerPage : Control
 
         OnBoolSaveDataUpdated = (id, _) =>
         {
-            if (id is ShowEmptyCircles or ShowFutureCircles) QueueUpdate();
+            if (id is ShowFutureCircles or ShowExcludedLocations) QueueUpdate();
         };
         SaveType<bool>.OnSaveEvent += OnBoolSaveDataUpdated;
 
@@ -94,30 +102,34 @@ public partial class TrackerPage : Control
 
     public override void _Process(double delta)
     {
+        if (Entry.LastRanCircle != LastRenderedCircleProgress)
+        {
+            var cur = LastRenderedCircleProgress = Entry.LastRanCircle;
+            var total = Math.Max(CircleLabels.Count == 0 ? 0 : CircleLabels.Keys.Max(), cur);
+            RenderProgressLabel.Text = $"Circle Calculations [{cur:###,##0}/{total:###,##0}]";
+            RenderProgressProgress.Value = (double)cur / total;
+        }
+
         if (UpdateQueue.IsEmpty) return;
         var recompile = UpdateQueue.Contains(true);
         UpdateQueue.Clear();
-        Label.Clear();
         NextProgressionLabel.Clear();
 
-        if (recompile)
-        {
-            InLogicEntrances = [.. Entrances.SelectMany(kv => kv.Value).DistinctBy(s => s)];
-            CompiledMessage = RenderCirclePage().CompileRichText(GetCompileEffects(), true);
-            NextProgressionLabel.QueueUiRefresh(true);
-            CircleTracker.Singleton.SendTrackerNotify();
-            OnLogicUpdated?.Invoke();
-        }
-
-        Label.ApplyCompiledPrintableObjs(CompiledMessage);
+        if (!recompile) return;
+        InLogicEntrances = [.. Entrances.SelectMany(kv => kv.Value).DistinctBy(s => s)];
+        RenderCirclePage();
+        NextProgressionLabel.QueueUiRefresh(true);
+        CircleTracker.Singleton.SendTrackerNotify();
+        OnLogicUpdated?.Invoke();
     }
 
-    public void ListenForEntrances(string[] entrances)
+    public void ListenForEntrances(string[] rawEntrances)
     {
-        foreach (var rawEntranceId in entrances)
+        foreach (var rawEntranceId in rawEntrances)
         {
             var entranceId = rawEntranceId.Split(':')[^1];
             Entry.EntranceKeyMap[entranceId] = rawEntranceId;
+            ListeningEntrances.Add(entranceId);
             Client.GetFromStorageAsync(
                 entranceId, val =>
                 {
@@ -142,12 +154,16 @@ public partial class TrackerPage : Control
         }
     }
 
-    public string RenderCirclePage()
+    public void RenderCirclePage()
     {
-        StringBuilder sb = new();
-        var font = (int)SaveType<double>.Load(GlobalThemeSettings.GlobalFontSize, 20d);
         List<ulong> recordedLocations = [];
         List<string> recordedEntrances = [];
+
+        if (!SaveType<bool>.Load(ShowExcludedLocations, true))
+        {
+            lock (ExcludedLocations) recordedLocations.AddRange(ExcludedLocations);
+        }
+
         var localHints = Client.Hints.Where(hint => hint.FindingPlayer == Client.PlayerSlot).ToArray();
         var hints = localHints.ToDictionary(hint => hint.LocationId, hint => hint.GetItemEffectText());
         var hintImportance = localHints.ToDictionary(
@@ -155,11 +171,11 @@ public partial class TrackerPage : Control
         );
         var priority = localHints.Where(hint => hint.Status is HintStatus.Priority).Select(hint => hint.LocationId)
                                  .ToArray();
-        var firstEnd = SaveType<bool>.Load(ShowFutureCircles, false);
         LocationsInLogic = [.. Circles.Values.SelectMany(arr => arr)];
         LocationNamesInLogic = [.. LocationsInLogic.Select(loc => Client.Locations[(long)loc])];
+        var wasImportant = false;
 
-        foreach (var circle in Circles.Keys.Order())
+        foreach (var circle in Circles.Keys.Concat(Entrances.Keys).DistinctBy(i => i).Order())
         {
             if (!Circles.TryGetValue(circle, out var locations))
             {
@@ -175,67 +191,17 @@ public partial class TrackerPage : Control
                 ? [.. entrances.Except(recordedEntrances)] : [];
             recordedEntrances.AddRange(uniqueEntrances);
 
-            if (uniqueLocations.Length == 0 && !SaveType<bool>.Load(ShowEmptyCircles, true)
-                                            && uniqueEntrances.Length == 0) continue;
-
-            sb.Append("[center][font_size=").Append(font * (uniqueLocations.Length == 0 ? 1 : 2))
-              .Append("]Circle #").Append($"{circle:###,###}").Append("[/font_size]");
-
-            if (uniqueLocations.Length != 0)
-                sb.Append(" (").Append($"{uniqueLocations.Length:###,###}").Append(") locations");
-
-            sb.Append("[/center]\n");
-
-            if (CircleItems[circle].Length != 0)
-                sb.Append("[center]").Append(CircleItems[circle]).Append("[/center]\n");
-
-            var important = false;
-            foreach (var entrance in uniqueEntrances)
+            if (!CircleLabels.TryGetValue(circle, out var circleLabel))
             {
-                sb.Append("[color=").Append(ColorIdConstants.ColorConstant.EntranceColor.Color().ToHtml()).Append(']')
-                  .Append(entrance).Append("[/color]\n");
-                important = true;
+                CircleLabels[circle] = circleLabel = CircleLabel.Instantiate<CircleTrackerLabel>();
+                CircleLabelContainer.AddChild(circleLabel);
+                circleLabel.SetData(circle, Client, CircleItems[circle]);
             }
 
-            if (uniqueLocations.Length != 0)
-            {
-                var orderedLocations = uniqueLocations
-                                      .OrderByDescending(id => priority.Contains((long)id))
-                                      .ThenBy(id => Client.Locations[(long)id]).ToArray();
-
-                var use2ndColumn = hints.Keys.Any(id => orderedLocations.Contains((ulong)id));
-                sb.Append("[table=").Append(use2ndColumn ? 2 : 1).Append("][cell bg=#00000069] Locations [/cell]");
-                if (use2ndColumn) sb.Append("[cell bg=#00000069] Hinted Items [/cell]");
-
-                for (var i = 0; i < orderedLocations.Length; i++)
-                {
-                    var id = orderedLocations[i];
-                    var colColor = i % 2 == 0 ? "[cell bg=#00000044]" : "[cell]";
-                    sb.Append(colColor).Append(" {{loc;").Append(id).Append(';').Append(Client.PlayerSlot)
-                      .Append("}} [/cell]");
-                    if (!use2ndColumn)
-                    {
-                        important = true;
-                        continue;
-                    }
-
-                    sb.Append(colColor);
-                    if (hints.TryGetValue((long)id, out var item))
-                    {
-                        sb.Append(item);
-                        important = important || hintImportance[(long)id];
-                    }
-                    else important = true;
-                    sb.Append(" [/cell]");
-                }
-                sb.Append("[/table]\n");
-            }
-            
-            if (!firstEnd && important) break;
+            wasImportant = circleLabel.UpdateData(
+                uniqueEntrances, uniqueLocations, hints, hintImportance, priority, wasImportant
+            ) || wasImportant;
         }
-
-        if (sb.ToString().Trim() is "") sb.Append("Super BK :(\nEither that or there was an error from UT");
-        return sb.ToString();
     }
 
     public void CalculateCircles()
@@ -260,8 +226,7 @@ public partial class TrackerPage : Control
 
     public void QueueCircle(int circle, params ItemInfo[] items)
     {
-        if (!RawCircleItems.ContainsKey(circle))
-            RawCircleItems[circle] = [.. items.Select(i => i.ItemId)];
+        if (!RawCircleItems.ContainsKey(circle)) RawCircleItems[circle] = [.. items.Select(i => i.ItemId)];
 
         CircleItems[circle] = $"{string.Join(", ", items.Skip(TrackedCount).Select(item => item.GetEffectText()))}";
         Entry.ItemsQueued.Enqueue((circle, [.. items.Select(item => item.ItemId)]));
@@ -272,26 +237,24 @@ public partial class TrackerPage : Control
     public void QueueUpdate(bool recompile = true) => UpdateQueue.Enqueue(recompile);
     public void CallReload() => QueueUpdate(false);
 
-    private Dictionary<string, Action<RichTextLabel, string[]>> GetCompileEffects()
-    {
-        if (CompileEffects is not null) return CompileEffects;
-        return CompileEffects = MessageParser.CreateEffects(() => CallDeferred("UpdateData", false));
-    }
-
-    public void Failure(string text) => Label.Text = $"[color=red]{text}[/color]";
-
     protected override void Dispose(bool disposing)
     {
-        foreach (var entranceId in ListeningEntrances)
-            Client?.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+        if (Client is not null)
+        {
+            Client.UpdateConnection();
+            foreach (var entranceId in ListeningEntrances)
+            {
+                Client?.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+            }
+            Client?.CheckedLocationsUpdated -= OnLocationsChecked;
+            Client?.HintsTrackedEvent -= OnHintsUpdated;
+            Client?.ItemHandler.OnNewItemsReceived -= OnItemsReceived;
+        }
 
         EntranceEffect.OnUpdate -= CallReload;
         ItemEffect.OnUpdate -= CallReload;
         LocationEffect.OnUpdate -= CallReload;
         ExternalAppController.EndProcess(ProcessId);
-        Client?.CheckedLocationsUpdated -= OnLocationsChecked;
-        Client?.HintsTrackedEvent -= OnHintsUpdated;
-        Client?.ItemHandler.OnNewItemsReceived -= OnItemsReceived;
         SaveType<bool>.OnSaveEvent -= OnBoolSaveDataUpdated;
         SaveType<FilterType>.OnSaveEvent -= OnFilterDataUpdated;
     }

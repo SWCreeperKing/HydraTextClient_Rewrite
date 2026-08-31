@@ -40,6 +40,30 @@ text = "Show Empty Circles"
 layout_mode = 2
 text = "Show Future Circles"
 
+[node name="CheckBox3" type="CheckBox" parent="MarginContainer/VBoxContainer" unique_id=1582920826]
+layout_mode = 2
+button_pressed = true
+text = "Show Excluded Locations"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=505371780]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1693426654]
+layout_mode = 2
+text = "Header Alignment"
+
+[node name="OptionButton" type="OptionButton" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=2037938405]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 3
+popup/item_0/text = "Center"
+popup/item_0/id = 0
+popup/item_1/text = "Left"
+popup/item_1/id = 1
+popup/item_2/text = "Right"
+popup/item_2/id = 2
+
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1096340705]
 layout_mode = 2
 
@@ -61,6 +85,8 @@ metadata/_tab_index = 1
 layout_mode = 2
 Prefix = "circle_tracker"
 Controls = {
+"exclude_locations": NodePath("../MarginContainer/VBoxContainer/CheckBox3"),
+"header_align": NodePath("../MarginContainer/VBoxContainer/HBoxContainer/OptionButton"),
 "show_empty": NodePath("../MarginContainer/VBoxContainer/CheckBox"),
 "spoil_future": NodePath("../MarginContainer/VBoxContainer/CheckBox2")
 }

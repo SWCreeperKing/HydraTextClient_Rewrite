@@ -14,6 +14,7 @@ script = ExtResource("2_3pvbc")
 TabContainer = NodePath("Panel/TabContainer")
 ButtonContainer = NodePath("Panel/TabContainer/ChoseToEdit")
 MapName = NodePath("Panel/TabContainer/ChoseToEdit/HBoxContainer/LineEdit")
+DisableMin = false
 BlockParent = false
 
 [node name="Panel" type="Panel" parent="." unique_id=1461021148]

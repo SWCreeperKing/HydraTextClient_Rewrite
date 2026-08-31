@@ -64,9 +64,9 @@ public partial class MapLocation : TextureRect
 
     public void AddLocations(params string[] locs)
     {
+        NodeDead = false;
         RawNodeData.Locations.AddRange(locs);
         SetOrderedLocations();
-        NodeDead = false;
     }
 
     public void RemoveLocations(params string[] locs)
@@ -86,7 +86,6 @@ public partial class MapLocation : TextureRect
     {
         QueueUpdate = true;
         Texture = image is not "" ? Loader.ItemImageLoader[image] : BaseCheckImage;
-        QueueRedraw();
     }
 
     public void SetNodeSize(Vector2 size)
@@ -95,7 +94,6 @@ public partial class MapLocation : TextureRect
         Size = size;
         RawNodeData.W = size.X;
         RawNodeData.H = size.Y;
-        QueueRedraw();
     }
 
     public override void _Process(double delta)

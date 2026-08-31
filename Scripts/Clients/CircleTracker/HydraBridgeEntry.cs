@@ -19,7 +19,7 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
     public readonly ConcurrentQueue<(int, long[])> ItemsQueued = [];
     public readonly ConcurrentQueue<string> EntrancesQueued = [];
     public bool CheckNextProg;
-
+    public int LastRanCircle;
 
     public override void Interactor(string text, StreamWriter input, string console)
     {
@@ -28,7 +28,6 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
             switch (text)
             {
                 case "": break;
-                case "Player YAML not installed or Generator failed": page.CallDeferred("Failure", text); break;
                 case "READY": WriteLine(console, "UT line of communication ready and established"); break;
                 case "slot_name":
                     WriteLine(console, $"Sending Slot Name: [{client.PlayerName}]");
@@ -40,17 +39,17 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
                     input.WriteLine(string.Join(',', client.Locations.Select(kv => kv.Value))); break;
 
                 default:
-                    if (text.StartsWith("sending_data_store_keys "))
-                    {
-                        page.ListenForEntrances(JsonConvert.DeserializeObject<string[]>(text[24..]));
-                        return;
-                    }
-
                     if (text.StartsWith("exit")) return;
                     if (text.StartsWith("ERROR: "))
                     {
                         WriteError(console, text);
-                        MainController.ShowError(text);
+                        MainController.ShowError($"from: Circle Tracker | [{text}]");
+                        return;
+                    }
+
+                    if (text.StartsWith("sending_data_store_keys "))
+                    {
+                        page.ListenForEntrances(JsonConvert.DeserializeObject<string[]>(text[24..]));
                         return;
                     }
 
@@ -59,24 +58,29 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
                         var circleData = JsonConvert.DeserializeObject<CircleData>(text[7..]);
                         page.Circles[circleData.Circle] = [.. circleData.AllAvailableLocations.Select(loc => loc.Id)];
 
+                        circleData.EntranceNames.RemoveAll(s => page.EntranceEarliestCircle.TryGetValue(s, out var c)
+                                                                && c < circleData.Circle
+                        );
+
                         if (page.Entrances.TryGetValue(circleData.Circle, out var entrances) && entrances.Length > 0)
                         {
-                            foreach (var entrance in entrances)
-                            {
-                                if (!page.EntranceEarliestCircle.TryGetValue(entrance, out var value)
-                                    || value <= circleData.Circle) continue;
+                            foreach (var entrance in entrances.Where(s => !circleData.EntranceNames.Contains(s)))
                                 page.EntranceEarliestCircle.Remove(entrance, out _);
-                            }
                         }
 
-                        page.Entrances[circleData.Circle] = circleData.EntranceNames;
+                        page.Entrances[circleData.Circle] = [.. circleData.EntranceNames];
 
-                        foreach (var entrance in circleData.EntranceNames)
+                        foreach (var entrance in circleData.EntranceNames.Where(entrance
+                                     => !page.EntranceEarliestCircle.ContainsKey(entrance)
+                                 )) page.EntranceEarliestCircle[entrance] = circleData.Circle;
+
+                        lock (page.ExcludedLocations)
                         {
-                            if (page.EntranceEarliestCircle.ContainsKey(entrance)
-                                && page.EntranceEarliestCircle[entrance] <= circleData.Circle) continue;
-                            page.EntranceEarliestCircle[entrance] = circleData.Circle;
+                            foreach (var loc in circleData.AllAvailableLocations.Where(l => l.IsExcluded))
+                                page.ExcludedLocations.Add(loc.Id);
                         }
+
+                        LastRanCircle = circleData.Circle;
                         page.QueueUpdate();
                     }
 
@@ -101,6 +105,7 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
                             return;
                         }
 
+                        input.WriteLine($"missing {string.Join(',', client.Locations.Select(kv => kv.Value))}");
                         while (ItemsQueued.IsEmpty && EntrancesQueued.IsEmpty) Task.Delay(50).Wait();
 
                         if (!EntrancesQueued.IsEmpty)
@@ -113,6 +118,7 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
                             }
 
                             var earliestCircle = page.EntranceEarliestCircle.Values.Min();
+                            LastRanCircle = 0;
                             ItemsQueued.Clear(); // only re-calc circles if entrance was in logic
                             for (var i = earliestCircle; i <= page.RawCircleItems.Keys.Max(); i++)
                             {
@@ -152,7 +158,7 @@ public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, b
         [JsonProperty("circle")] public int Circle;
         [JsonProperty("location_list")] public LocationData[] AllAvailableLocations;
         [JsonProperty("glitched_list")] public ulong[] GlitchedLocations;
-        [JsonProperty("entrances")] public string[] EntranceNames;
+        [JsonProperty("entrances")] public List<string> EntranceNames;
     }
 
     private struct LocationData

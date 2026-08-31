@@ -3,12 +3,32 @@
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="1_ot20o"]
 [ext_resource type="Script" uid="uid://2ge3tplrfw3o" path="res://Scripts/Clients/CircleTracker/TrackerPage.cs" id="2_hagme"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_iqac5"]
+[ext_resource type="PackedScene" uid="uid://vx4hkccykw0s" path="res://Scenes/Clients/CircleTracker/CircleTrackerLabel.tscn" id="3_1e3v1"]
 [ext_resource type="PackedScene" uid="uid://bqisbomfxfu6r" path="res://Scenes/Utility/Popout.tscn" id="3_iqac5"]
-[ext_resource type="Script" uid="uid://bvk0i3283dwhs" path="res://Scripts/Utility/UIHelpers/EmptyRichLabelInteractor.cs" id="5_3kkys"]
 [ext_resource type="Script" uid="uid://ci4bcdb7cbtm3" path="res://Scripts/Clients/CircleTracker/ProgressionItemTable.cs" id="5_5b2u4"]
 [ext_resource type="PackedScene" uid="uid://d1unnc4t8u5xh" path="res://Scenes/Utilities/Popups/HintPopup.tscn" id="6_1e3v1"]
 
-[node name="MarginContainer" type="MarginContainer" unique_id=1147147692 node_paths=PackedStringArray("PopoutWindow", "Label", "NextProgressionLabel")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1e3v1"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3)
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ib7yh"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(1, 1, 1, 0.4)
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 10
+
+[node name="MarginContainer" type="MarginContainer" unique_id=1147147692 node_paths=PackedStringArray("PopoutWindow", "RenderProgressLabel", "RenderProgressProgress", "NextProgressionLabel", "CircleLabelContainer")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,8 +37,11 @@ grow_vertical = 2
 theme = ExtResource("1_ot20o")
 script = ExtResource("2_hagme")
 PopoutWindow = NodePath("Popout")
-Label = NodePath("Popout/VBoxContainer/ScrollContainer/VBoxContainer/RichTextLabel")
+RenderProgressLabel = NodePath("Popout/VBoxContainer/ScrollContainer/VBoxContainer/ProgressRender")
+RenderProgressProgress = NodePath("Popout/VBoxContainer/ScrollContainer/VBoxContainer/ProgressBar2")
 NextProgressionLabel = NodePath("Popout/VBoxContainer/ScrollContainer/VBoxContainer/FoldableContainer/RichTextLabel")
+CircleLabelContainer = NodePath("Popout/VBoxContainer/ScrollContainer/VBoxContainer/Circle Container")
+CircleLabel = ExtResource("3_1e3v1")
 
 [node name="Popout" parent="." unique_id=763240208 node_paths=PackedStringArray("Child") instance=ExtResource("3_iqac5")]
 layout_mode = 2
@@ -52,6 +75,25 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="Label" type="Label" parent="Popout/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=447926339]
+layout_mode = 2
+text = "If nothing is showing up, you are either bk or it's loading"
+
+[node name="ProgressRender" type="Label" parent="Popout/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1780103272]
+layout_mode = 2
+text = "progress"
+horizontal_alignment = 1
+
+[node name="ProgressBar2" type="ProgressBar" parent="Popout/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1823336621]
+modulate = Color(0, 1, 0.4000001, 1)
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+theme = ExtResource("1_ot20o")
+theme_override_styles/background = SubResource("StyleBoxFlat_1e3v1")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ib7yh")
+max_value = 1.0
+show_percentage = false
+
 [node name="FoldableContainer" type="FoldableContainer" parent="Popout/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1696324153]
 layout_mode = 2
 title = "Next Progression (Takes some time to load)"
@@ -68,14 +110,7 @@ selection_enabled = true
 script = ExtResource("5_5b2u4")
 HintPopup = ExtResource("6_1e3v1")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Popout/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1972510381]
+[node name="Circle Container" type="VBoxContainer" parent="Popout/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1501678451]
 layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 2
-bbcode_enabled = true
-text = "[center]Loading . . .[/center]"
-fit_content = true
-selection_enabled = true
-script = ExtResource("5_3kkys")
 
 [connection signal="pressed" from="Popout/VBoxContainer/HBoxContainer/Button" to="." method="Stop"]

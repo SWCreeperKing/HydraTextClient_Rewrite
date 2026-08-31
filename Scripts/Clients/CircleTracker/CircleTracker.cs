@@ -15,7 +15,7 @@ namespace HydraTextClient.Scripts.Clients.CircleTracker;
 
 public partial class CircleTracker : Control
 {
-    private const string HydraUTBridgeFileHash = "93FEFB7801E36ECDB2601851E5E44F204F917EAAC2540F4EDF04DA3609B48633";
+    private const string HydraUTBridgeFileHash = "ACCCD4E8294BB3009BE0F71D0137A14C38973236584D770BB829A26B46FF6FB8";
     public static CircleTracker Singleton;
     public static event Action? OnTrackerUpdate;
     [Export] private PackedScene TrackerScene;
