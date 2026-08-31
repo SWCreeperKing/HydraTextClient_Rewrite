@@ -58,21 +58,28 @@ public partial class MapLocation : TextureRect
 
     public void SetData(MapNavigator map)
     {
-        OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
         Map = map;
+        SetOrderedLocations();
     }
 
     public void AddLocations(params string[] locs)
     {
         RawNodeData.Locations.AddRange(locs);
-        OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
+        SetOrderedLocations();
         NodeDead = false;
     }
 
     public void RemoveLocations(params string[] locs)
     {
         RawNodeData.Locations.RemoveAll(l => locs.Contains(l));
-        OrderedLocations = [.. RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s)];
+        SetOrderedLocations();
+    }
+
+    public void SetOrderedLocations()
+    {
+        IEnumerable<string> locs = RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s);
+        if (Client is not null && !Loader.IsInEditMode) locs = locs.Where(l => Client.Locations.Any(kv => kv.Key == l));
+        OrderedLocations = [.. locs];
     }
 
     public void SetImage(string image)
@@ -102,7 +109,7 @@ public partial class MapLocation : TextureRect
     // 0: in logic (hinted) <- 1: in logic <- 2: not logic (hinted) <- 3: not in logic <- 4: nothing, location checked <- 5 doesn't exist
     private void LocationUpdate()
     {
-        if (NodeDead) return;
+        if (!Loader.IsInEditMode && NodeDead) return;
         var page = Loader.Page;
         var applicableHints = Client is null ? []
             : Client.Hints

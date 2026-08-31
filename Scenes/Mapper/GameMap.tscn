@@ -14,6 +14,18 @@
 [ext_resource type="PackedScene" uid="uid://8ib67dxo0ieh" path="res://Scenes/Mapper/Popups/EntrnaceManagerPopup.tscn" id="9_yu0wl"]
 [ext_resource type="PackedScene" uid="uid://5yn5klpca2j3" path="res://Scenes/Mapper/Popups/AutoTrackingPopup.tscn" id="11_njn85"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_njn85"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ajsmo"]
 content_margin_left = 4.0
 content_margin_top = 4.0
@@ -39,18 +51,18 @@ theme_override_constants/margin_left = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("1_ajsmo")
-SaveMap = NodePath("HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button4")
-Container = NodePath("HSplitContainer/VBoxContainer/Popout/Control/MapContainer")
-List = NodePath("HSplitContainer/VBoxContainer2/ItemList")
-ListContainer = NodePath("HSplitContainer/VBoxContainer2")
-ListEditControls = NodePath("HSplitContainer/VBoxContainer2/EditControls")
-MapEditorControls = NodePath("HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer")
-LocationPanel = NodePath("HSplitContainer/VBoxContainer/Popout/Control/PopupPanel")
-LocationPanelText = NodePath("HSplitContainer/VBoxContainer/Popout/Control/PopupPanel/RichTextLabel")
-PopoutWindow = NodePath("HSplitContainer/VBoxContainer/Popout")
-AutoTab = NodePath("HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HFlowContainer2/CheckBox")
+SaveMap = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button4")
+Container = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/MapContainer")
+List = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/ItemList")
+ListContainer = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer")
+ListEditControls = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls")
+MapEditorControls = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer")
+LocationPanel = NodePath("VBoxContainer/Popout/Control/PopupPanel")
+LocationPanelText = NodePath("VBoxContainer/Popout/Control/PopupPanel/RichTextLabel")
+PopoutWindow = NodePath("VBoxContainer/Popout")
+AutoTab = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer2/CheckBox")
 MapContainer = ExtResource("3_ajsmo")
-OpenConfig = NodePath("HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/CheckBox")
+OpenConfig = NodePath("VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/CheckBox")
 AddLocationsPopup = ExtResource("4_tesqn")
 EditMapPopup = ExtResource("4_epac1")
 ManageTabPopup = ExtResource("5_epac1")
@@ -62,20 +74,17 @@ EntranceManagerPopup = ExtResource("9_yu0wl")
 AutoTrackingPopup = ExtResource("11_njn85")
 metadata/_tab_index = 0
 
-[node name="HSplitContainer" type="HSplitContainer" parent="." unique_id=208381665]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer" unique_id=520425136]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=520425136]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Popout" parent="HSplitContainer/VBoxContainer" unique_id=763240208 node_paths=PackedStringArray("Child") instance=ExtResource("4_5tv33")]
+[node name="Popout" parent="VBoxContainer" unique_id=763240208 node_paths=PackedStringArray("Child") instance=ExtResource("4_5tv33")]
 layout_mode = 2
 Title = "MapTracker"
 Child = NodePath("Control")
 RestoreSize = false
 
-[node name="Control" type="Control" parent="HSplitContainer/VBoxContainer/Popout" unique_id=2077341386]
+[node name="Control" type="Control" parent="VBoxContainer/Popout" unique_id=2077341386]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,7 +92,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MapContainer" type="VBoxContainer" parent="HSplitContainer/VBoxContainer/Popout/Control" unique_id=89605152]
+[node name="UIContainer" type="Control" parent="VBoxContainer/Popout/Control" unique_id=2120398731]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -93,137 +102,159 @@ grow_vertical = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer" unique_id=120085920]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Popout/Control/UIContainer" unique_id=1005254106]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer" unique_id=120085920]
 layout_mode = 2
 
-[node name="HFlowContainer2" type="HFlowContainer" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer" unique_id=1273094307]
+[node name="HFlowContainer2" type="HFlowContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer" unique_id=1273094307]
 layout_mode = 2
 
-[node name="Button2" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HFlowContainer2" unique_id=322102203]
+[node name="Button2" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer2" unique_id=322102203]
 layout_mode = 2
 text = "Reset Zoom"
 script = ExtResource("4_1xhnn")
 
-[node name="CheckBox" type="CheckBox" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HFlowContainer2" unique_id=545184037]
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer2" unique_id=545184037]
 layout_mode = 2
 button_pressed = true
 text = "Auto Tab"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer" unique_id=359534289]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer" unique_id=359534289]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HFlowContainer" type="HFlowContainer" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer" unique_id=1751141079]
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1751141079]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="Button7" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1808208216]
+[node name="Button7" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1808208216]
 layout_mode = 2
 text = "Open Folder"
 script = ExtResource("4_1xhnn")
 
-[node name="Button4" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=576456530]
+[node name="Button4" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=576456530]
 layout_mode = 2
 text = "Save Map Data"
 script = ExtResource("4_1xhnn")
 
-[node name="Button5" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1385862180]
+[node name="Button5" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1385862180]
 layout_mode = 2
 text = "Edit Map Tab"
 script = ExtResource("4_1xhnn")
 
-[node name="Button6" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=870290117]
+[node name="Button6" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=870290117]
 layout_mode = 2
 text = "Location Groups"
 script = ExtResource("4_1xhnn")
 
-[node name="Button8" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1487482360]
+[node name="Button8" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1487482360]
 layout_mode = 2
 text = "Manage Tabs"
 script = ExtResource("4_1xhnn")
 
-[node name="Button" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1512730927]
+[node name="Button" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1512730927]
 layout_mode = 2
 text = "Location Icons"
 script = ExtResource("4_1xhnn")
 
-[node name="Button2" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1049533912]
+[node name="Button2" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1049533912]
 layout_mode = 2
 text = "Entrances"
 script = ExtResource("4_1xhnn")
 
-[node name="Button3" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=603848273]
+[node name="Button3" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=603848273]
 layout_mode = 2
 text = "Auto Tracking"
 script = ExtResource("4_1xhnn")
 
-[node name="CheckBox" type="CheckBox" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1042946624]
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1042946624]
 layout_mode = 2
 button_pressed = true
 text = "Creation Popups"
 
-[node name="HFlowContainer3" type="HFlowContainer" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer" unique_id=551543628]
+[node name="HFlowContainer3" type="HFlowContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer" unique_id=551543628]
 layout_mode = 2
 alignment = 2
 
-[node name="Button" type="Button" parent="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HFlowContainer3" unique_id=882059614]
+[node name="Button" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer3" unique_id=882059614]
 layout_mode = 2
 text = "Stop and Close"
 
-[node name="PopupPanel" type="PopupPanel" parent="HSplitContainer/VBoxContainer/Popout/Control" unique_id=291722302]
-oversampling_override = 1.0
-size = Vector2i(8, 8)
+[node name="Control" type="Control" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer" unique_id=125274636]
+layout_mode = 2
+size_flags_vertical = 3
 
-[node name="RichTextLabel" type="RichTextLabel" parent="HSplitContainer/VBoxContainer/Popout/Control/PopupPanel" unique_id=1683634577]
+[node name="MapContainer" type="VBoxContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control" unique_id=1603650674]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 5.0
-offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control" unique_id=208381665]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-fit_content = true
-autowrap_mode = 0
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HSplitContainer" unique_id=1095271231]
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer" unique_id=470478039]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer" unique_id=1585788902]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_njn85")
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer" unique_id=1095271231]
 layout_mode = 2
 
-[node name="EditControls" type="VBoxContainer" parent="HSplitContainer/VBoxContainer2" unique_id=951844168]
-layout_mode = 2
-
-[node name="Button3" type="Button" parent="HSplitContainer/VBoxContainer2/EditControls" unique_id=223116638]
+[node name="Button3" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2" unique_id=223116638]
 layout_mode = 2
 text = "Unselect"
 script = ExtResource("4_1xhnn")
 
-[node name="HFlowContainer" type="HFlowContainer" parent="HSplitContainer/VBoxContainer2/EditControls" unique_id=599737876]
+[node name="EditControls" type="VBoxContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2" unique_id=951844168]
 layout_mode = 2
 
-[node name="Button3" type="Button" parent="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=105905615]
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls" unique_id=599737876]
+layout_mode = 2
+
+[node name="Button3" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=105905615]
 layout_mode = 2
 text = "Edit Node"
 script = ExtResource("4_1xhnn")
 
-[node name="Button2" type="Button" parent="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1583162094]
+[node name="Button2" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1583162094]
 layout_mode = 2
 text = "Add Locations"
 script = ExtResource("4_1xhnn")
 
-[node name="Button4" type="Button" parent="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1286506877]
+[node name="Button4" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1286506877]
 layout_mode = 2
 text = "Copy Selected Locations"
 script = ExtResource("4_1xhnn")
 
-[node name="Button" type="Button" parent="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1224080543]
+[node name="Button" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1224080543]
 layout_mode = 2
 text = "Remove Selected Locations"
 script = ExtResource("4_1xhnn")
 
-[node name="ItemList" type="ItemList" parent="HSplitContainer/VBoxContainer2" unique_id=1913025308]
+[node name="ItemList" type="ItemList" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2" unique_id=1913025308]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_vertical = 3
@@ -233,18 +264,36 @@ select_mode = 1
 allow_search = false
 fixed_icon_size = Vector2i(16, 16)
 
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HFlowContainer2/Button2" to="." method="ResetZoom"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button7" to="." method="OpenFolder"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button4" to="." method="SaveMapData"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button5" to="." method="EditMap"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button6" to="." method="EditLocationGroup"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button8" to="." method="ManageTabs"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button" to="." method="EditLocationIconOverrides"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button2" to="." method="ManageEntrances"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button3" to="." method="EditAutoTracking"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer/Popout/Control/MapContainer/HBoxContainer/HFlowContainer3/Button" to="." method="StopAndClose"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/Button3" to="." method="ResetSelectedNodes"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button3" to="." method="EditNode"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button2" to="." method="AddLocations"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button4" to="." method="CopyLocations"]
-[connection signal="pressed" from="HSplitContainer/VBoxContainer2/EditControls/HFlowContainer/Button" to="." method="RemoveSelectedLocations"]
+[node name="PopupPanel" type="PopupPanel" parent="VBoxContainer/Popout/Control" unique_id=291722302]
+oversampling_override = 1.0
+size = Vector2i(8, 8)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/Popout/Control/PopupPanel" unique_id=1683634577]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+fit_content = true
+autowrap_mode = 0
+
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer2/Button2" to="." method="ResetZoom"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button7" to="." method="OpenFolder"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button4" to="." method="SaveMapData"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button5" to="." method="EditMap"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button6" to="." method="EditLocationGroup"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button8" to="." method="ManageTabs"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button" to="." method="EditLocationIconOverrides"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button2" to="." method="ManageEntrances"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button3" to="." method="EditAutoTracking"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer3/Button" to="." method="StopAndClose"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/Button3" to="." method="ResetSelectedNodes"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button3" to="." method="EditNode"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button2" to="." method="AddLocations"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button4" to="." method="CopyLocations"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button" to="." method="RemoveSelectedLocations"]

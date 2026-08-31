@@ -84,6 +84,7 @@ public partial class MapLoader : Control
     private bool HasAutoTrackingData;
     private bool AutoTrackEntrances;
     private string FunctionIdString;
+    private bool UpdateUILater;
 
     public void Setup(string path, string trackerName, Control parent)
     {
@@ -164,6 +165,7 @@ public partial class MapLoader : Control
         ItemImageLoader = new MapItemImageLoader(path);
         Page?.OnLogicUpdated += UpdateNodes;
         Page?.OnLogicUpdated += UpdateEntrances;
+        Page?.OnLogicUpdated += CallUpdateUI;
         foreach (var group in LocationGroups) LocationGroupingMap[group.GroupName] = group;
 
         Queue<TabStructure> structures = [];
@@ -294,8 +296,16 @@ public partial class MapLoader : Control
         foreach (var node in entranceNode) node.UpdateEntrance = true;
     }
 
+    public void CallUpdateUI() => UpdateUI = true;
+
     public override void _Process(double delta)
     {
+        if (UpdateUILater)
+        {
+            UpdateUILater = false;
+            SetDeferred("UpdateUI", true);
+        }
+
         if (!UpdateUI) return;
         ListContainer.Visible = false;
         UpdateUI = false;
@@ -327,7 +337,7 @@ public partial class MapLoader : Control
 
             SetHoverPopupText(sb.ToString());
         }
-        catch (Exception e) { GD.PrintErr($"Error with map node [{HoveredMapLocation?.Pos}]", e); }
+        catch (Exception e) {SetHoverPopupText($"Error with map node [{e}]"); }
     }
 
     private void SetHoverPopupText(string text)
@@ -684,6 +694,7 @@ public partial class MapLoader : Control
                     SelectedMapLocation.AddLocations([.. locs.DistinctBy(s => s)]);
                     UpdateUI = true;
                     UpdateNodes();
+                    SetDeferred("UpdateUILater", true);
                 };
             }
         );
@@ -694,8 +705,8 @@ public partial class MapLoader : Control
         if (SelectedMapLocation is null) return;
         var locationNamesToRemove = (string[])[.. List.GetSelectedItems().Where(i => i >= 0).Select(List.GetItemText)];
         SelectedMapLocation.RemoveLocations(locationNamesToRemove);
-        SetDeferred("UpdateUI", true);
         UpdateNodes();
+        SetDeferred("UpdateUILater", true);
     }
 
     public void StopAndClose()
@@ -847,6 +858,7 @@ public partial class MapLoader : Control
             Client?.RemoveDataStorageListeners(AutoTrackingData.MapKey, FunctionIdString, Scope.Slot);
         Page?.OnLogicUpdated -= UpdateNodes;
         Page?.OnLogicUpdated -= UpdateEntrances;
+        Page?.OnLogicUpdated -= CallUpdateUI;
 
         if (!IsEntranceRando || !AutoTrackEntrances || IsInEditMode || Client is null) return;
         foreach (var (id, _) in EntranceMap) Client!.RemoveDataStorageListeners(id, FunctionIdString, Scope.Slot);

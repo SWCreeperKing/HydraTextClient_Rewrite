@@ -19,16 +19,28 @@ public partial class MapNavigator : ScrollContainer
     public string MapId => CoreMap.GetId;
 
     public Vector2 GetMapSize => Container.MapImage.Texture.GetSize();
+    private bool ToUpdateNodes;
+    private bool ToUpdateEntrances;
 
-    public void UpdateNodes()
+    public override void _Process(double delta)
     {
-        foreach (var node in Locations) node.QueueUpdate = true;
+        if (!IsVisibleInTree()) return;
+        
+        if (ToUpdateNodes)
+        {
+            ToUpdateNodes = false;
+            foreach (var node in Locations) node.QueueUpdate = true;
+        }
+
+        if (ToUpdateEntrances)
+        {
+            ToUpdateEntrances = false;
+            foreach (var node in Entrances) node.QueueUpdate = true;
+        }
     }
 
-    public void UpdateEntranceColors()
-    {
-        foreach (var node in Entrances) node.QueueUpdate = true;
-    }
+    public void UpdateNodes() => ToUpdateNodes = true;
+    public void UpdateEntranceColors() => ToUpdateEntrances = true;
 
     public void SetupMap(MapLoader loader, Maps map, string packPath)
     {
@@ -177,10 +189,11 @@ public partial class MapNavigator : ScrollContainer
                 node.SetImage("");
                 GD.PrintErr($"Location Icon not found for: [{group.MappedIcon}]");
             }
-            
+
             if (group.SlotDataKey is not ("" or null) && !Loader.IsInEditMode)
             {
-                if (Loader.Client!.SlotData.TryGetValue(group.SlotDataKey, out var slotDataVal)) return group.CompareDataValue(slotDataVal);
+                if (Loader.Client!.SlotData.TryGetValue(group.SlotDataKey, out var slotDataVal))
+                    return group.CompareDataValue(slotDataVal);
                 GD.PrintErr($"Slot data key is invalid: [{group.SlotDataKey}]");
             }
         }
