@@ -449,6 +449,12 @@ public partial class MapLoader : Control
 
     public void EntranceLink(EntranceLocation loc)
     {
+        if (Input.IsKeyPressed(Key.Ctrl))
+        {
+            BreakLink(loc);
+            return;
+        }
+        
         if (LinkingEntrance is null)
         {
             LinkingEntrance = loc;

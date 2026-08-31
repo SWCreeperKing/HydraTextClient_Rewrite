@@ -97,7 +97,7 @@
       - Automatically tracked entrances will have priority over manually tracked ones and can not be modified 
       - Right Click to start linking (can link an entrance to itself)
         - Holding Shift will decouple the entrances 
-      - Middle Click to break a link or stop linking
+      - Middle Click (or ctrl + Right Click) to break a link or stop linking
         - Holding Shift will break the destination entrance only
       - Left Click to go to where the entrance leads
         - Hold Shift to go to where the entrance leads from 
