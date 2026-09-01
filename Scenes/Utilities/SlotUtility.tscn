@@ -15,8 +15,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-split_offsets = PackedInt32Array(590, 220)
-split_offset = 590
+split_offsets = PackedInt32Array(556, 195)
+split_offset = 556
 script = ExtResource("1_4p5od")
 HintPopup = ExtResource("2_0m8we")
 Inventory = NodePath("MarginContainer/VBoxContainer/ScrollContainer/RichTextLabel")
@@ -29,6 +29,12 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1715377581]
 layout_mode = 2
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer" unique_id=832919166]
+modulate = Color(1, 0.41000003, 0.41000003, 1)
+layout_mode = 2
+text = "Only hints from the Leader thats connected will be displayed in the text client. (aka check hints tab after hinting from non leader slots)"
+autowrap_mode = 3
 
 [node name="Button" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1978777269]
 layout_mode = 2
