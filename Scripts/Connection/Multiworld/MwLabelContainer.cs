@@ -20,13 +20,14 @@ public partial class MwLabelContainer : VBoxContainer
         var mwDatas = SaveType<MultiworldData>.GetKeys();
         foreach (var data in mwDatas)
         {
-            try { CreateLabel(SaveType<MultiworldData>.Load(data, new MultiworldData())); }
-            catch (Exception e)
+            var mwData = SaveType<MultiworldData>.Load(data, new MultiworldData());
+            if (mwData is null)
             {
-                MainController.ShowError($"Multiworld: [{data}] contains corrupt data? deleting it", e);
                 SaveType<MultiworldData>.Delete(data);
-                return;
+                continue;
             }
+
+            CreateLabel(mwData);
         }
         SaveType<MultiworldData>.OnSaveEvent += (_, data) => CreateLabel(data);
     }
