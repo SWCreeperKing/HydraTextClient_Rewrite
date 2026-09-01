@@ -28,8 +28,9 @@ public partial class MapEditorPopup : WindowSetter
             ButtonContainer.RemoveChild(button);
             button.QueueFree();
         }
-
+        
         Tracker.Reload();
+        MapButtons.Clear();
         foreach (var (game, _) in Tracker.FullNameMapPaths)
         {
             ButtonAnimation button = new();
