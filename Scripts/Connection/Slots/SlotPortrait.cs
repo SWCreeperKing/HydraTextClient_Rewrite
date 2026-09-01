@@ -277,6 +277,8 @@ public partial class SlotPortrait : TextureRect
     protected override void Dispose(bool disposing)
     {
         SaveType<double>.RemoveIndividualEvent(LabelSize, UpdateLabelSizes);
+        SaveType<bool>.RemoveIndividualEvent(HideSlotNames, SetShowSlotNames);
+        SaveType<bool>.RemoveIndividualEvent(HideCheckCounts, SetShowCheckCounts);
         ConnectionController.OnCheckCountUpdated -= CheckAction;
         ConnectionController.OnFullDisconnection -= ClearCheckCountOnDisconnect;
         ConnectionController.OnClientConnection -= RunOnConnectAction;
