@@ -48,7 +48,7 @@ public partial class MapControl : Control
 
         if (ScrollXPercent is not -1 && ScrollYPercent is not -1)
         {
-            CallDeferred("SetScrollPercent", (float)ScrollXPercent, (float)ScrollYPercent);
+            CallDeferred("SetScrollPercent", ScrollXPercent, ScrollYPercent);
             ScrollXPercent = -1;
             ScrollYPercent = -1;
         }
@@ -105,7 +105,7 @@ public partial class MapControl : Control
         }
     }
 
-    public void SetScrollPercent(float xPercent, float yPercent)
+    public void SetScrollPercent(double xPercent, double yPercent)
     {
         var scrollX = ScrollContainer.GetHScrollBar();
         var scrollY = ScrollContainer.GetVScrollBar();
