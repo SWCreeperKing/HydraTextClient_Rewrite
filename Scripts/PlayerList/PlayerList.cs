@@ -64,8 +64,8 @@ public partial class PlayerList : MarginContainer
         };
     }
 
-    public void Refresh() => CallDeferred("CallRefresh"); 
-    
+    public void Refresh() => CallDeferred("CallRefresh");
+
     private void CallRefresh()
     {
         var mw = ConnectionController.GetCurrentMultiworld;
@@ -99,18 +99,14 @@ public partial class PlayerList : MarginContainer
             }
 
 
-            if (statuses[i] == ClientGoal)
-            {
-                Items[i].HasGoaled();
-                continue;
-            }
-
-            Items[i].SetConnected(
-                statuses[i] switch
-                {
-                    ClientUnknown => false, ClientConnected or ClientReady or ClientPlaying => true, _ => null,
-                }
-            );
+            if (statuses[i] == ClientGoal) { Items[i].HasGoaled(); }
+            else
+                Items[i].SetConnected(
+                    statuses[i] switch
+                    {
+                        ClientUnknown => false, ClientConnected or ClientReady or ClientPlaying => true, _ => null,
+                    }
+                );
 
             if (!mw.CheckCountsChecked.ContainsKey(name)
                 || !mw.CheckCounts.TryGetValue(name, out var maxCount)) continue;

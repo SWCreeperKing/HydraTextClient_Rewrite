@@ -158,6 +158,7 @@ theme_override_constants/separation = 7
 
 [node name="Label" type="RichTextLabel" parent="VBoxContainer/HBoxContainer" unique_id=549768807]
 layout_mode = 2
+bbcode_enabled = true
 text = "##,###/##,### "
 fit_content = true
 autowrap_mode = 0

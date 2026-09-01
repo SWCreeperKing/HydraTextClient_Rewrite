@@ -102,7 +102,8 @@ public partial class PlayerItem : PanelContainer
         var normalized = (double)count / max;
         if (Goaled)
         {
-            CheckCounter.Text = $"[hint=text {count:###,##0}/{max:###,##0} ({normalized * 100d:#00.00}%)]Goaled[/hint] ";
+            CheckCounter.Text = max == 0 ? "Goaled "
+                : $"[hint=text {count:###,##0}/{max:###,##0} ({normalized * 100d:#00.00}%)]Goaled[/hint] ";
             if (LastCount == -2) return;
             ProgressTween?.Kill();
             ProgressTween = CreateTween();
