@@ -92,10 +92,9 @@ expand_mode = 1
 [node name="Main Container" type="TabContainer" parent="." unique_id=534411987]
 layout_mode = 2
 theme = ExtResource("1_yd0xa")
-current_tab = 3
+current_tab = 0
 
 [node name="Connection" type="TabContainer" parent="Main Container" unique_id=2072097402]
-visible = false
 layout_mode = 2
 current_tab = 1
 metadata/_tab_index = 0
@@ -140,6 +139,7 @@ visible = false
 layout_mode = 2
 
 [node name="Utilities" parent="Main Container" unique_id=1245487862 node_paths=PackedStringArray("InventoryContainer") instance=ExtResource("14_i5ty2")]
+visible = false
 layout_mode = 2
 current_tab = 0
 InventoryContainer = NodePath("Inventories")
