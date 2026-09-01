@@ -111,6 +111,7 @@ public partial class MultiworldCreator : WindowSetter
         var data = GenDataFromFields();
         data.WorldName = TemporaryLabel.MultiWorldName;
         SaveType<MultiworldData>.Save(TemporaryLabel.MultiWorldName, data, false);
+        Close();
     }
 
     public void AddMultiworld(string _) => AddMultiworld();

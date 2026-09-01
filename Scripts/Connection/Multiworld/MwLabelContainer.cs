@@ -21,19 +21,19 @@ public partial class MwLabelContainer : VBoxContainer
         foreach (var data in mwDatas)
         {
             var mwData = SaveType<MultiworldData>.Load(data, new MultiworldData());
-            if (mwData is null)
-            {
-                SaveType<MultiworldData>.Delete(data);
-                continue;
-            }
-
-            CreateLabel(mwData);
+            CreateLabel(data, mwData);
         }
-        SaveType<MultiworldData>.OnSaveEvent += (_, data) => CreateLabel(data);
+        SaveType<MultiworldData>.OnSaveEvent += CreateLabel;
     }
 
-    public void CreateLabel(MultiworldData data)
+    public void CreateLabel(string key, MultiworldData data)
     {
+        if (data is null)
+        {
+            SaveType<MultiworldData>.Delete(key);
+            return;
+        }
+        
         if (Labels.ContainsKey(data.WorldName) || data.WorldName is "Temporary Multiworld") return;
         var label = DataLabel.Instantiate<MultiworldLabel>();
         label.MultiWorldName = data.WorldName;
