@@ -27,6 +27,8 @@ public static class GlobalThemeSettings
         "*.ttf", "*.ttc", "*.otf", "*.otc", "*.woff", "*.woff2", "*.pfb", "*.pfm",
     ];
 
+    public const string VerticalSpacing = "Theme/Global/VerticalSpacing";
+    public const string HorizontalSpacing = "Theme/Global/HorizontalSpacing";
     public const string GlobalFontSize = "Theme/Global/FontSize";
     public const string ApDir = "Main/ArchipelagoFolder";
     public const string AlwaysOnTop = "Main/AlwaysOnTop";
@@ -55,11 +57,15 @@ public static class GlobalThemeSettings
         SetBoldFont(SaveType<string>.Load(BoldFont, ""));
         SetItalicFont(SaveType<string>.Load(ItalicFont, ""));
         SetBoldItalicFont(SaveType<string>.Load(BoldItalicFont, ""));
+        SetVerticalContainerSpacing(SaveType<double>.Load(VerticalSpacing, 7));
+        SetHorizontalContainerSpacing(SaveType<double>.Load(HorizontalSpacing, 7));
 
         SaveType<string>.AddIndividualEvent(NormalFont, SetNormalFont);
         SaveType<string>.AddIndividualEvent(BoldFont, SetBoldFont);
         SaveType<string>.AddIndividualEvent(ItalicFont, SetItalicFont);
         SaveType<string>.AddIndividualEvent(BoldItalicFont, SetBoldItalicFont);
+        SaveType<double>.AddIndividualEvent(VerticalSpacing, SetVerticalContainerSpacing);
+        SaveType<double>.AddIndividualEvent(HorizontalSpacing, SetHorizontalContainerSpacing);
 
         SetAlwaysOnTop(SaveType<bool>.Load(AlwaysOnTop, false));
         SaveType<double>.AddIndividualEvent(GlobalFontSize, LoadGlobalFont);
@@ -67,7 +73,8 @@ public static class GlobalThemeSettings
 
         var emptyFontDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
         if (emptyFontDir.EndsWith("WINDOWS\\Fonts"))
-            emptyFontDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/Microsoft/Windows/Fonts/";
+            emptyFontDir
+                = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/Microsoft/Windows/Fonts/";
 
         SettingsCreator.Tab(
             "Main Settings", tab =>
@@ -141,6 +148,9 @@ public static class GlobalThemeSettings
                        }
                    ).AddDropdown("Background Image Stretch Mode", WindowBackGroundImageScale, ["Scale", "Tile"], col: 1)
                   .AddSeparator(1)
+                  .AddSpinBox("Vertical Container Spacing", VerticalSpacing, 7, 1)
+                  .AddSpinBox("Horizontal Container Spacing", HorizontalSpacing, 7, 1)
+                  .AddSeparator(1)
                   .AddSpinBox("Global Font Size", GlobalFontSize, 20d, 1, c => c.MinValue = 1)
                   .AddSpinBox("Text Client Font Size", TextClient.FontSizeId, 20d, 1)
                   .AddBrowseFile(
@@ -212,4 +222,10 @@ public static class GlobalThemeSettings
         }
         catch (Exception e) { ShowError(e); }
     }
+
+    public static void SetVerticalContainerSpacing(double amt)
+        => GlobalTheme.SetConstant("separation", "VBoxContainer", (int)amt);
+
+    public static void SetHorizontalContainerSpacing(double amt) =>
+        GlobalTheme.SetConstant("separation", "HBoxContainer", (int)amt);
 }
