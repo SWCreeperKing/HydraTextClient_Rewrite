@@ -6,6 +6,7 @@ using HydraTextClient.Scripts.Clients.TextClient;
 using HydraTextClient.Scripts.Clients.TextClient.ParserEffects;
 using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Utility;
+using HydraTextClient.Scripts.Utility.UIHelpers;
 
 namespace HydraTextClient.Scripts.PlayerList;
 
@@ -14,7 +15,7 @@ public partial class PlayerItem : PanelContainer
     [Export] private Gradient CheckGradient;
     [Export] private Color GoalColor;
     [Export] private RichTextLabel Player;
-    [Export] private Label CheckCounter;
+    [Export] private EmptyRichLabelInteractor CheckCounter;
     [Export] private Label CheckIndicator;
     [Export] private ProgressBar CheckProgress;
     [Export] private TextureRect ConnectedIndicator;
@@ -98,15 +99,16 @@ public partial class PlayerItem : PanelContainer
 
         CheckProgress.Visible = true;
 
+        var normalized = (double)count / max;
         if (Goaled)
         {
+            CheckCounter.Text = $"[hint=text {count:###,##0}/{max:###,##0} ({normalized * 100d:#00.00}%)]Goaled[/hint] ";
             if (LastCount == -2) return;
             ProgressTween?.Kill();
             ProgressTween = CreateTween();
             ProgressTween.SetTrans(Tween.TransitionType.Expo).SetEase(Tween.EaseType.Out);
             SetConnected(null);
             GoalIndicator.Visible = true;
-            CheckCounter.Text = "Goaled ";
 
             ProgressTween.TweenProperty(CheckProgress, "value", 100, 1);
             ProgressTween.Parallel().TweenProperty(CheckProgress, "modulate", GoalColor, 1);
@@ -119,7 +121,6 @@ public partial class PlayerItem : PanelContainer
         ProgressTween?.Kill();
         ProgressTween = CreateTween();
         ProgressTween.SetTrans(Tween.TransitionType.Expo).SetEase(Tween.EaseType.Out);
-        var normalized = (double)count / max;
         CheckCounter.Text = $"{count:###,##0}/{max:###,##0} ({normalized * 100d:#00.00}%)";
 
         ProgressTween.TweenProperty(CheckProgress, "value", normalized * 100d, 1);

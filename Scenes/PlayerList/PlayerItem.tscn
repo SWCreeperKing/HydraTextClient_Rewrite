@@ -156,9 +156,12 @@ modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 theme_override_constants/separation = 7
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1287203400]
+[node name="Label" type="RichTextLabel" parent="VBoxContainer/HBoxContainer" unique_id=549768807]
 layout_mode = 2
 text = "##,###/##,### "
+fit_content = true
+autowrap_mode = 0
+script = ExtResource("3_mu871")
 
 [node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1826289608]
 modulate = Color(0, 1, 0.4000001, 0)
