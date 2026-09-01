@@ -30,7 +30,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 10
 
-[node name="SlotPortrait" type="TextureRect" unique_id=118846534 node_paths=PackedStringArray("Portrait", "SlotNameLabel", "CheckCountPanel", "CheckCountLabel", "CheckProgressBar", "Tinter")]
+[node name="SlotPortrait" type="TextureRect" unique_id=118846534 node_paths=PackedStringArray("Portrait", "SlotNameLabel", "SlotNameBacker", "CheckCountBacker", "CheckCountPanel", "CheckCountLabel", "CheckProgressBar", "Tinter")]
 custom_minimum_size = Vector2(150, 225)
 clip_contents = true
 offset_right = 150.0
@@ -45,6 +45,8 @@ UnknownPortrait = ExtResource("1_nokb1")
 Portrait = NodePath(".")
 SlotNameLabel = NodePath("MarginContainer/PanelContainer/RichTextLabel")
 RunOnCommandPopup = ExtResource("4_e8rt3")
+SlotNameBacker = NodePath("MarginContainer")
+CheckCountBacker = NodePath("MarginContainer2")
 CheckCountPanel = NodePath("MarginContainer2/PanelContainer2")
 CheckCountLabel = NodePath("MarginContainer2/PanelContainer2/RichTextLabel")
 CheckProgressBar = NodePath("MarginContainer2/PanelContainer2/ProgressBar")
@@ -73,7 +75,6 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 0.133
-offset_bottom = 0.074998856
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

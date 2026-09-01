@@ -18,8 +18,8 @@ script = ExtResource("1_j5y7k")
 MainSlotContainer = NodePath("VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/SlotContainer")
 SubSlotContainer = NodePath("VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer/SlotContainer")
 SlotPortraitScene = ExtResource("1_87y10")
-LeaderChanger = NodePath("VBoxContainer/HBoxContainer/OptionButton")
-ScaleBox = NodePath("VBoxContainer/HBoxContainer/ScaleBox")
+LeaderChanger = NodePath("VBoxContainer/HBoxContainer/HBoxContainer3/OptionButton")
+ScaleBox = NodePath("VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox")
 UnknownGame = ExtResource("3_nusw7")
 metadata/_tab_index = 1
 
@@ -29,8 +29,11 @@ layout_mode = 2
 script = ExtResource("2_oacbj")
 Prefix = "Connection/SlotsMenu"
 Controls = {
-"PortraitScale": NodePath("../VBoxContainer/HBoxContainer/ScaleBox"),
-"SlotsNotConnectedFolder": NodePath("../VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer")
+"PortLabelHeight": NodePath("../VBoxContainer/HBoxContainer/HBoxContainer/ScaleBox2"),
+"PortraitScale": NodePath("../VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox"),
+"SlotsNotConnectedFolder": NodePath("../VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer"),
+"showCounts": NodePath("../VBoxContainer/HBoxContainer/CheckBox2"),
+"showNames": NodePath("../VBoxContainer/HBoxContainer/CheckBox")
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2009290757]
@@ -62,14 +65,17 @@ script = ExtResource("6_28ygy")
 [node name="HSeparator3" type="HSeparator" parent="VBoxContainer" unique_id=251188888]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=705082872]
+[node name="HBoxContainer" type="HFlowContainer" parent="VBoxContainer" unique_id=1684648718]
 layout_mode = 2
 
-[node name="Label3" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1277811073]
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=1171749837]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer3" unique_id=1277811073]
 layout_mode = 2
 text = "Leader:"
 
-[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=1084373754]
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer/HBoxContainer3" unique_id=1084373754]
 layout_mode = 2
 theme = ExtResource("5_28ygy")
 
@@ -78,11 +84,49 @@ modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PortraitScale" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=862110446]
+[node name="VSeparator6" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=700883922]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/HBoxContainer" unique_id=1450905615]
+layout_mode = 2
+text = "Hide Slot Names"
+
+[node name="VSeparator4" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=983769412]
+layout_mode = 2
+
+[node name="CheckBox2" type="CheckBox" parent="VBoxContainer/HBoxContainer" unique_id=645787999]
+layout_mode = 2
+text = "Hide Check Counts"
+
+[node name="VSeparator5" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=1083905899]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=1156044251]
+layout_mode = 2
+
+[node name="PortraitScale2" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer" unique_id=118850347]
+layout_mode = 2
+text = "Label Height Offset:"
+
+[node name="ScaleBox2" type="SpinBox" parent="VBoxContainer/HBoxContainer/HBoxContainer" unique_id=92016401]
+layout_mode = 2
+min_value = -40.0
+step = 0.1
+allow_greater = true
+custom_arrow_step = 0.05
+custom_arrow_round = true
+
+[node name="VSeparator3" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=1926648424]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=542653020]
+layout_mode = 2
+
+[node name="PortraitScale" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer2" unique_id=862110446]
 layout_mode = 2
 text = "Portrait Scale:"
 
-[node name="ScaleBox" type="SpinBox" parent="VBoxContainer/HBoxContainer" unique_id=1784734131]
+[node name="ScaleBox" type="SpinBox" parent="VBoxContainer/HBoxContainer/HBoxContainer2" unique_id=1784734131]
 layout_mode = 2
 min_value = 0.55
 step = 0.05
@@ -128,5 +172,5 @@ size_flags_vertical = 3
 offset_transform_enabled = true
 
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="CallAddNew"]
-[connection signal="item_selected" from="VBoxContainer/HBoxContainer/OptionButton" to="." method="ChangeLeader"]
-[connection signal="value_changed" from="VBoxContainer/HBoxContainer/ScaleBox" to="." method="ChangePortraitScale"]
+[connection signal="item_selected" from="VBoxContainer/HBoxContainer/HBoxContainer3/OptionButton" to="." method="ChangeLeader"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox" to="." method="ChangePortraitScale"]

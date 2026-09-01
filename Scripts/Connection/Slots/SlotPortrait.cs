@@ -13,18 +13,26 @@ namespace HydraTextClient.Scripts.Connection.Slots;
 
 public partial class SlotPortrait : TextureRect
 {
+    private const string LabelSize = "Connection/SlotsMenu/PortLabelHeight";
+    private const string HideSlotNames = "Connection/SlotsMenu/showNames";
+    private const string HideCheckCounts = "Connection/SlotsMenu/showCounts";
     [ExportGroup("Internal"), Export] private Texture2D UnknownPortrait;
     [Export] private TextureRect Portrait;
     [Export] private RichTextLabel SlotNameLabel;
     [Export] private PackedScene RunOnCommandPopup;
 
-    [ExportGroup("Internal - CheckCount"), Export]
+    [Export, ExportGroup("Internal/Labels")]
+    private MarginContainer SlotNameBacker;
+
+    [Export] private MarginContainer CheckCountBacker;
+
+    [ExportGroup("Internal/CheckCount"), Export]
     private PanelContainer CheckCountPanel;
 
     [Export] private RichTextLabel CheckCountLabel;
     [Export] private ProgressBar CheckProgressBar;
 
-    [ExportGroup("Internal - Tinter"), Export]
+    [ExportGroup("Internal/Tinter"), Export]
     private ColorRect Tinter;
 
     [Export] private Color IdleTint;
@@ -51,6 +59,13 @@ public partial class SlotPortrait : TextureRect
 
     public override void _Ready()
     {
+        SaveType<double>.AddIndividualEvent(LabelSize, UpdateLabelSizes);
+        SaveType<bool>.AddIndividualEvent(HideSlotNames, SetShowSlotNames);
+        SaveType<bool>.AddIndividualEvent(HideCheckCounts, SetShowCheckCounts);
+        UpdateLabelSizes(SaveType<double>.Load(LabelSize, 0d));
+        SetShowSlotNames(SaveType<bool>.Load(HideSlotNames, false));
+        SetShowCheckCounts(SaveType<bool>.Load(HideCheckCounts, false));
+
         CheckAction = (slot, amount, max) =>
         {
             var mw = ConnectionController.GetCurrentMultiworld;
@@ -102,7 +117,7 @@ public partial class SlotPortrait : TextureRect
                                  {
                                      args[0] = $"{args[0]} {args[1]}";
 
-                                     if (args.Length > 2) args = [args[0], ..args[2..]];
+                                     if (args.Length > 2) args = [args[0], .. args[2..]];
                                      else args = [args[0]];
                                  }
 
@@ -250,8 +265,18 @@ public partial class SlotPortrait : TextureRect
         CheckProgressBar.Value = (float)count / max;
     }
 
+    public void SetShowSlotNames(bool show) => SlotNameBacker.Visible = !show;
+    public void SetShowCheckCounts(bool show) => CheckCountBacker.Visible = !show;
+
+    public void UpdateLabelSizes(double size)
+    {
+        SlotNameBacker.SetAnchorAndOffset(Side.Bottom, SlotNameBacker.AnchorBottom, (float)size);
+        CheckCountBacker.SetAnchorAndOffset(Side.Top, CheckCountBacker.AnchorTop, (float)size);
+    }
+
     protected override void Dispose(bool disposing)
     {
+        SaveType<double>.RemoveIndividualEvent(LabelSize, UpdateLabelSizes);
         ConnectionController.OnCheckCountUpdated -= CheckAction;
         ConnectionController.OnFullDisconnection -= ClearCheckCountOnDisconnect;
         ConnectionController.OnClientConnection -= RunOnConnectAction;
