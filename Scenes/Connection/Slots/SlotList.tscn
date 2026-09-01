@@ -20,7 +20,6 @@ theme_override_constants/margin_bottom = 0
 layout_mode = 2
 
 [node name="Create" parent="." unique_id=40431195 instance=ExtResource("2_p6cio")]
-visible = false
 
 [connection signal="AddNewPortrait" from="View" to="Create" method="show"]
 [connection signal="EditPortrait" from="View" to="Create" method="EditPortrait"]

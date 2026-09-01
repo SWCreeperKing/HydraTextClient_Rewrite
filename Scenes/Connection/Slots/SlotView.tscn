@@ -7,7 +7,7 @@
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="5_28ygy"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="6_28ygy"]
 
-[node name="View" type="MarginContainer" unique_id=1050209111 node_paths=PackedStringArray("MainSlotContainer", "SubSlotContainer", "LeaderChanger", "ScaleBox")]
+[node name="View" type="MarginContainer" unique_id=1050209111 node_paths=PackedStringArray("MainSlotContainer", "SubSlotContainer", "LeaderChanger", "ScaleBox", "SlotSearch")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -21,6 +21,7 @@ SlotPortraitScene = ExtResource("1_87y10")
 LeaderChanger = NodePath("VBoxContainer/HBoxContainer/HBoxContainer3/OptionButton")
 ScaleBox = NodePath("VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox")
 UnknownGame = ExtResource("3_nusw7")
+SlotSearch = NodePath("VBoxContainer/HBoxContainer2/LineEdit")
 metadata/_tab_index = 1
 
 [node name="UISaver" type="Control" parent="." unique_id=189766631 node_paths=PackedStringArray("Controls")]
@@ -32,8 +33,10 @@ Controls = {
 "PortLabelHeight": NodePath("../VBoxContainer/HBoxContainer/HBoxContainer/ScaleBox2"),
 "PortraitScale": NodePath("../VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox"),
 "SlotsNotConnectedFolder": NodePath("../VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer"),
+"searchType": NodePath("../VBoxContainer/HBoxContainer2/OptionButton"),
 "showCounts": NodePath("../VBoxContainer/HBoxContainer/CheckBox2"),
-"showNames": NodePath("../VBoxContainer/HBoxContainer/CheckBox")
+"showNames": NodePath("../VBoxContainer/HBoxContainer/CheckBox"),
+"useStrictSearch": NodePath("../VBoxContainer/HBoxContainer2/CheckBox")
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2009290757]
@@ -136,6 +139,34 @@ custom_arrow_step = 0.05
 custom_arrow_round = true
 
 [node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1650162209]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=1692819423]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/HBoxContainer2" unique_id=879676259]
+layout_mode = 2
+text = "Use Strict Search"
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer2" unique_id=1331117327]
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "Search Slot Name"
+popup/item_0/id = 0
+popup/item_1/text = "Search Game"
+popup/item_1/id = 1
+popup/item_2/text = "Search Both (and)"
+popup/item_2/id = 2
+popup/item_3/text = "Search Both (or)"
+popup/item_3/id = 3
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer2" unique_id=2127370775]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search Slots"
+
+[node name="HSeparator4" type="HSeparator" parent="VBoxContainer" unique_id=1957724613]
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1248246170]

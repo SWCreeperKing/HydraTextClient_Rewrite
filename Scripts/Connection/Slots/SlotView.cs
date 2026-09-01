@@ -12,6 +12,8 @@ namespace HydraTextClient.Scripts.Connection.Slots;
 public partial class SlotView : MarginContainer
 {
     private static SlotView Singleton;
+    private const string UseStrictSearch = "Connection/SlotsMenu/useStrictSearch"; // bool
+    private const string SearchType = "Connection/SlotsMenu/searchType"; // int
 
     [ExportGroup("Internal")] [Export] private HFlowContainer MainSlotContainer;
     [Export] private HFlowContainer SubSlotContainer;
@@ -19,17 +21,24 @@ public partial class SlotView : MarginContainer
     [Export] private OptionButton LeaderChanger;
     [Export] private SpinBox ScaleBox;
     [Export] private Texture2D UnknownGame;
+    [Export] private LineEdit SlotSearch;
 
     [Signal] public delegate void EditPortraitEventHandler(string slotName);
 
     [Signal] public delegate void AddNewPortraitEventHandler();
 
+    private FuzzySearch SearchAlg = new();
     private Dictionary<string, SlotPortrait> Portraits = [];
     private string[] OrderedSlots = [];
 
     public override void _Ready()
     {
         Singleton = this;
+
+        SaveType<bool>.AddIndividualEvent(UseStrictSearch, _ => ReOrganizeSlots());
+        SaveType<int>.AddIndividualEvent(SearchType, _ => ReOrganizeSlots());
+        SlotSearch.TextChanged += _ => ReOrganizeSlots();
+
         var portraitData = SaveType<SlotGameData>.GetKeys();
         foreach (var key in portraitData) CreatePortrait(SaveType<SlotGameData>.Load(key, new SlotGameData()), false);
         SaveType<SlotGameData>.OnSaveEvent += (_, data) => CreatePortrait(data, true);
@@ -121,19 +130,52 @@ public partial class SlotView : MarginContainer
 
         var mw = ConnectionController.GetCurrentMultiworld;
         var leader = ConnectionController.LeaderClient;
-        if (mw is null || leader is null)
-        {
-            foreach (var slot in Portraits.Keys.Order()) MainSlotContainer.AddChild(Portraits[slot]);
-            return;
-        }
 
-        var names = leader!.PlayerNames;
-        foreach (var slot in Portraits.Keys.Order())
+        var searchText = SlotSearch.Text.Trim();
+        var searchType = SaveType<int>.Load(SearchType, 0);
+        foreach (var rawSlot in Portraits.Keys.Order())
         {
-            if (names.Contains(slot) || names.Contains(mw!.GetSlotName(slot)))
-                MainSlotContainer.AddChild(Portraits[slot]);
-            else SubSlotContainer.AddChild(Portraits[slot]);
+            var slot = rawSlot;
+            var isSub = false;
+
+            if (mw is not null && leader is not null)
+            {
+                var names = leader!.PlayerNames;
+                if (!(names.Contains(slot) || names.Contains(mw!.GetSlotName(slot)))) isSub = true;
+                slot = mw!.GetSlotName(slot);
+            }
+
+            if (!isSub && searchText is not "")
+            {
+                var slotNameMatches = IsMatch(searchText, slot);
+                var gameNameMatches = IsMatch(searchText, Portraits[rawSlot].GameName);
+
+                switch (searchType)
+                {
+                    case 0:
+                        if (!slotNameMatches) isSub = true;
+                        break;
+                    case 1:
+                        if (!gameNameMatches) isSub = true;
+                        break;
+                    case 2:
+                        if (!slotNameMatches || !gameNameMatches) isSub = true;
+                        break;
+                    case 3:
+                        if (!slotNameMatches && !gameNameMatches) isSub = true;
+                        break;
+                }
+            }
+
+            if (!isSub) MainSlotContainer.AddChild(Portraits[rawSlot]);
+            else SubSlotContainer.AddChild(Portraits[rawSlot]);
         }
+    }
+
+    public bool IsMatch(string searchText, string candidate)
+    {
+        if (SaveType<bool>.Load(UseStrictSearch, false)) return candidate.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
+        return SearchAlg.SearchAll(searchText, [candidate]).Count > 0;
     }
 
     public static bool ContainsSlot(string name)

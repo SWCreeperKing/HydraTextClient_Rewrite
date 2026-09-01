@@ -202,6 +202,7 @@ visible = false
 layout_mode = 2
 
 [node name="UpperLayer" type="VBoxContainer" parent="." unique_id=958285575]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 alignment = 2
