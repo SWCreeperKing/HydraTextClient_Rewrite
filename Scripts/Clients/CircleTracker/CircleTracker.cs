@@ -15,7 +15,7 @@ namespace HydraTextClient.Scripts.Clients.CircleTracker;
 
 public partial class CircleTracker : Control
 {
-    private const string HydraUTBridgeFileHash = "ACCCD4E8294BB3009BE0F71D0137A14C38973236584D770BB829A26B46FF6FB8";
+    private const string HydraUTBridgeFileHash = "A2D59F49EC29D28B80308B383EACA4BA0EE846FD25CDF18FC0AB1AFBD75FA4B9";
     public static CircleTracker Singleton;
     public static event Action? OnTrackerUpdate;
     [Export] private PackedScene TrackerScene;
@@ -101,7 +101,7 @@ public partial class CircleTracker : Control
         if (!DoesApWorldExist(apDir, "HydraUTBridge", false, out var bridgeLoc))
         {
             MainController.ShowConfirm(
-                "HydraUTBridge.apworld does not exist", "HydraUTBridge.apworld does not exist\nWould you like hydra to download it?", downloadBridge
+                "HydraUTBridge.apworld does not exist", "HydraUTBridge.apworld does not exist\nWould you like hydra to download it?\n(Might need to reopen hydra after)", downloadBridge
             );
             return false;
         }
@@ -109,7 +109,7 @@ public partial class CircleTracker : Control
         if (ExternalAppController.GetFileSha(bridgeLoc) != HydraUTBridgeFileHash)
         {
             MainController.ShowConfirm(
-                "HydraUTBridge.apworld version isn't compatible", "HydraUTBridge.apworld version isn't compatible\nWould you like hydra to update it?", downloadBridge
+                "HydraUTBridge.apworld version isn't compatible", "HydraUTBridge.apworld version isn't compatible\nWould you like hydra to update it?\n(Might need to reopen hydra after)", downloadBridge
             );
             return false;
         }
