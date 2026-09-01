@@ -1,19 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Godot;
 using HydraTextClient.Scripts.Controllers;
+using HydraTextClient.Scripts.Settings;
 using HydraTextClient.Scripts.Utility.Loaders;
 using HydraTextClient.Scripts.Utility.Popups;
 using HydraTextClient.Scripts.Utility.UIHelpers;
 using Newtonsoft.Json;
+using Environment = System.Environment;
 
-namespace HydraTextClient.Scripts.Mapper;
+namespace HydraTextClient.Scripts.Mapper.Popups;
 
-public partial class PoptrackerImporter : WindowSetter
+public partial class PackImporter : WindowSetter
 {
-    [Export] public OptionButton LayoutOptions;
+    private const string PreviousFolder = "Mapper/Importer/FileDialogue/LastFolderUsed";
+
+    private static string[] ContentFiles =
+    [
+        "images", "maps", "atlas.json", "tabs.json", "entrance_rando_names.json",
+        "entrance_rando_display_names.json", "locationiconopen.json", "locationiconclose.json", "autotracking.json",
+        "locationgroups.json",
+    ];
+
+    private static string[] AllowedFiles =
+    [
+        ".txt", ".json", .. GlobalThemeSettings.ImageFormats.Select(f => f.Replace("*", "")),
+    ];
+
+    [Export, ExportGroup("Hydra Pack")] public FileDialog OpenZip;
+    [Export, ExportGroup("Poptracker")] public OptionButton LayoutOptions;
     [Export] public VBoxContainer LocationImports;
     [Export] public ButtonAnimation ConfirmButton;
     [Export] public ButtonAnimation MapButton;
@@ -33,8 +52,69 @@ public partial class PoptrackerImporter : WindowSetter
     private Dictionary<string, CheckBox> LayoutSelections = [];
     private string[] LocationJsons = [];
 
+    public override void _Ready()
+    {
+        OpenZip.FileSelected += s =>
+        {
+            SaveType<string>.Save(PreviousFolder, Path.GetDirectoryName(s), false);
+            CallDeferred("ReadPackZip", s);
+        };
+        OpenZip.AboutToPopup += () =>
+        {
+            OpenZip.CurrentDir = SaveType<string>.Load(
+                PreviousFolder, Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            );
+        };
+    }
+
     public void CallReadPack(string manifest) => CallDeferred("ReadPack", manifest);
     public void CallReadMap(string map) => CallDeferred("ContinueToReadPack", map);
+
+    private void ReadPackZip(string path)
+    {
+        try
+        {
+            var game = Path.GetFileNameWithoutExtension(path);
+            var gameDirectory = $"{Directories.MapPacks}/{game}";
+            if (Directory.Exists(gameDirectory)) return;
+            Directory.CreateDirectory(gameDirectory);
+
+            using var zip = ZipFile.OpenRead(path);
+            var starting = $"{game}/";
+            
+            foreach (var entry in zip.Entries)
+            {
+                var subPath = entry.FullName;
+                if (subPath == starting) continue;
+                if (subPath.StartsWith(starting)) subPath = subPath[starting.Length..];
+                
+                if (entry.Name is "")
+                {
+                    Directory.CreateDirectory($"{gameDirectory}/{subPath}");
+                    continue;
+                }
+                
+                entry.ExtractToFile($"{gameDirectory}/{subPath}".Trim());
+            }
+
+            Queue<string> folders = [];
+            folders.Enqueue(gameDirectory);
+
+            while (folders.Count != 0)
+            {
+                var folder = folders.Dequeue();
+                foreach (var file in Directory.GetFiles(folder))
+                {
+                    if (!AllowedFiles.Contains(Path.GetExtension(file))) File.Delete(file);
+                }
+
+                foreach (var subFolder in Directory.GetDirectories(folder)) folders.Enqueue(subFolder);
+            }
+        }
+        catch (Exception e) { MainController.ShowError(e); }
+
+        Close();
+    }
 
     private void ReadPack(string manifestFile)
     {

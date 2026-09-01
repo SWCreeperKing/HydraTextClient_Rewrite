@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="4_dgvn7"]
 [ext_resource type="PackedScene" uid="uid://c8kp7fmxpn1tr" path="res://Scenes/Mapper/Popups/PackImporter.tscn" id="4_so8ey"]
 [ext_resource type="PackedScene" uid="uid://brl2lxca8asui" path="res://Scenes/Mapper/Popups/MapEditorWindow.tscn" id="5_t3xfa"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="6_js3tx"]
 
 [node name="Map Tracker" type="HSplitContainer" unique_id=1830903005 node_paths=PackedStringArray("MapContainer", "ButtonContainer")]
 offset_right = 1152.0
@@ -29,10 +30,22 @@ layout_mode = 2
 [node name="Button" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1810564245]
 layout_mode = 2
 text = "Import Pack"
+script = ExtResource("6_js3tx")
 
 [node name="Button2" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1960466507]
 layout_mode = 2
 text = "Pack Editor"
+script = ExtResource("6_js3tx")
+
+[node name="Button3" type="Button" parent="MarginContainer/VBoxContainer" unique_id=426932078]
+layout_mode = 2
+text = "Reload Packs"
+script = ExtResource("6_js3tx")
+
+[node name="Button4" type="Button" parent="MarginContainer/VBoxContainer" unique_id=19599947]
+layout_mode = 2
+text = "Open Packs Folder"
+script = ExtResource("6_js3tx")
 
 [node name="HSeparator3" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=1252904152]
 layout_mode = 2
@@ -75,3 +88,5 @@ Controls = {
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Button" to="." method="CallPopupImporter"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Button2" to="." method="CallOpenPackEditor"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Button3" to="." method="Reload"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Button4" to="." method="OpenFolder"]

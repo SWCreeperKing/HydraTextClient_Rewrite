@@ -17,7 +17,7 @@ public static class GlobalThemeSettings
 {
     public static event Action? OnFontUpdate;
 
-    private static readonly string[] ImageFormats =
+    public static readonly string[] ImageFormats =
     [
         "*.png", "*.jpg", "*.bmp", "*.exr", "*.jpeg", "*.tga", "*.svg", "*.svgz",
     ];

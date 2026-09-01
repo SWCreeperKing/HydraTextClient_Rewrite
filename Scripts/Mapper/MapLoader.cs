@@ -100,42 +100,52 @@ public partial class MapLoader : Control
 
         ListContainer.Visible = false;
         MapPath = path;
-        Client?.HintsTrackedEvent += UpdateNodes;
         FunctionIdString = $"Map_Tracker_{(IsInEditMode ? "Editor" : Client?.PlayerName)}";
 
         TrackerName = trackerName;
         Parent = parent;
-        MapsList = JsonConvert.DeserializeObject<List<Maps>>(File.ReadAllText($"{path}/atlas.json"));
-        Structure = JsonConvert.DeserializeObject<TabStructure>(File.ReadAllText($"{path}/tabs.json"));
 
-        if (File.Exists($"{path}/entrance_rando_names.json"))
-            EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                File.ReadAllText($"{path}/entrance_rando_names.json")
-            );
-        if (File.Exists($"{path}/entrance_rando_display_names.json"))
-            EntranceNicknames = JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                File.ReadAllText($"{path}/entrance_rando_display_names.json")
-            );
-        if (File.Exists($"{path}/locationiconopen.json"))
-            LocationOpenedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                File.ReadAllText($"{path}/locationiconopen.json")
-            );
-        if (File.Exists($"{path}/locationiconclose.json"))
-            LocationClosedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                File.ReadAllText($"{path}/locationiconclose.json")
-            );
-        if (File.Exists($"{path}/autotracking.json"))
+        try
         {
-            AutoTrackingData = JsonConvert.DeserializeObject<AutoTrackingData>(
-                File.ReadAllText($"{path}/autotracking.json")
+            MapsList = JsonConvert.DeserializeObject<List<Maps>>(File.ReadAllText($"{path}/atlas.json"));
+            Structure = JsonConvert.DeserializeObject<TabStructure>(File.ReadAllText($"{path}/tabs.json"));
+
+            if (File.Exists($"{path}/entrance_rando_names.json"))
+                EntranceMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                    File.ReadAllText($"{path}/entrance_rando_names.json")
+                );
+            if (File.Exists($"{path}/entrance_rando_display_names.json"))
+                EntranceNicknames = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                    File.ReadAllText($"{path}/entrance_rando_display_names.json")
+                );
+            if (File.Exists($"{path}/locationiconopen.json"))
+                LocationOpenedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                    File.ReadAllText($"{path}/locationiconopen.json")
+                );
+            if (File.Exists($"{path}/locationiconclose.json"))
+                LocationClosedIconOverride = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                    File.ReadAllText($"{path}/locationiconclose.json")
+                );
+            if (File.Exists($"{path}/autotracking.json"))
+            {
+                AutoTrackingData = JsonConvert.DeserializeObject<AutoTrackingData>(
+                    File.ReadAllText($"{path}/autotracking.json")
+                );
+                HasAutoTrackingData = true;
+            }
+
+            LocationGroups = JsonConvert.DeserializeObject<List<LocationGroup>>(
+                File.ReadAllText($"{path}/locationgroups.json")
             );
-            HasAutoTrackingData = true;
         }
+        catch (Exception e)
+        {
+            MainController.ShowError($"Failed to read pack [{Path.GetFileName(path)}]", e);
+            ((MapTracker)parent).UnloadMap(trackerName);
+            return;
+        } 
 
-        LocationGroups = JsonConvert.DeserializeObject<List<LocationGroup>>(
-            File.ReadAllText($"{path}/locationgroups.json")
-        );
-
+        Client?.HintsTrackedEvent += UpdateNodes;
         if (!IsInEditMode && !CircleTracker.Singleton.Pages.TryGetValue(trackerName, out Page))
         {
             ((MapTracker)parent).UnloadMap(trackerName);
@@ -337,7 +347,7 @@ public partial class MapLoader : Control
 
             SetHoverPopupText(sb.ToString());
         }
-        catch (Exception e) {SetHoverPopupText($"Error with map node [{e}]"); }
+        catch (Exception e) { SetHoverPopupText($"Error with map node [{e}]"); }
     }
 
     private void SetHoverPopupText(string text)
@@ -454,7 +464,7 @@ public partial class MapLoader : Control
             BreakLink(loc);
             return;
         }
-        
+
         if (LinkingEntrance is null)
         {
             LinkingEntrance = loc;
