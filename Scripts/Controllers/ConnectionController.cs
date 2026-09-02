@@ -32,7 +32,7 @@ public partial class ConnectionController : Control
 
     public static double GetConnectionCooldown => ConnectionCooldown;
     public static bool IsConnecting => ClientTryConnecting;
-    public static ConcurrentBag<int> ProcessIds = []; 
+    public static ConcurrentBag<int> ProcessIds = [];
     private static double ConnectionCooldown;
     private static bool ClientTryConnecting;
 
@@ -73,7 +73,9 @@ public partial class ConnectionController : Control
 
         try
         {
-            var disconnectTimer = new TimeSpan(0, 0, (int)SaveType<double>.Load(GlobalThemeSettings.ServerTimeoutTime, 60));
+            var disconnectTimer = new TimeSpan(
+                0, 0, (int)SaveType<double>.Load(GlobalThemeSettings.ServerTimeoutTime, 60)
+            );
             ApClient client = new() { ServerTimeout = disconnectTimer, ExcludeBouncedPacketsFromSelf = false };
             var isLeader = !HasLeaderClient;
             List<ArchipelagoTag> tags = [ArchipelagoTag.TextOnly, ArchipelagoTag.DeathLink, ArchipelagoTag.TrapLink];
@@ -171,7 +173,14 @@ public partial class ConnectionController : Control
         var leader = LeaderClient;
         OnClientRemoved?.Invoke(name, NamedClients[name], leader == NamedClients[name]);
 
-        if (leader == NamedClients[name] && Clients.Count > 1) { ChangeLeader(Clients[1]); }
+        var candidate = Clients.Skip(1).FirstOrDefault(
+            c =>
+            {
+                NamedClients[c].UpdateConnection();
+                return NamedClients[c].IsConnected;
+            }, null
+        );
+        if (leader == NamedClients[name] && candidate is not null) ChangeLeader(candidate);
 
         Clients.Remove(name);
         NamedClients.Remove(name);
@@ -241,7 +250,7 @@ public partial class ConnectionController : Control
             TryDisconnect(multiWorldName, name);
             return;
         }
-        
+
         if (ConnectionCooldown > 0) return;
         if (Singleton.Clients.Count >= 7 && mw.Address.ToLower() is not ("localhost" or "127.0.0.1"))
         {

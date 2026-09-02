@@ -32,25 +32,30 @@ public partial class AppLogger(LoggerLabel label) : Logger
 
     public override void _LogMessage(string message, bool error)
     {
-        if (message.Length == 0) return;
-        var timeStamp = DateTime.Now.ToString("[HH:mm:ss]");
-        var split = message.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        if (split.Length == 0) return;
-
-        _Label.LoggerWriter.WriteLine($"{timeStamp} [{(error ? "ERROR" : "Info")}] {split[0]}");
-        var text = $"[color=darkgray]{timeStamp}[/color] [color={(error ? "red" : "white")}]{split[0].Replace("[", "[lb]")}";
-
-        if (split.Length > 1)
+        lock (_Label.LoggerWriter)
         {
-            text += $"\n{BLOCK}{string.Join($"\n{BLOCK} ", split.Skip(1))}"; 
-            _Label.LoggerWriter.WriteLine($"\n{BLOCK}{string.Join($"\n{BLOCK} ", split.Skip(1)).Replace("[", "[lb]")}");
+            if (message.Length == 0) return;
+            var timeStamp = DateTime.Now.ToString("[HH:mm:ss]");
+            var split = message.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length == 0) return;
+
+            _Label.LoggerWriter.WriteLine($"{timeStamp} [{(error ? "ERROR" : "Info")}] {split[0]}");
+            var text
+                = $"[color=darkgray]{timeStamp}[/color] [color={(error ? "red" : "white")}]{split[0].Replace("[", "[lb]")}";
+
+            if (split.Length > 1)
+            {
+                text += $"\n{BLOCK}{string.Join($"\n{BLOCK} ", split.Skip(1))}";
+                _Label.LoggerWriter.WriteLine(
+                    $"\n{BLOCK}{string.Join($"\n{BLOCK} ", split.Skip(1)).Replace("[", "[lb]")}"
+                );
+            }
+
+            if (error) _Label.LoggerWriter.Flush();
+
+            _Messages.Add($"{text}[/color]");
+            _Label.RefreshUI = true;
         }
-        
-        if (error) _Label.LoggerWriter.Flush();
-
-        _Messages.Add($"{text}[/color]");
-
-        _Label.RefreshUI = true;
     }
 
     public string[] Messages => _Messages.GetCollection;

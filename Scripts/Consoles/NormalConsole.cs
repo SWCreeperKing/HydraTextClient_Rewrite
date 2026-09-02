@@ -44,27 +44,30 @@ public partial class NormalConsole : RichTextLabel
 
     public void WriteLine(string message, bool error = false)
     {
-        if (message.Length == 0) return;
-        var split = message.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        if (split.Length == 0) return;
-
-        StringBuilder sb = new();
-        try { SlotLogs.WriteLine($"{DateTime.Now:[HH:mm:ss]} [{(error ? "ERROR" : "Info")}] [{Name}] {split[0]}"); }
-        catch (OverflowException) { }
-        sb.Append(GetTimestamp()).Append("[color=").Append(error ? "red" : "white").Append(']')
-          .Append(split[0].Replace("[", "[lb]"));
-        if (split.Length > 1)
+        lock (SlotLogs)
         {
-            sb.Append('\n').Append(BLOCK).Append(string.Join($"\n{BLOCK}", split.Skip(1)).Replace("[", "[lb]"));
-            SlotLogs.WriteLine($"\n{BLOCK}{string.Join($"\n{BLOCK}", split.Skip(1))}");
-        }
-        try
-        {
-            if (error) SlotLogs.Flush();
-        }
-        catch (ArgumentOutOfRangeException) { }
+            if (message.Length == 0) return;
+            var split = message.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length == 0) return;
 
-        CallDeferred("AddLine", sb.ToString());
+            StringBuilder sb = new();
+            try { SlotLogs.WriteLine($"{DateTime.Now:[HH:mm:ss]} [{(error ? "ERROR" : "Info")}] [{Name}] {split[0]}"); }
+            catch (OverflowException) { }
+            sb.Append(GetTimestamp()).Append("[color=").Append(error ? "red" : "white").Append(']')
+              .Append(split[0].Replace("[", "[lb]"));
+            if (split.Length > 1)
+            {
+                sb.Append('\n').Append(BLOCK).Append(string.Join($"\n{BLOCK}", split.Skip(1)).Replace("[", "[lb]"));
+                SlotLogs.WriteLine($"\n{BLOCK}{string.Join($"\n{BLOCK}", split.Skip(1))}");
+            }
+            try
+            {
+                if (error) SlotLogs.Flush();
+            }
+            catch (ArgumentOutOfRangeException) { }
+            
+            CallDeferred("AddLine", sb.ToString());
+        }
     }
 
     public void WriteError(Exception err) => WriteLine($"{err.Message}\n{err.StackTrace}", true);

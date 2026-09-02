@@ -90,10 +90,13 @@ public partial class CircleTracker : Control
                 return false;
             }
         }
-        
+
         if (!entry.FileExists())
         {
-            var finalExecutableTest = (string[])[.. Directory.GetFiles(apDir).Select(Path.GetFileName).Where(f => f.StartsWith("Archipelago_"))];
+            var finalExecutableTest = (string[])
+            [
+                .. Directory.GetFiles(apDir).Select(Path.GetFileName).Where(f => f.StartsWith("Archipelago_"))
+            ];
             if (finalExecutableTest.Length > 0)
             {
                 try { entry = new HydraBridgeEntry(apDir, finalExecutableTest.First(), Clients[name], page); }
@@ -113,13 +116,12 @@ public partial class CircleTracker : Control
             return false;
         }
 
-        var downloadBridge = () => DownloadUTBridge($"{apDir}/custom_worlds/HydraUTBridge.apworld");
         if (!DoesApWorldExist(apDir, "HydraUTBridge", false, out var bridgeLoc))
         {
             MainController.ShowConfirm(
                 "HydraUTBridge.apworld does not exist",
                 "HydraUTBridge.apworld does not exist\nWould you like hydra to download it?\n(Might need to reopen hydra after)",
-                downloadBridge
+                () => DownloadUTBridge(apDir, true)
             );
             return false;
         }
@@ -129,7 +131,7 @@ public partial class CircleTracker : Control
             MainController.ShowConfirm(
                 "HydraUTBridge.apworld version isn't compatible",
                 "HydraUTBridge.apworld version isn't compatible\nWould you like hydra to update it?\n(Might need to reopen hydra after)",
-                downloadBridge
+                () => DownloadUTBridge(bridgeLoc, false)
             );
             return false;
         }
@@ -153,7 +155,7 @@ public partial class CircleTracker : Control
         var custom = $"{apDir}/custom_worlds/{world}.apworld";
         var lib = Directory.Exists($"{apDir}/lib/worlds") ? $"{apDir}/lib/worlds/{world}.apworld"
             : $"{apDir}/worlds/{world}.apworld";
-        var worldInWorlds = File.Exists(custom);
+        var worldInWorlds = Directory.Exists($"{apDir}/custom_worlds") && File.Exists(custom);
         var worldInLibWorlds = File.Exists(lib);
         if (worldInLibWorlds ^ worldInWorlds)
         {
@@ -163,27 +165,45 @@ public partial class CircleTracker : Control
         if (show404Error && !worldInWorlds || worldInLibWorlds)
         {
             MainController.ShowError(
-                worldInWorlds ? $"Duplicate ApWorld in {(Directory.Exists($"{apDir}/lib/worlds") ? "./lib/worlds" : "./worlds")} and ./custom_worlds" : $"ApWorld [{world}] not found"
+                worldInWorlds
+                    ? $"Duplicate ApWorld in ./{(Directory.Exists($"{apDir}/lib/worlds") ? "lib/" : "")}worlds and ./custom_worlds"
+                    : $"ApWorld [{world}] not found"
             );
         }
         path = "";
         return false;
     }
 
-    public void DownloadUTBridge(string path)
+    public void DownloadUTBridge(string apPath, bool guessPath)
     {
         var selfFile = System.Environment.ProcessPath;
         if (Path.GetFileNameWithoutExtension(selfFile)!.ToLower() is "godot") return;
 
         try
         {
+            var path = apPath;
+            if (guessPath)
+            {
+                var worldDest = "/custom_worlds";
+                if (!Directory.Exists($"{apPath}{worldDest}")) worldDest = "/lib/worlds";
+                if (!Directory.Exists($"{apPath}{worldDest}")) worldDest = "/worlds";
+                if (!Directory.Exists($"{apPath}{worldDest}"))
+                {
+                    MainController.ShowError("Could not find an appropriate download location for the bridge");
+                    return;
+                };
+
+                path = $"{worldDest}/HydraUTBridge.apworld";
+            }
+            
+            if (File.Exists(path)) File.Delete(path);
+            
             HttpClient client = new();
             var response = client.GetByteArrayAsync(
                                       $"{AutoUpdater.GithubReleasesPath}{MainController.GetVersion()}/HydraUTBridge.apworld"
                                   )
                                  .GetAwaiter().GetResult();
-
-            if (File.Exists(path)) File.Delete(path);
+            
             File.WriteAllBytes(path!, response);
         }
         catch (Exception e) { MainController.ShowError(e); }
