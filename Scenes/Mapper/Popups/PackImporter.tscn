@@ -34,9 +34,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_tab = 0
+current_tab = 1
 
 [node name="Import Hydra Pack Zip" type="MarginContainer" parent="Panel/TabContainer" unique_id=1718524007]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -63,7 +64,6 @@ text = "Import Hydra Pack Zip"
 script = ExtResource("3_xksft")
 
 [node name="Import PopTracker Pack" type="MarginContainer" parent="Panel/TabContainer" unique_id=1212581701]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 

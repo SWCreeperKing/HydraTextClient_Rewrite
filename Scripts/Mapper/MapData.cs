@@ -210,30 +210,12 @@ public class PoptrackerLayout // needed to find the stupid tabs and subtabs ;-;
     [JsonProperty("tracker_horizontal")] public PoptrackerLayout HorizontalLayout;
     [JsonProperty("tracker_vertical")] public PoptrackerLayout VerticalLayout;
     [JsonProperty("type")] public string Type = ""; // look for tabbed
-    [JsonProperty("background")] public string BackgroundColor;
-    [JsonProperty("h_alignment")] public string HorizontalAlignment;
-    [JsonProperty("v_alignment")] public string VerticalAlignment;
-    [JsonProperty("dock")] public string DockType;
-    [JsonProperty("orientation")] public string Orientation;
-    [JsonProperty("max_height")] public int MaxHeight;
-    [JsonProperty("max_width")] public int MaxWidth;
-    [JsonProperty("margin")] public string Margin;
-    [JsonProperty("item_margin")] public string ItemMargin;
-    [JsonProperty("item_size")] public string ItemSize;
-    [JsonProperty("item_h_alignment")] public string ItemHorizontalAlignment;
-    [JsonProperty("item_v_alignment")] public string ItemVerticalAlignment;
-    [JsonProperty("dropshadow")] public bool DropShadow;
-    [JsonProperty("text")] public string Text;
-    [JsonProperty("header_content")] public dynamic HeaderContent;
 
     [JsonProperty("content"), JsonConverter(typeof(SingleOrArray<PoptrackerLayout>))]
     public PoptrackerLayout[] Content = [];
 
     [JsonProperty("tabs"), JsonConverter(typeof(SingleOrArray<PoptrackerLayout>))]
     public PoptrackerLayout[] Tabs = [];
-
-    [JsonProperty("key")] public string KeyReference;
-    [JsonProperty("compact")] public bool Compact;
 
     [JsonProperty("maps"), JsonConverter(typeof(SingleOrArray<string>))]
     public string[] Maps = [];
