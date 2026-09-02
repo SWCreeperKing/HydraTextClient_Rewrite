@@ -41,7 +41,7 @@ public partial class LocationGroupsManagement : SelectionEditWindow<LocationGrou
         CompareContainer.SetCurrentTab(0);
         Loader = loader;
         Loader.ItemImageLoader.ReloadImages();
-        Images = [.. Loader.ItemImageLoader.GetImageNames().Order()];
+        Images = ["", .. Loader.ItemImageLoader.GetImageNames().Order()];
         GroupView.ItemSelected += l => SwitchToEdit(Groups[l]);
         SetImages(NodeImage);
         SetImages(ClosedImage);
@@ -53,7 +53,11 @@ public partial class LocationGroupsManagement : SelectionEditWindow<LocationGrou
     {
         button.Clear();
         button.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
-        foreach (var name in Images) button.AddIconItem(Loader.ItemImageLoader[name], name);
+        foreach (var name in Images)
+        {
+            if (Loader.ItemImageLoader.TryGet(name, out var img)) button.AddIconItem(img, name);
+            button.AddItem(name);
+        }
     }
 
     public void AddGroup()

@@ -20,7 +20,7 @@ public partial class LocationIconsOverrider : SelectionEditWindow<string>
     {
         Loader = loader;
         Loader.ItemImageLoader.ReloadImages();
-        Images = [.. Loader.ItemImageLoader.GetImageNames().Order()];
+        Images = ["", .. Loader.ItemImageLoader.GetImageNames().Order()];
         Locations =
         [
             .. loader.MapNavigators.SelectMany(map => map.Locations.SelectMany(loc => loc.RawNodeData.Locations))
@@ -40,7 +40,11 @@ public partial class LocationIconsOverrider : SelectionEditWindow<string>
     {
         button.Clear();
         button.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
-        foreach (var name in Images) button.AddIconItem(Loader.ItemImageLoader[name], name);
+        foreach (var name in Images)
+        {
+            if (Loader.ItemImageLoader.TryGet(name, out var img)) button.AddIconItem(img, name);
+            button.AddItem(name);
+        }
     }
 
     protected override bool DataCheck(string dataIn, out string dataOut) => (dataOut = dataIn).Trim() is not "";

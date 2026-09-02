@@ -24,7 +24,7 @@ public partial class EditNodeDataPopup : WindowSetter
         {
             Loader = loader;
             Node = selectedNode;
-            Groups = [.. Loader.LocationGroupingMap.Keys.Order()];
+            Groups = ["", .. Loader.LocationGroupingMap.Keys.Order()];
 
             if (isNew)
             {
@@ -38,8 +38,8 @@ public partial class EditNodeDataPopup : WindowSetter
             foreach (var groupName in Groups)
             {
                 var group = Loader.LocationGroupingMap[groupName];
-                if (!Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img)) continue;
-                LocationGroup.AddIconItem(img, groupName);
+                if (Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img)) LocationGroup.AddIconItem(img, groupName);
+                else LocationGroup.AddItem(groupName);
             }
             LocationGroup.Selected = Groups.IndexOf(Node.Group);
 
