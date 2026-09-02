@@ -1,4 +1,5 @@
 using Godot;
+using HydraTextClient.Scripts.Connection.Slots;
 using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Utility.DataTypes;
 using HydraTextClient.Scripts.Utility.Loaders;
@@ -27,7 +28,7 @@ public partial class MultiworldCreator : WindowSetter
         CurrentMultiworld = SaveType<string>.Load("CurrentMultiworld", null);
         if (CurrentMultiworld is null || !SaveType<MultiworldData>.ContainsKey(CurrentMultiworld))
             SetWorld(TemporaryLabel);
-        else SetWorld(CurrentMultiworld);
+        else SetWorldS(CurrentMultiworld);
 
         if (SaveType<MultiworldData>.ContainsKey(TemporaryLabel.MultiWorldName)) return;
         var def = new MultiworldData { WorldName = TemporaryLabel.MultiWorldName };
@@ -55,9 +56,9 @@ public partial class MultiworldCreator : WindowSetter
         return mw;
     }
 
-    public void SetWorld(MultiworldLabel label) => SetWorld(label.MultiWorldName);
+    public void SetWorld(MultiworldLabel label) => SetWorldS(label.MultiWorldName);
 
-    private void SetWorld(string world)
+    private void SetWorldS(string world)
     {
         if (LockMultiworld)
         {
@@ -66,8 +67,15 @@ public partial class MultiworldCreator : WindowSetter
                 "You are currently logged into Multiple slots\nDisconnect all of them and switch worlds?",
                 () =>
                 {
-                    foreach (var client in GetClientNames()) TryConnect(client);
-                    SetWorld(world);
+                    var mw = GetCurrentMultiworld;
+                    if (CurrentMultiworld is null) return;
+                    foreach (var slot in SaveType<SlotGameData>.GetKeys())
+                    {
+                        SlotView.SetPortraitStatus(slot, ConnectionStatus.NotConnected);
+                        var name = mw!.GetSlotName(slot);
+                        TryDisconnect(name, slot);
+                    }
+                    CallDeferred("SetWorldS", world);
                 }
             );
             return;

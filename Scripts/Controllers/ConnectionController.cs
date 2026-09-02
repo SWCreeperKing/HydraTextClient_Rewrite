@@ -264,7 +264,7 @@ public partial class ConnectionController : Control
 
     public static void TryDisconnect(string name, string originalName)
     {
-        if (Singleton.Receipts[name] != originalName) return;
+        if (!Singleton.Receipts.TryGetValue(name, out var receiptName)  || receiptName != originalName) return;
         Singleton.Receipts.Remove(name);
         SlotView.SetPortraitStatus(originalName, ConnectionStatus.NotConnected);
         Singleton.CallDeferred("DisconnectClient", name);
