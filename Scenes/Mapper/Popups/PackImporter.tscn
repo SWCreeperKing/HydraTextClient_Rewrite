@@ -12,10 +12,10 @@ size = Vector2i(600, 400)
 theme = ExtResource("1_ful1g")
 script = ExtResource("2_ful1g")
 OpenZip = NodePath("FileDialog3")
-LayoutOptions = NodePath("Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer3/OptionButton")
-LocationImports = NodePath("Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/ScrollContainer/VBoxContainer")
-ConfirmButton = NodePath("Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer2/Button")
-MapButton = NodePath("Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer4/Button")
+LayoutOptions = NodePath("Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer3/OptionButton")
+LocationImports = NodePath("Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/ScrollContainer/VBoxContainer")
+ConfirmButton = NodePath("Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2/Button")
+MapButton = NodePath("Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer4/Button")
 MapSelect = NodePath("FileDialog2")
 
 [node name="Panel" type="Panel" parent="." unique_id=1989329588]
@@ -62,20 +62,20 @@ layout_mode = 2
 text = "Import Hydra Pack Zip"
 script = ExtResource("3_xksft")
 
-[node name="Import PopTracker Packs" type="MarginContainer" parent="Panel/TabContainer" unique_id=1212581701]
+[node name="Import PopTracker Pack" type="MarginContainer" parent="Panel/TabContainer" unique_id=1212581701]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer/Import PopTracker Packs" unique_id=483669024]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer/Import PopTracker Pack" unique_id=483669024]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer" unique_id=1346056092]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer" unique_id=1346056092]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer" unique_id=1245847000]
+[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer" unique_id=1245847000]
 self_modulate = Color(1, 0.73, 0.73, 1)
 layout_mode = 2
 text = "Warning: conversion is not perfect.
@@ -83,70 +83,70 @@ you might need to mess with the files directly
 or even place locations in manually
 (make sure to check the console for errors)"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer" unique_id=406372560]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer" unique_id=406372560]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1837448063]
+[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1837448063]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Pack Manifest.json"
 
-[node name="Button" type="Button" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=440841125]
+[node name="Button" type="Button" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=440841125]
 layout_mode = 2
 text = "Browse"
 script = ExtResource("3_xksft")
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer" unique_id=1638037708]
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer" unique_id=1638037708]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=784012794]
+[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=784012794]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Pack Maps.json"
 
-[node name="Button" type="Button" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=747087869]
+[node name="Button" type="Button" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=747087869]
 layout_mode = 2
 disabled = true
 text = "Browse"
 script = ExtResource("3_xksft")
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer" unique_id=630721793]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer" unique_id=630721793]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1677722335]
+[node name="Label" type="Label" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1677722335]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Select Which Layout to use"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1513037669]
+[node name="OptionButton" type="OptionButton" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1513037669]
 layout_mode = 2
 fit_to_longest_item = false
 
-[node name="Label2" type="Label" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer" unique_id=1264176547]
+[node name="Label2" type="Label" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer" unique_id=1264176547]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Select location jsons to import"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer" unique_id=772025329]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer" unique_id=772025329]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/ScrollContainer" unique_id=1935857848]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/ScrollContainer" unique_id=1935857848]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer" unique_id=962066638]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer" unique_id=962066638]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=947970361]
+[node name="Button" type="Button" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=947970361]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Convert"
 script = ExtResource("3_xksft")
 
-[node name="Button2" type="Button" parent="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=781550910]
+[node name="Button2" type="Button" parent="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=781550910]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
@@ -183,9 +183,9 @@ show_hidden_files = true
 use_native_dialog = true
 
 [connection signal="pressed" from="Panel/TabContainer/Import Hydra Pack Zip/VBoxContainer/Button" to="FileDialog3" method="popup_file_dialog"]
-[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer/Button" to="FileDialog" method="popup_file_dialog"]
-[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer4/Button" to="FileDialog2" method="popup_file_dialog"]
-[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer2/Button" to="." method="FinishConversionAndClose"]
-[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Packs/ScrollContainer/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]
+[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer/Button" to="FileDialog" method="popup_file_dialog"]
+[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer4/Button" to="FileDialog2" method="popup_file_dialog"]
+[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2/Button" to="." method="FinishConversionAndClose"]
+[connection signal="pressed" from="Panel/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]
 [connection signal="file_selected" from="FileDialog" to="." method="CallReadPack"]
 [connection signal="file_selected" from="FileDialog2" to="." method="CallReadMap"]
