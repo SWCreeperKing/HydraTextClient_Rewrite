@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using CreepyUtil.Archipelago.ApClient;
 using Godot;
@@ -104,11 +105,14 @@ public partial class SlotPortrait : TextureRect
                                                    SaveType<string>.Load(GlobalThemeSettings.ApDir, "", false)
                                                ).Replace("{{slot}}", slot)
                                               .Replace("{{pass}}", mw.GetPassword(slot)).Split(' ')
-                     ).Where(args => args.Any(arg => arg is not ("{{mw}}" or "{{hydra}}")))
+                     ).Where(args => args.Any(arg => arg is not ("{{mw}}" or "{{hydra}}" or "{{web}}")))
                     .Select(args =>
                          {
                              var context = args[0];
-                             args = [.. args.Where(arg => arg is not ("{{mw}}" or "{{hydra}}"))];
+                             args = [.. args.Where(arg => arg is not ("{{mw}}" or "{{hydra}}" or "{{web}}"))];
+
+                             if (context is "{{web}}") return new ReadOnlyEntry(string.Join(' ', args), "", context);
+
                              if (args.Length == 0) return null;
 
                              if (args[0].StartsWith('"'))
@@ -138,6 +142,12 @@ public partial class SlotPortrait : TextureRect
                 {
                     foreach (var entry in toRun)
                     {
+                        if (((ReadOnlyEntry)entry).Context is "{{web}}")
+                        {
+                            OS.ShellOpen(entry.Executable);
+                            continue;
+                        }
+
                         SaveType<string>.Save($"PROG:HASH/{entry.Executable}", entry.Hash, false);
                         var id = ExternalAppController.StartProcess(slot, entry);
                         if (id is -1 or 404) return;

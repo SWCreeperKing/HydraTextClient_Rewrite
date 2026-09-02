@@ -38,6 +38,7 @@
       - {{ap}} => path to ap
       - if {{mw}} is at the front then the process will only close when you disconnect all slots from the multiworld
       - if {{hydra}} is at the front then the process will only close when hydra closes
+      - if {{web}} is at the front then it will launch as a website
       - this runs using C#'s Process
       - ex: {{ap}}/ArchipelagoLauncherDebug.exe "Universal Tracker" --  --name {{slot}} --connect {{add}}:{{port}}
         - (UT is special as it accepts a slot name, by default AP doesn't)

@@ -269,6 +269,7 @@ public partial class HintTable : TextTable
 
     public int GetOrderSlot(int slot)
     {
+        if (!ConnectionController.HasLeaderClient) return 1;
         var player = ConnectionController.LeaderClient!.PlayerNames[slot];
         if (ConnectionController.IsConnected(player)) return 3;
         return SlotView.ContainsSlot(player) ? 2 : 1;

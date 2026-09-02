@@ -123,23 +123,33 @@ public abstract class CoreAppEntry
 
     protected CoreAppEntry(string exe, string args)
     {
-        var fileToRun = exe.Replace(@"\\", "/");
-        if (!File.Exists(fileToRun))
+        if (!exe.StartsWith("http") && !exe.StartsWith("www."))
         {
-            if (File.Exists($"{exe}.exe")) fileToRun += ".exe";
-            else if (File.Exists($"{exe}.appimage")) fileToRun += ".appimage";
-            else if (File.Exists($"{exe}.x86_64")) fileToRun += ".x86_64";
-            else if (File.Exists($"{exe}.app")) fileToRun += ".app";
-            else if (File.Exists($"{exe}.arm64")) fileToRun += ".arm64";
-            else if (File.Exists($"{exe}.bat")) fileToRun += ".bat";
-            else if (File.Exists($"{exe}.sh")) fileToRun += ".sh";
-            else fileToRun = "";
-        }
+            var fileToRun = exe.Replace(@"\\", "/");
+            if (!File.Exists(fileToRun))
+            {
+                if (File.Exists($"{exe}.exe")) fileToRun += ".exe";
+                else if (File.Exists($"{exe}.appimage")) fileToRun += ".appimage";
+                else if (File.Exists($"{exe}.x86_64")) fileToRun += ".x86_64";
+                else if (File.Exists($"{exe}.app")) fileToRun += ".app";
+                else if (File.Exists($"{exe}.arm64")) fileToRun += ".arm64";
+                else if (File.Exists($"{exe}.bat")) fileToRun += ".bat";
+                else if (File.Exists($"{exe}.sh")) fileToRun += ".sh";
+                else fileToRun = "";
+            }
 
-        Executable = fileToRun;
-        Arguments = args;
-        ShortName = Path.GetFileNameWithoutExtension(fileToRun);
-        Hash = fileToRun is "" ? "" : ExternalAppController.GetFileSha(fileToRun);
+            Executable = fileToRun;
+            Arguments = args;
+            ShortName = Path.GetFileNameWithoutExtension(fileToRun);
+            Hash = fileToRun is "" ? "" : ExternalAppController.GetFileSha(fileToRun);
+        }
+        else
+        {
+            Executable = exe;
+            Arguments = args;
+            ShortName =  string.Join("//", exe.Split("//")[1..]).Split('/')[0];
+            Hash = null;
+        }
     }
 
     public abstract void Interactor(string text, StreamWriter input, string console);
