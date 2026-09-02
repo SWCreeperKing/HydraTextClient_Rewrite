@@ -12,8 +12,8 @@ using Newtonsoft.Json;
 
 namespace HydraTextClient.Scripts.Clients.CircleTracker;
 
-public class HydraBridgeEntry(string apDir, ApClient client, TrackerPage page, bool useDebug)
-    : CoreAppEntry($"{apDir}/ArchipelagoLauncher{(useDebug ? "Debug" : "")}", "HydraUTBridge")
+public class HydraBridgeEntry(string apDir, string executable, ApClient client, TrackerPage page)
+    : CoreAppEntry($"{apDir}/{executable}", "HydraUTBridge")
 {
     public readonly ConcurrentDictionary<string, string> EntranceKeyMap = [];
     public readonly ConcurrentQueue<(int, long[])> ItemsQueued = [];

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using HydraTextClient.Scripts.Controllers;
@@ -22,9 +23,9 @@ public partial class CircleTracker : Control
     [Export] private VBoxContainer ButtonContainer;
     [Export] private TabContainer PageContainer;
 
-    public static event Action<string, ApClient>? CircleTrackerOpened; 
-    public static event Action<string, ApClient>? CircleTrackerClosed; 
-    
+    public static event Action<string, ApClient>? CircleTrackerOpened;
+    public static event Action<string, ApClient>? CircleTrackerClosed;
+
     private ConcurrentDictionary<string, ApClient> Clients = []; // easy access
     private Dictionary<string, ButtonAnimation> Buttons = [];
     public ConcurrentDictionary<string, TrackerPage> Pages = [];
@@ -71,7 +72,7 @@ public partial class CircleTracker : Control
 
         var page = TrackerScene.Instantiate<TrackerPage>();
         HydraBridgeEntry entry;
-        try { entry = new HydraBridgeEntry(apDir, Clients[name], page, true); }
+        try { entry = new HydraBridgeEntry(apDir, "ArchipelagoLauncherDebug", Clients[name], page); }
         catch (Exception e)
         {
             MainController.ShowError($"Error with [{apDir}]", e);
@@ -81,12 +82,27 @@ public partial class CircleTracker : Control
 
         if (!entry.FileExists())
         {
-            try { entry = new HydraBridgeEntry(apDir, Clients[name], page, false); }
+            try { entry = new HydraBridgeEntry(apDir, "ArchipelagoLauncher", Clients[name], page); }
             catch (Exception e)
             {
                 MainController.ShowError($"Error with [{apDir}]", e);
                 page.QueueFree();
                 return false;
+            }
+        }
+        
+        if (!entry.FileExists())
+        {
+            var finalExecutableTest = (string[])[.. Directory.GetFiles(apDir).Where(f => f.StartsWith("Archipelago_"))];
+            if (finalExecutableTest.Length != 0)
+            {
+                try { entry = new HydraBridgeEntry(apDir, Path.GetFileName(finalExecutableTest.First()), Clients[name], page); }
+                catch (Exception e)
+                {
+                    MainController.ShowError($"Error with [{apDir}]", e);
+                    page.QueueFree();
+                    return false;
+                }
             }
         }
 
@@ -101,7 +117,9 @@ public partial class CircleTracker : Control
         if (!DoesApWorldExist(apDir, "HydraUTBridge", false, out var bridgeLoc))
         {
             MainController.ShowConfirm(
-                "HydraUTBridge.apworld does not exist", "HydraUTBridge.apworld does not exist\nWould you like hydra to download it?\n(Might need to reopen hydra after)", downloadBridge
+                "HydraUTBridge.apworld does not exist",
+                "HydraUTBridge.apworld does not exist\nWould you like hydra to download it?\n(Might need to reopen hydra after)",
+                downloadBridge
             );
             return false;
         }
@@ -109,7 +127,9 @@ public partial class CircleTracker : Control
         if (ExternalAppController.GetFileSha(bridgeLoc) != HydraUTBridgeFileHash)
         {
             MainController.ShowConfirm(
-                "HydraUTBridge.apworld version isn't compatible", "HydraUTBridge.apworld version isn't compatible\nWould you like hydra to update it?\n(Might need to reopen hydra after)", downloadBridge
+                "HydraUTBridge.apworld version isn't compatible",
+                "HydraUTBridge.apworld version isn't compatible\nWould you like hydra to update it?\n(Might need to reopen hydra after)",
+                downloadBridge
             );
             return false;
         }
@@ -131,7 +151,8 @@ public partial class CircleTracker : Control
     public bool DoesApWorldExist(string apDir, string world, bool show404Error, out string path)
     {
         var custom = $"{apDir}/custom_worlds/{world}.apworld";
-        var lib = $"{apDir}/lib/worlds/{world}.apworld";
+        var lib = Directory.Exists($"{apDir}/lib/worlds") ? $"{apDir}/lib/worlds/{world}.apworld"
+            : $"{apDir}/worlds/{world}.apworld";
         var worldInWorlds = File.Exists(custom);
         var worldInLibWorlds = File.Exists(lib);
         if (worldInLibWorlds ^ worldInWorlds)

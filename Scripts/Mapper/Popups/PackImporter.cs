@@ -19,13 +19,6 @@ public partial class PackImporter : WindowSetter
 {
     private const string PreviousFolder = "Mapper/Importer/FileDialogue/LastFolderUsed";
 
-    private static string[] ContentFiles =
-    [
-        "images", "maps", "atlas.json", "tabs.json", "entrance_rando_names.json",
-        "entrance_rando_display_names.json", "locationiconopen.json", "locationiconclose.json", "autotracking.json",
-        "locationgroups.json",
-    ];
-
     private static string[] AllowedFiles =
     [
         ".txt", ".json", .. GlobalThemeSettings.ImageFormats.Select(f => f.Replace("*", "")),
