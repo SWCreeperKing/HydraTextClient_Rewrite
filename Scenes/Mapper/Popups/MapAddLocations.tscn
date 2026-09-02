@@ -59,12 +59,16 @@ script = ExtResource("2_353mw")
 
 [node name="CheckBox2" type="CheckBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=1185845978]
 layout_mode = 2
-text = "Clear Last Locations After Adding"
+text = "Clear ALL Last Locations After Adding"
 
 [node name="CheckBox" type="CheckBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=324202436]
 layout_mode = 2
 button_pressed = true
 text = "Clear Selected Last Locations After Adding"
+
+[node name="CheckBox3" type="CheckBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=813660069]
+layout_mode = 2
+text = "Sort Alphabetically"
 
 [node name="ItemList" type="ItemList" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer" unique_id=1093330436]
 layout_mode = 2
@@ -96,6 +100,7 @@ script = ExtResource("2_353mw")
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("1_dmcys")]
 Prefix = "mapAddLocations"
 Controls = {
+"SortAlpha": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox3"),
 "clearAllLast": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox2"),
 "clearSelectedLast": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox"),
 "window_nodes/MapAddLocations": NodePath("..")

@@ -26,7 +26,7 @@ public partial class MapAddLocations : WindowSetter
     public void SendLocations()
     {
         var locs = NewLocations.Text.Split('\n');
-        if (LastLocationList.Count > 0) locs = [..locs, ..GetSelectedLocations()];
+        if (LastLocationList.Count > 0) locs = [.. locs, .. GetSelectedLocations()];
         if (SaveType<bool>.Load("mapAddLocations/clearAllLast", false)) ClearAllLocations();
         else if (SaveType<bool>.Load("mapAddLocations/clearSelectedLast", true)) ClearSelectedLocations();
         EmitSignalAddLocations(locs);
@@ -46,14 +46,15 @@ public partial class MapAddLocations : WindowSetter
         ReloadItemList();
     }
 
-    public string[] GetSelectedLocations()
-        => [.. LastLocations.GetSelectedItems().Select(i => LastLocationList[i])];
+    public string[] GetSelectedLocations() => [.. LastLocations.GetSelectedItems().Select(LastLocations.GetItemText)];
 
     public void ReloadItemList()
     {
         LastLocations.Clear();
         ItemListContainer.Visible = LastLocationList.Count > 0;
         if (LastLocationList.Count == 0) return;
-        foreach (var loc in LastLocationList) LastLocations.AddItem(loc);
+        var list = SaveType<bool>.Load("mapAddLocations/SortAlpha", false) ? LastLocationList
+            : [.. LastLocationList.Order()];
+        foreach (var loc in list) LastLocations.AddItem(loc);
     }
 }
