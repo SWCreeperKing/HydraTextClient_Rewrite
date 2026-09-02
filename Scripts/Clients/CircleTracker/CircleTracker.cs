@@ -93,10 +93,10 @@ public partial class CircleTracker : Control
         
         if (!entry.FileExists())
         {
-            var finalExecutableTest = (string[])[.. Directory.GetFiles(apDir).Where(f => f.StartsWith("Archipelago_"))];
-            if (finalExecutableTest.Length != 0)
+            var finalExecutableTest = (string[])[.. Directory.GetFiles(apDir).Select(Path.GetFileName).Where(f => f.StartsWith("Archipelago_"))];
+            if (finalExecutableTest.Length > 0)
             {
-                try { entry = new HydraBridgeEntry(apDir, Path.GetFileName(finalExecutableTest.First()), Clients[name], page); }
+                try { entry = new HydraBridgeEntry(apDir, finalExecutableTest.First(), Clients[name], page); }
                 catch (Exception e)
                 {
                     MainController.ShowError($"Error with [{apDir}]", e);
@@ -163,7 +163,7 @@ public partial class CircleTracker : Control
         if (show404Error && !worldInWorlds || worldInLibWorlds)
         {
             MainController.ShowError(
-                worldInWorlds ? "Duplicate ApWorld in ./custom_worlds and ./lib/worlds" : $"ApWorld [{world}] not found"
+                worldInWorlds ? $"Duplicate ApWorld in {(Directory.Exists($"{apDir}/lib/worlds") ? "./lib/worlds" : "./worlds")} and ./custom_worlds" : $"ApWorld [{world}] not found"
             );
         }
         path = "";
