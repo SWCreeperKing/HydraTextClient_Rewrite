@@ -5,11 +5,32 @@
 [ext_resource type="Script" uid="uid://vu1absk21f82" path="res://Scripts/Utilities/PlayerInventory.cs" id="2_02inb"]
 [ext_resource type="PackedScene" uid="uid://deiabdossqvll" path="res://Scenes/Utilities/Popups/InventorySenders.tscn" id="3_80wbg"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="3_a8rg6"]
+[ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="3_jxosy"]
 [ext_resource type="PackedScene" uid="uid://duftnvs8wyydo" path="res://Scenes/Utilities/SearchingList.tscn" id="3_mknbs"]
 [ext_resource type="PackedScene" uid="uid://lhi65rdnf4eg" path="res://Scenes/Utilities/Popups/InventoryCounter.tscn" id="4_p40g0"]
 [ext_resource type="PackedScene" uid="uid://cbwouwen0n4nl" path="res://Scenes/Utilities/Popups/InventoryHistory.tscn" id="5_3y6xe"]
 
-[node name="SlotUtility" type="HSplitContainer" unique_id=1159233697 node_paths=PackedStringArray("Inventory", "ItemList", "LocationList")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icbdy"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3)
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eo764"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(1, 1, 1, 0.4)
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 10
+
+[node name="SlotUtility" type="HSplitContainer" unique_id=1159233697 node_paths=PackedStringArray("HintInfo", "HintProgress", "Inventory", "ItemList", "LocationList")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -18,6 +39,8 @@ grow_vertical = 2
 split_offsets = PackedInt32Array(556, 195)
 split_offset = 556
 script = ExtResource("1_4p5od")
+HintInfo = NodePath("MarginContainer/VBoxContainer/Label3")
+HintProgress = NodePath("MarginContainer/VBoxContainer/ProgressBar2")
 HintPopup = ExtResource("2_0m8we")
 Inventory = NodePath("MarginContainer/VBoxContainer/ScrollContainer/RichTextLabel")
 ItemList = NodePath("ScrollContainer2")
@@ -35,6 +58,20 @@ modulate = Color(1, 0.41000003, 0.41000003, 1)
 layout_mode = 2
 text = "Only hints from the Leader thats connected will be displayed in the text client. (aka check hints tab after hinting from non leader slots)"
 autowrap_mode = 3
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer" unique_id=129119381]
+layout_mode = 2
+text = "hint cost info"
+
+[node name="ProgressBar2" type="ProgressBar" parent="MarginContainer/VBoxContainer" unique_id=1002741056]
+modulate = Color(0, 1, 0.4000001, 1)
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+theme = ExtResource("3_jxosy")
+theme_override_styles/background = SubResource("StyleBoxFlat_icbdy")
+theme_override_styles/fill = SubResource("StyleBoxFlat_eo764")
+max_value = 1.0
+show_percentage = false
 
 [node name="Button" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1978777269]
 layout_mode = 2

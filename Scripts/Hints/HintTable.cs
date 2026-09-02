@@ -23,6 +23,9 @@ namespace HydraTextClient.Scripts.Hints;
 
 public partial class HintTable : TextTable
 {
+    [Export] private Label HintInfo;
+    [Export] private ProgressBar HintProgress;
+
     public const string SortOrderSaveId = "hint_table_sort";
     public override string[] EffectGroups => ["default", "hinttable"];
     public const string GlobalCopyFormatProgressive = "Theme/HintTable/CopyFormat/Progressive";
@@ -63,6 +66,7 @@ public partial class HintTable : TextTable
         PlayerEffect.OnUpdate += CallReload;
         HintStatusEffect.OnUpdate += CallReload;
         CircleTracker.OnTrackerUpdate += () => QueueUiRefresh(true);
+
         SaveType<string>.AddIndividualEvents(
             CallReload, PlayerEffect.SaveIdNoAlias, PlayerEffect.SaveIdWithAlias, ItemEffect.SaveId
         );
@@ -95,6 +99,8 @@ public partial class HintTable : TextTable
             }
         );
 
+        ConnectionController.OnClientLeaderChanged += (_, _) => QueueUiRefresh(true);
+
         ConnectionController.OnClientConnection += (slot, client, _) =>
         {
             client.HintsTrackedEvent += hints =>
@@ -104,6 +110,9 @@ public partial class HintTable : TextTable
                 mw.Hints[slot] = hints;
                 QueueUiRefresh(true);
             };
+
+            client.OnRoomInfoPacketReceived += _ => QueueUiRefresh(true);
+            client.OnRoomUpdatePacketReceived += _ => QueueUiRefresh(true);
 
             var mw = ConnectionController.GetCurrentMultiworld;
             mw?.Hints[slot] = client.Hints;
@@ -151,6 +160,7 @@ public partial class HintTable : TextTable
             return;
         }
 
+        RoomUpdate();
         if (resort)
         {
             var orderedHints =
@@ -351,5 +361,35 @@ public partial class HintTable : TextTable
                 QueueUiRefresh(true);
                 break;
         }
+    }
+
+    public void RoomUpdate()
+    {
+        if (!ConnectionController.HasLeaderClient)
+        {
+            HintInfo.Text = "";
+            HintProgress.Value = 0;
+        }
+        var leader = ConnectionController.LeaderClient!;
+        var costPercent = leader.HintCostPercent;
+
+        if (costPercent is 0)
+        {
+            HintInfo.Text = "Hint cost percent is 0, Unlimited Hints!";
+            HintProgress.Value = 1;
+            return;
+        }
+
+        var cost = leader.HintCost;
+        var locPoints = leader.LocationCheckPoints;
+        var points = leader.HintPoints;
+        var hintAmount = (int)Math.Floor((double)points / cost);
+        HintInfo.Text =
+            $"""
+             Hint cost percentage: [{costPercent}], Hint points per location: [{locPoints}]
+             Leader ({leader.PlayerName})'s points: [{points}], cost: [{cost}]{(hintAmount > 0 ? $"| Hint(s) available: [{hintAmount}]" : "")}
+             Progress to next hint ({cost - points % cost} points):
+             """;
+        HintProgress.Value = (double)(points % cost) / cost;
     }
 }
