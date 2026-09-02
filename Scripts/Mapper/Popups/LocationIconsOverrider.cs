@@ -28,7 +28,7 @@ public partial class LocationIconsOverrider : SelectionEditWindow<string>
         ];
         SetImages(ClosedImage);
         SetImages(OpenedImage);
-        LocationView.ItemClicked += (l, _, _) =>
+        LocationView.ItemSelected += l =>
         {
             if (l is -1 || l % 3 is not 0) return;
             SwitchToEdit(Locations[l / 3]);
@@ -43,7 +43,7 @@ public partial class LocationIconsOverrider : SelectionEditWindow<string>
         foreach (var name in Images)
         {
             if (Loader.ItemImageLoader.TryGet(name, out var img)) button.AddIconItem(img, name);
-            button.AddItem(name);
+            else button.AddItem(name);
         }
     }
 

@@ -56,7 +56,7 @@ public partial class LocationGroupsManagement : SelectionEditWindow<LocationGrou
         foreach (var name in Images)
         {
             if (Loader.ItemImageLoader.TryGet(name, out var img)) button.AddIconItem(img, name);
-            button.AddItem(name);
+            else button.AddItem(name);
         }
     }
 
