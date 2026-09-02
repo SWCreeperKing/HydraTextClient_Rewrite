@@ -9,9 +9,9 @@ oversampling_override = 1.0
 title = "Add Locations"
 size = Vector2i(620, 400)
 script = ExtResource("1_ghy1g")
-LastLocations = NodePath("Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/ItemList")
-NewLocations = NodePath("Panel/ScrollContainer/VBoxContainer/HSplitContainer/TextEdit")
-ItemListContainer = NodePath("Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer")
+LastLocations = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/ItemList")
+NewLocations = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/TextEdit")
+ItemListContainer = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=1404250215]
 anchors_preset = 15
@@ -20,7 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=1608331417]
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1377371829]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,63 +28,66 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer" unique_id=1140181720]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer" unique_id=1608331417]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=1140181720]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=442670656]
+[node name="HSplitContainer" type="HSplitContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=442670656]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer" unique_id=304063385]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer" unique_id=304063385]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HFlowContainer" type="HFlowContainer" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer" unique_id=865219938]
+[node name="HFlowContainer" type="HFlowContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer" unique_id=865219938]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=1237034849]
+[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=1237034849]
 layout_mode = 2
 text = "Clear Selected Locations"
 script = ExtResource("2_353mw")
 
-[node name="Button2" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=716699714]
+[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=716699714]
 layout_mode = 2
 text = "Clear All Locations"
 script = ExtResource("2_353mw")
 
-[node name="CheckBox2" type="CheckBox" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=1185845978]
+[node name="CheckBox2" type="CheckBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=1185845978]
 layout_mode = 2
 text = "Clear Last Locations After Adding"
 
-[node name="CheckBox" type="CheckBox" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=324202436]
+[node name="CheckBox" type="CheckBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer" unique_id=324202436]
 layout_mode = 2
 button_pressed = true
 text = "Clear Selected Last Locations After Adding"
 
-[node name="ItemList" type="ItemList" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer" unique_id=1093330436]
+[node name="ItemList" type="ItemList" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer" unique_id=1093330436]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 select_mode = 1
 
-[node name="TextEdit" type="TextEdit" parent="Panel/ScrollContainer/VBoxContainer/HSplitContainer" unique_id=297281460]
+[node name="TextEdit" type="TextEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer" unique_id=297281460]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "insert location names
 each new line is a new location"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1218709874]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1218709874]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1740902340]
+[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1740902340]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Add Locations"
 script = ExtResource("2_353mw")
 
-[node name="Button2" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1162195444]
+[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1162195444]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
@@ -93,12 +96,12 @@ script = ExtResource("2_353mw")
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("1_dmcys")]
 Prefix = "mapAddLocations"
 Controls = {
-"clearAllLast": NodePath("../Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox2"),
-"clearSelectedLast": NodePath("../Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox"),
+"clearAllLast": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox2"),
+"clearSelectedLast": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox"),
 "window_nodes/MapAddLocations": NodePath("..")
 }
 
-[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button" to="." method="ClearSelectedLocations"]
-[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button2" to="." method="ClearAllLocations"]
-[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer/Button" to="." method="SendLocations"]
-[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer/Button2" to="." method="Close"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button" to="." method="ClearSelectedLocations"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button2" to="." method="ClearAllLocations"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/Button" to="." method="SendLocations"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/Button2" to="." method="Close"]

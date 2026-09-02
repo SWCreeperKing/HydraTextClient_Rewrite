@@ -7,13 +7,13 @@
 [node name="EditEntranceNodePopup" type="Window" unique_id=206010802 node_paths=PackedStringArray("EntranceSelect", "Xposition", "Yposition", "Width", "Height", "Saver")]
 oversampling_override = 1.0
 title = "Edit Entrance Node"
-size = Vector2i(430, 260)
+size = Vector2i(430, 280)
 script = ExtResource("1_64o7s")
-EntranceSelect = NodePath("Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/OptionButton")
-Xposition = NodePath("Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer2/SpinBox")
-Yposition = NodePath("Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/SpinBox")
-Width = NodePath("Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer4/SpinBox")
-Height = NodePath("Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer5/SpinBox")
+EntranceSelect = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
+Xposition = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/SpinBox")
+Yposition = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3/SpinBox")
+Width = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4/SpinBox")
+Height = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer5/SpinBox")
 Saver = NodePath("UISaver")
 
 [node name="Panel" type="Panel" parent="." unique_id=1036124765]
@@ -23,109 +23,111 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=671510752]
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=504441]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel/ScrollContainer" unique_id=504441]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer" unique_id=671510752]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=638966464]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer/MarginContainer" unique_id=638966464]
+[node name="HBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1756549444]
 layout_mode = 2
 
-[node name="HBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1756549444]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=247549387]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=247549387]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Entrance (Can not change later)"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1886633935]
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1886633935]
 layout_mode = 2
 size_flags_horizontal = 3
 allow_reselect = true
 search_bar_enabled = true
 
-[node name="HSeparator" type="HSeparator" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=2014842935]
+[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=2014842935]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1028189571]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1028189571]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=524709590]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=524709590]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "X Position"
 
-[node name="SpinBox" type="SpinBox" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1289084197]
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=1289084197]
 layout_mode = 2
 size_flags_horizontal = 3
 allow_greater = true
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1465487651]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1465487651]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=1767043359]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1767043359]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Y Position"
 
-[node name="SpinBox" type="SpinBox" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=862421647]
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=862421647]
 layout_mode = 2
 size_flags_horizontal = 3
 allow_greater = true
 
-[node name="HSeparator2" type="HSeparator" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1834391581]
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1834391581]
 layout_mode = 2
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=698814238]
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=698814238]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer4" unique_id=1233011067]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=1233011067]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Width"
 
-[node name="SpinBox" type="SpinBox" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer4" unique_id=587070277]
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=587070277]
 layout_mode = 2
 size_flags_horizontal = 3
 allow_greater = true
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=336997179]
+[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=336997179]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1109228018]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer5" unique_id=1109228018]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Height"
 
-[node name="SpinBox" type="SpinBox" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1813851936]
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer5" unique_id=1813851936]
 layout_mode = 2
 size_flags_horizontal = 3
 allow_greater = true
 
-[node name="HSeparator3" type="HSeparator" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1169041718]
+[node name="HSeparator3" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1169041718]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSeparator4" type="HSeparator" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1521624018]
+[node name="HSeparator4" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1521624018]
 layout_mode = 2
 
-[node name="Button2" type="Button" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=118412180]
+[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=118412180]
 modulate = Color(1, 0.45999998, 0.45999998, 1)
 layout_mode = 2
 text = "DELETE NODE"
 script = ExtResource("2_l332g")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer/MarginContainer/VBoxContainer" unique_id=61579906]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=61579906]
 layout_mode = 2
 
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_xx528")]
@@ -134,4 +136,4 @@ Controls = {
 "edit_entrance_popup": NodePath("..")
 }
 
-[connection signal="pressed" from="Panel/ScrollContainer/MarginContainer/VBoxContainer/Button2" to="." method="DeleteNode"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/Button2" to="." method="DeleteNode"]

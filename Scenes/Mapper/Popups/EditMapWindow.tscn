@@ -8,12 +8,12 @@
 [node name="EditMapWindow" type="Window" unique_id=1427444570 node_paths=PackedStringArray("MapName", "MapImage", "MapAutoTabId")]
 oversampling_override = 1.0
 title = "Edit Map"
-size = Vector2i(550, 350)
+size = Vector2i(550, 375)
 theme = ExtResource("1_kfaqn")
 script = ExtResource("2_cjjud")
-MapName = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer2/LineEdit")
-MapImage = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
-MapAutoTabId = NodePath("Panel/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit")
+MapName = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/LineEdit")
+MapImage = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
+MapAutoTabId = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit")
 
 [node name="Panel" type="Panel" parent="." unique_id=323802724]
 anchors_preset = 15
@@ -22,7 +22,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=884355039]
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1488553790]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,84 +30,87 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer" unique_id=1380630057]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer" unique_id=884355039]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=1380630057]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=204526393]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=204526393]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=359941103]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=359941103]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Map Name"
 
-[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=1988735493]
+[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=1988735493]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1930313982]
+[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1930313982]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1290121917]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1290121917]
 modulate = Color(1, 0.62, 0.62, 1)
 layout_mode = 2
 text = "When setting map images with different sizes, keep in mind that the location nodes get clamped to always be inside the map"
 autowrap_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=736299747]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=736299747]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=813481372]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=813481372]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Set Map Image"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=399711603]
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=399711603]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator2" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1215144476]
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1215144476]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Panel/ScrollContainer/VBoxContainer" unique_id=465229423]
+[node name="Label2" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=465229423]
 modulate = Color(1, 0.68, 0.68, 1)
 layout_mode = 2
 text = "leave blank to use the map name as the ID, duplicate IDs can lead to incorrect behavior"
 autowrap_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1214175691]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1214175691]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1655295032]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1655295032]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Map Auto-Tab ID"
 
-[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=602618182]
+[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=602618182]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator5" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=2133349355]
+[node name="HSeparator5" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=2133349355]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSeparator6" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=94914200]
+[node name="HSeparator6" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=94914200]
 layout_mode = 2
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1875753438]
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1875753438]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=527381303]
+[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=527381303]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Edit"
 script = ExtResource("3_gbwu6")
 
-[node name="Button2" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=2027019982]
+[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=2027019982]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
@@ -119,5 +122,5 @@ Controls = {
 "edit_map_info_window": NodePath("..")
 }
 
-[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer4/Button" to="." method="Edit"]
-[connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer4/Button2" to="." method="Close"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4/Button" to="." method="Edit"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4/Button2" to="." method="Close"]

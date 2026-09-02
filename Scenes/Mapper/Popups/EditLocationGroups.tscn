@@ -9,20 +9,20 @@ oversampling_override = 1.0
 title = "Location Groups"
 size = Vector2i(550, 400)
 script = ExtResource("1_7bw0f")
-AddGroupName = NodePath("Panel/ScrollContainer/TabContainer/Add_Edit/HBoxContainer/LineEdit")
-GroupView = NodePath("Panel/ScrollContainer/TabContainer/Add_Edit/ItemList")
-NodeImage = NodePath("Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer/OptionButton")
-ClosedImage = NodePath("Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer2/OptionButton")
-OpenedImage = NodePath("Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer3/OptionButton")
-SlotDataVariable = NodePath("Panel/ScrollContainer/TabContainer/Edit group/LineEdit")
-SlotDataType = NodePath("Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer4/OptionButton")
-CompareContainer = NodePath("Panel/ScrollContainer/TabContainer/Edit group/TabContainer")
-IsVariableTrue = NodePath("Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Bool/CheckBox")
-Operator = NodePath("Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer/OptionButton")
-ValueCompare = NodePath("Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer/SpinBox")
-MatchAny = NodePath("Panel/ScrollContainer/TabContainer/Edit group/TabContainer/String/CheckBox")
-StringCompareData = NodePath("Panel/ScrollContainer/TabContainer/Edit group/TabContainer/String/TextEdit")
-MainContainer = NodePath("Panel/ScrollContainer/TabContainer")
+AddGroupName = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit/HBoxContainer/LineEdit")
+GroupView = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit/ItemList")
+NodeImage = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer/OptionButton")
+ClosedImage = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer2/OptionButton")
+OpenedImage = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer3/OptionButton")
+SlotDataVariable = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/LineEdit")
+SlotDataType = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer4/OptionButton")
+CompareContainer = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer")
+IsVariableTrue = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Bool/CheckBox")
+Operator = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer/OptionButton")
+ValueCompare = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer/SpinBox")
+MatchAny = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/String/CheckBox")
+StringCompareData = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/String/TextEdit")
+MainContainer = NodePath("Panel/MarginContainer/ScrollContainer/TabContainer")
 
 [node name="Panel" type="Panel" parent="." unique_id=2069696929]
 anchors_preset = 15
@@ -31,7 +31,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=1245427338]
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1927560724]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,100 +39,103 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TabContainer" type="TabContainer" parent="Panel/ScrollContainer" unique_id=231095948]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer" unique_id=1245427338]
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=231095948]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 current_tab = 1
 tabs_visible = false
 
-[node name="Add_Edit" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer" unique_id=1642157229]
+[node name="Add_Edit" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer" unique_id=1642157229]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/Add_Edit" unique_id=211732894]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit" unique_id=211732894]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/TabContainer/Add_Edit/HBoxContainer" unique_id=715363259]
+[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit/HBoxContainer" unique_id=715363259]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Button" type="Button" parent="Panel/ScrollContainer/TabContainer/Add_Edit/HBoxContainer" unique_id=1985360132]
+[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit/HBoxContainer" unique_id=1985360132]
 layout_mode = 2
 text = "Add Group"
 script = ExtResource("1_6mmx6")
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/Add_Edit" unique_id=412987521]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit" unique_id=412987521]
 layout_mode = 2
 text = "Click to Edit"
 
-[node name="ItemList" type="ItemList" parent="Panel/ScrollContainer/TabContainer/Add_Edit" unique_id=1956017745]
+[node name="ItemList" type="ItemList" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit" unique_id=1956017745]
 layout_mode = 2
 size_flags_vertical = 3
 fixed_icon_size = Vector2i(16, 16)
 
-[node name="Edit group" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer" unique_id=397939412]
+[node name="Edit group" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer" unique_id=397939412]
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Button2" type="Button" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=1369557318]
+[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=1369557318]
 layout_mode = 2
 text = "Save"
 script = ExtResource("1_6mmx6")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=1511199415]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=1511199415]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer" unique_id=636235123]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer" unique_id=636235123]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Node Image"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer" unique_id=1819383915]
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer" unique_id=1819383915]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=383199816]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=383199816]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer2" unique_id=486307862]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer2" unique_id=486307862]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Default Closed Image"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer2" unique_id=1745600268]
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer2" unique_id=1745600268]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=1113072820]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=1113072820]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer3" unique_id=516640622]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer3" unique_id=516640622]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Default Opened Image"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer3" unique_id=639010693]
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer3" unique_id=639010693]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator3" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=1216779193]
+[node name="HSeparator3" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=1216779193]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=1706658286]
+[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=1706658286]
 layout_mode = 2
 placeholder_text = "Slot Data Variable"
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=315376314]
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=315376314]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer4" unique_id=1433098334]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer4" unique_id=1433098334]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Slot Data Compare"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer4" unique_id=652090880]
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer4" unique_id=652090880]
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
@@ -144,36 +147,36 @@ popup/item_1/id = 1
 popup/item_2/text = "String"
 popup/item_2/id = 2
 
-[node name="TabContainer" type="TabContainer" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=1405854969]
+[node name="TabContainer" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=1405854969]
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 tabs_visible = false
 
-[node name="Bool" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer" unique_id=194510379]
+[node name="Bool" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer" unique_id=194510379]
 layout_mode = 2
 alignment = 1
 metadata/_tab_index = 0
 
-[node name="CheckBox" type="CheckBox" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Bool" unique_id=676596301]
+[node name="CheckBox" type="CheckBox" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Bool" unique_id=676596301]
 layout_mode = 2
 button_pressed = true
 text = "Variable Is True"
 
-[node name="Number" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer" unique_id=785280645]
+[node name="Number" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer" unique_id=785280645]
 visible = false
 layout_mode = 2
 alignment = 1
 metadata/_tab_index = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Number" unique_id=473828854]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Number" unique_id=473828854]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=611525751]
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=611525751]
 layout_mode = 2
 text = "Variable"
 
-[node name="OptionButton" type="OptionButton" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=113556328]
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=113556328]
 layout_mode = 2
 selected = 0
 item_count = 6
@@ -190,34 +193,34 @@ popup/item_4/id = 4
 popup/item_5/text = "<="
 popup/item_5/id = 5
 
-[node name="SpinBox" type="SpinBox" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=550467436]
+[node name="SpinBox" type="SpinBox" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/Number/HBoxContainer" unique_id=550467436]
 layout_mode = 2
 size_flags_horizontal = 3
 step = 0.001
 allow_greater = true
 allow_lesser = true
 
-[node name="String" type="VBoxContainer" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer" unique_id=1701391749]
+[node name="String" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer" unique_id=1701391749]
 visible = false
 layout_mode = 2
 alignment = 1
 metadata/_tab_index = 2
 
-[node name="CheckBox" type="CheckBox" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer/String" unique_id=1574998315]
+[node name="CheckBox" type="CheckBox" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/String" unique_id=1574998315]
 layout_mode = 2
 button_pressed = true
 text = "Match Any if true, Match None if false"
 
-[node name="TextEdit" type="TextEdit" parent="Panel/ScrollContainer/TabContainer/Edit group/TabContainer/String" unique_id=109955964]
+[node name="TextEdit" type="TextEdit" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer/String" unique_id=109955964]
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Possible string values
 each new line is a new value to match"
 
-[node name="HSeparator2" type="HSeparator" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=353129759]
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=353129759]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Panel/ScrollContainer/TabContainer/Edit group" unique_id=31124369]
+[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group" unique_id=31124369]
 modulate = Color(1, 0.49, 0.49, 1)
 layout_mode = 2
 text = "DELETE GROUP"
@@ -229,7 +232,7 @@ Controls = {
 "location_group_management": NodePath("..")
 }
 
-[connection signal="pressed" from="Panel/ScrollContainer/TabContainer/Add_Edit/HBoxContainer/Button" to="." method="AddGroup"]
-[connection signal="pressed" from="Panel/ScrollContainer/TabContainer/Edit group/Button2" to="." method="SaveAndSwitchBack"]
-[connection signal="item_selected" from="Panel/ScrollContainer/TabContainer/Edit group/HBoxContainer4/OptionButton" to="Panel/ScrollContainer/TabContainer/Edit group/TabContainer" method="set_current_tab"]
-[connection signal="pressed" from="Panel/ScrollContainer/TabContainer/Edit group/Button" to="." method="DeleteAndSwitchBack"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/TabContainer/Add_Edit/HBoxContainer/Button" to="." method="AddGroup"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/Button2" to="." method="SaveAndSwitchBack"]
+[connection signal="item_selected" from="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/HBoxContainer4/OptionButton" to="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/TabContainer" method="set_current_tab"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/TabContainer/Edit group/Button" to="." method="DeleteAndSwitchBack"]
