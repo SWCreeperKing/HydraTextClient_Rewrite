@@ -25,7 +25,7 @@ public partial class MapNavigator : ScrollContainer
     public override void _Process(double delta)
     {
         if (!IsVisibleInTree()) return;
-        
+
         if (ToUpdateNodes)
         {
             ToUpdateNodes = false;
@@ -177,9 +177,10 @@ public partial class MapNavigator : ScrollContainer
 
     public bool UpdateLocationGroup(MapLocation node)
     {
-        if (Loader.LocationGroupingMap.TryGetValue(node.Group, out var group))
+        if (node.Group is not "" && Loader.LocationGroupingMap.TryGetValue(node.Group, out var group))
         {
-            if (Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img))
+            if (group.MappedIcon is "") node.SetImage("");
+            else if (Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img))
             {
                 node.Texture = img;
                 node.SetImage(group.MappedIcon);
