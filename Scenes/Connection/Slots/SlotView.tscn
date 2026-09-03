@@ -18,10 +18,10 @@ script = ExtResource("1_j5y7k")
 MainSlotContainer = NodePath("VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/SlotContainer")
 SubSlotContainer = NodePath("VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer/SlotContainer")
 SlotPortraitScene = ExtResource("1_87y10")
-LeaderChanger = NodePath("VBoxContainer/HBoxContainer/HBoxContainer3/OptionButton")
-ScaleBox = NodePath("VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox")
+LeaderChanger = NodePath("VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer3/OptionButton")
+ScaleBox = NodePath("VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox")
 UnknownGame = ExtResource("3_nusw7")
-SlotSearch = NodePath("VBoxContainer/HBoxContainer2/LineEdit")
+SlotSearch = NodePath("VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer2/LineEdit")
 metadata/_tab_index = 1
 
 [node name="UISaver" type="Control" parent="." unique_id=189766631 node_paths=PackedStringArray("Controls")]
@@ -30,13 +30,14 @@ layout_mode = 2
 script = ExtResource("2_oacbj")
 Prefix = "Connection/SlotsMenu"
 Controls = {
-"PortLabelHeight": NodePath("../VBoxContainer/HBoxContainer/HBoxContainer/ScaleBox2"),
-"PortraitScale": NodePath("../VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox"),
+"PortLabelHeight": NodePath("../VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer/ScaleBox2"),
+"PortraitScale": NodePath("../VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox"),
 "SlotsNotConnectedFolder": NodePath("../VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer"),
-"searchType": NodePath("../VBoxContainer/HBoxContainer2/OptionButton"),
-"showCounts": NodePath("../VBoxContainer/HBoxContainer/CheckBox2"),
-"showNames": NodePath("../VBoxContainer/HBoxContainer/CheckBox"),
-"useStrictSearch": NodePath("../VBoxContainer/HBoxContainer2/CheckBox")
+"searchType": NodePath("../VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer2/OptionButton"),
+"showCounts": NodePath("../VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/CheckBox2"),
+"showNames": NodePath("../VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/CheckBox"),
+"show_slot_settings": NodePath("../VBoxContainer/FoldableContainer"),
+"useStrictSearch": NodePath("../VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer2/CheckBox")
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2009290757]
@@ -65,53 +66,61 @@ layout_mode = 2
 text = "Add New Slot"
 script = ExtResource("6_28ygy")
 
-[node name="HSeparator3" type="HSeparator" parent="VBoxContainer" unique_id=251188888]
+[node name="FoldableContainer" type="FoldableContainer" parent="VBoxContainer" unique_id=1425850075]
+layout_mode = 2
+title = "Slot Settings"
+title_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/FoldableContainer" unique_id=1231993500]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HFlowContainer" parent="VBoxContainer" unique_id=1684648718]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/FoldableContainer/MarginContainer" unique_id=1109012864]
 layout_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=1171749837]
+[node name="HBoxContainer" type="HFlowContainer" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer" unique_id=1684648718]
 layout_mode = 2
 
-[node name="Label3" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer3" unique_id=1277811073]
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1171749837]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer3" unique_id=1277811073]
 layout_mode = 2
 text = "Leader:"
 
-[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer/HBoxContainer3" unique_id=1084373754]
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer3" unique_id=1084373754]
 layout_mode = 2
 theme = ExtResource("5_28ygy")
 
-[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=1795081307]
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1795081307]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VSeparator6" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=700883922]
+[node name="VSeparator6" type="VSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=700883922]
 layout_mode = 2
 
-[node name="CheckBox" type="CheckBox" parent="VBoxContainer/HBoxContainer" unique_id=1450905615]
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1450905615]
 layout_mode = 2
 text = "Hide Slot Names"
 
-[node name="VSeparator4" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=983769412]
+[node name="VSeparator4" type="VSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=983769412]
 layout_mode = 2
 
-[node name="CheckBox2" type="CheckBox" parent="VBoxContainer/HBoxContainer" unique_id=645787999]
+[node name="CheckBox2" type="CheckBox" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=645787999]
 layout_mode = 2
 text = "Hide Check Counts"
 
-[node name="VSeparator5" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=1083905899]
+[node name="VSeparator5" type="VSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1083905899]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=1156044251]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1156044251]
 layout_mode = 2
 
-[node name="PortraitScale2" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer" unique_id=118850347]
+[node name="PortraitScale2" type="Label" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=118850347]
 layout_mode = 2
 text = "Label Height Offset:"
 
-[node name="ScaleBox2" type="SpinBox" parent="VBoxContainer/HBoxContainer/HBoxContainer" unique_id=92016401]
+[node name="ScaleBox2" type="SpinBox" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=92016401]
 layout_mode = 2
 min_value = -40.0
 step = 0.1
@@ -119,17 +128,17 @@ allow_greater = true
 custom_arrow_step = 0.05
 custom_arrow_round = true
 
-[node name="VSeparator3" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=1926648424]
+[node name="VSeparator3" type="VSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1926648424]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=542653020]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=542653020]
 layout_mode = 2
 
-[node name="PortraitScale" type="Label" parent="VBoxContainer/HBoxContainer/HBoxContainer2" unique_id=862110446]
+[node name="PortraitScale" type="Label" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2" unique_id=862110446]
 layout_mode = 2
 text = "Portrait Scale:"
 
-[node name="ScaleBox" type="SpinBox" parent="VBoxContainer/HBoxContainer/HBoxContainer2" unique_id=1784734131]
+[node name="ScaleBox" type="SpinBox" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2" unique_id=1784734131]
 layout_mode = 2
 min_value = 0.55
 step = 0.05
@@ -138,17 +147,17 @@ allow_greater = true
 custom_arrow_step = 0.05
 custom_arrow_round = true
 
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1650162209]
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer" unique_id=1650162209]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=1692819423]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer" unique_id=1692819423]
 layout_mode = 2
 
-[node name="CheckBox" type="CheckBox" parent="VBoxContainer/HBoxContainer2" unique_id=879676259]
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=879676259]
 layout_mode = 2
 text = "Use Strict Search"
 
-[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer2" unique_id=1331117327]
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1331117327]
 layout_mode = 2
 selected = 0
 item_count = 4
@@ -161,13 +170,10 @@ popup/item_2/id = 2
 popup/item_3/text = "Search Both (or)"
 popup/item_3/id = 3
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer2" unique_id=2127370775]
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=2127370775]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Search Slots"
-
-[node name="HSeparator4" type="HSeparator" parent="VBoxContainer" unique_id=1957724613]
-layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1248246170]
 layout_mode = 2
@@ -203,5 +209,5 @@ size_flags_vertical = 3
 offset_transform_enabled = true
 
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="CallAddNew"]
-[connection signal="item_selected" from="VBoxContainer/HBoxContainer/HBoxContainer3/OptionButton" to="." method="ChangeLeader"]
-[connection signal="value_changed" from="VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox" to="." method="ChangePortraitScale"]
+[connection signal="item_selected" from="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer3/OptionButton" to="." method="ChangeLeader"]
+[connection signal="value_changed" from="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer2/ScaleBox" to="." method="ChangePortraitScale"]

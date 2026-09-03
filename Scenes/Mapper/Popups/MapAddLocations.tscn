@@ -108,5 +108,6 @@ Controls = {
 
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button" to="." method="ClearSelectedLocations"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button2" to="." method="ClearAllLocations"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox3" to="." method="ReloadItemList"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/Button" to="." method="SendLocations"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/Button2" to="." method="Close"]
