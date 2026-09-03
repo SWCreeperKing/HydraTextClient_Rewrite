@@ -16,6 +16,7 @@ public class HydraBridgeEntry(string apDir, string executable, ApClient client, 
     public readonly ConcurrentDictionary<string, string> EntranceKeyMap = [];
     public readonly ConcurrentQueue<(int, long[])> ItemsQueued = [];
     public readonly ConcurrentQueue<string> EntrancesQueued = [];
+    public readonly HashSet<string> EntranceList = [];
     public bool CheckNextProg;
     public int LastRanCircle;
 
@@ -108,11 +109,10 @@ public class HydraBridgeEntry(string apDir, string executable, ApClient client, 
 
                         if (!EntrancesQueued.IsEmpty)
                         {
-                            List<string> entranceList = [];
                             while (!EntrancesQueued.IsEmpty)
                             {
                                 EntrancesQueued.TryDequeue(out var entrance);
-                                entranceList.Add(entrance);
+                                EntranceList.Add(entrance);
                             }
 
                             var earliestCircle = page.EntranceEarliestCircle.Values.Min();
@@ -124,7 +124,7 @@ public class HydraBridgeEntry(string apDir, string executable, ApClient client, 
                                 ItemsQueued.Enqueue((i, item));
                             }
 
-                            input.WriteLine($"entrance {JsonConvert.SerializeObject(entranceList)}");
+                            input.WriteLine($"entrance {JsonConvert.SerializeObject(EntranceList)}");
                         }
 
                         if (!ItemsQueued.IsEmpty)
