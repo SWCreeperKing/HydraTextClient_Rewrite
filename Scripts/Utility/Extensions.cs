@@ -199,6 +199,7 @@ public static class Extensions // sorted alphabetically for the memes
         {
             get
             {
+                if (!ConnectionController.HasLeaderClient) return "";
                 var leader = ConnectionController.LeaderClient!;
                 var receiver = packet.ReceivingPlayer;
                 return FilterType.MakeUID(
