@@ -620,6 +620,7 @@ public partial class MapLoader : Control
             var map = GetCurrentMap();
             size ??= new Vector2(32, 32);
             var node = map.CreateNewNode(map.ToLocalPos(PopupPos) - size!.Value / 2f, size!.Value, group, locs);
+            SetSelectedLocation(node);
             if (OpenConfig.ButtonPressed && isNew) AddNode(node);
         }
     }
