@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Archipelago.MultiClient.Net.Enums;
 using Godot;
 using HydraTextClient.Scripts.Utility.Popups;
 using Newtonsoft.Json;

@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Godot;
-using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Utility.DataTypes;
 using HydraTextClient.Scripts.Utility.Loaders;
 

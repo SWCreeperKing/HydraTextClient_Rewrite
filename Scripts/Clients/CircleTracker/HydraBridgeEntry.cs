@@ -3,10 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CreepyUtil.Archipelago.ApClient;
-using Godot;
 using HydraTextClient.Scripts.Controllers;
 using Newtonsoft.Json;
 
