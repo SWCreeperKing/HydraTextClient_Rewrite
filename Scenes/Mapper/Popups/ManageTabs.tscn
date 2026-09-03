@@ -2,15 +2,19 @@
 
 [ext_resource type="Script" uid="uid://b0hv42jsry375" path="res://Scripts/Mapper/Popups/TabManager.cs" id="1_l0sj6"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_0aqj5"]
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_32h6s"]
 
-[node name="Window" type="Window" unique_id=1137080991 node_paths=PackedStringArray("Action", "NameEdit", "Destination")]
+[node name="Window" type="Window" unique_id=1137080991 node_paths=PackedStringArray("MainContainer", "NameEdit", "MapNamePicker", "TabNamePicker", "DestinationPicker", "VisibleTabs")]
 oversampling_override = 1.0
 title = "Manage Tabs"
-size = Vector2i(450, 180)
+size = Vector2i(450, 280)
 script = ExtResource("1_l0sj6")
-Action = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
-NameEdit = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/LineEdit")
-Destination = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/LineEdit2")
+MainContainer = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer")
+NameEdit = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/LineEdit")
+MapNamePicker = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer/target map")
+TabNamePicker = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer3/target tab")
+DestinationPicker = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer2/tab dest")
+VisibleTabs = [NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map"), NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Move Map"), NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Delete Map"), NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs/Add Tab"), NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs/Move Tab"), NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs/Delete Tab")]
 
 [node name="Panel" type="Panel" parent="." unique_id=1111119635]
 anchors_preset = 15
@@ -30,117 +34,120 @@ grow_vertical = 2
 [node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer" unique_id=1831798285]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=1264299188]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=720113675]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1210665836]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Action:"
-
-[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1121975106]
-layout_mode = 2
-selected = 0
-item_count = 6
-popup/item_0/text = "Add Map Tab"
-popup/item_0/id = 0
-popup/item_1/text = "Move Map Tab"
-popup/item_1/id = 1
-popup/item_2/text = "Delete Map Tab"
-popup/item_2/id = 2
-popup/item_3/text = "Add Tab"
-popup/item_3/id = 3
-popup/item_4/text = "Move Tab"
-popup/item_4/id = 4
-popup/item_5/text = "Delete Tab"
-popup/item_5/id = 5
-
-[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=768561163]
-layout_mode = 2
-placeholder_text = "Name"
-
-[node name="LineEdit2" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1189538408]
-layout_mode = 2
-placeholder_text = "Tab Destination"
-
-[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1649373570]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=782917034]
-layout_mode = 2
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=866672403]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=781152489]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Confirm"
-script = ExtResource("2_0aqj5")
-
-[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=194435867]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Cancel"
-script = ExtResource("2_0aqj5")
-
 [node name="VBoxContainer2" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=1864956841]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2" unique_id=640516604]
+modulate = Color(1, 0.39999998, 0.39999998, 1)
+layout_mode = 2
+text = "Duplicated named items no matter the type can cause some strange and unintended behavoir"
+autowrap_mode = 3
+
 [node name="TabContainer" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2" unique_id=759711012]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 current_tab = 0
 
 [node name="Maps" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer" unique_id=1693911647]
+propagate_maximum_size = false
+clip_contents = true
 layout_mode = 2
 current_tab = 0
 metadata/_tab_index = 0
 
 [node name="Add Map" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps" unique_id=328832888]
+custom_maximum_size = Vector2(-1, 0)
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map" unique_id=163002372]
-layout_mode = 2
-placeholder_text = "Name"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map" unique_id=1530998127]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map/HBoxContainer" unique_id=1577712882]
-layout_mode = 2
-text = "Destination"
-
-[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map/HBoxContainer" unique_id=1715064123]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="Move Map" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps" unique_id=5316108]
 visible = false
+custom_maximum_size = Vector2(-1, 0)
 layout_mode = 2
 metadata/_tab_index = 1
 
 [node name="Delete Map" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps" unique_id=830349345]
 visible = false
+custom_maximum_size = Vector2(-1, 0)
 layout_mode = 2
 metadata/_tab_index = 2
 
 [node name="Tabs" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer" unique_id=46657898]
 visible = false
 layout_mode = 2
+current_tab = 0
 metadata/_tab_index = 1
+
+[node name="Add Tab" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs" unique_id=1062755490]
+custom_maximum_size = Vector2(-1, 0)
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Move Tab" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs" unique_id=1083605079]
+visible = false
+custom_maximum_size = Vector2(-1, 0)
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Delete Tab" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs" unique_id=695205490]
+visible = false
+custom_maximum_size = Vector2(-1, 0)
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2" unique_id=1443751050]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer" unique_id=163002372]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Name"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer" unique_id=1530998127]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1577712882]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Target (Map)"
+
+[node name="target map" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1715064123]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer" unique_id=1023553901]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=1492008059]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Target (Tab)"
+
+[node name="target tab" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=1224647288]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer" unique_id=1901698347]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=400083954]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tab Destination"
+
+[node name="tab dest" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=1349686413]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2" unique_id=2141078334]
 layout_mode = 2
@@ -157,5 +164,17 @@ size_flags_horizontal = 3
 text = "Cancel"
 script = ExtResource("2_0aqj5")
 
-[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/Button" to="." method="Confirm"]
-[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_32h6s")]
+Prefix = "MapTracker/MapEditor/ManageTabs"
+Controls = {
+"manage_map_tabs": NodePath(".."),
+"mapsOrTabs": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer"),
+"mapstab": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps"),
+"tabstab": NodePath("../Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs")
+}
+
+[connection signal="tab_changed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer" to="." method="Update"]
+[connection signal="tab_changed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps" to="." method="Update"]
+[connection signal="tab_changed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Tabs" to="." method="Update"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer2/HBoxContainer2/Button" to="." method="Confirm"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer2/HBoxContainer2/Button2" to="." method="Close"]

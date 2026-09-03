@@ -67,9 +67,9 @@ public partial class MapLoader : Control
     public bool IsEntranceRando;
     public bool UseEntranceRandoMaps;
     public List<string> AllLocations = [];
+    public string MapPath;
 
     private string TrackerName;
-    private string MapPath;
     private EmptyRichLabelInteractor LocationPopupList;
     private PopupMenu OptionMenu;
     private MapLocation? HoveredMapLocation;
@@ -365,7 +365,7 @@ public partial class MapLoader : Control
         LocationPanelText.Text = text;
     }
 
-    private void CreateMap(string path, Maps map)
+    public void CreateMap(string path, Maps map)
     {
         if (MapNavigators.Any(m => m.CoreMap == map)) return;
         var container = MapTabs.GetValueOrDefault(map.Tab ?? "", MapTabs[""]);
@@ -750,64 +750,10 @@ public partial class MapLoader : Control
         }
     }
 
-    private void OnPopupOnConfirmAction(int action, string name, string destination)
-    {
-        if (!MapTabs.ContainsKey(destination)) destination = "";
-        var target = MapTabs[destination];
-        TabContainer tab;
-        MapNavigator map;
-        switch ((TabManager.ManageAction)action)
-        {
-            case TabManager.ManageAction.AddMap:
-                if (FindMapByName(name) is not null) return;
-                CreateMap(MapPath, new Maps(name, "", destination));
-                break;
-            case TabManager.ManageAction.MoveMap:
-                if ((map = FindMapByName(name)) is null) return;
-                map.GetParent().RemoveChild(map);
-                target.AddChild(map);
-                break;
-            case TabManager.ManageAction.DeleteMap:
-                if ((map = FindMapByName(name)) is null) return;
-                MapNavigators.Remove(map);
-                map.GetParent().RemoveChild(map);
-                map.QueueFree();
-                break;
-            case TabManager.ManageAction.AddTab:
-                if (MapTabs.ContainsKey(name)) return;
-                tab = MapTabs[name] = new TabContainer();
-                tab.SizeFlagsVertical = SizeFlags.ExpandFill;
-                tab.Name = name;
-                tab.DragToRearrangeEnabled = true;
-                tab.TabsRearrangeGroup = 59823532;
-                target.AddChild(tab);
-                break;
-            case TabManager.ManageAction.MoveTab:
-                if (!MapTabs.TryGetValue(name, out tab)) return;
-                tab.GetParent().RemoveChild(tab);
-                target.AddChild(tab);
-                break;
-            case TabManager.ManageAction.DeleteTab:
-                if (!MapTabs.TryGetValue(name, out tab)) return;
-                foreach (var child in tab.GetChildren())
-                {
-                    tab.RemoveChild(child);
-                    target.AddChild(child);
-                }
-                tab.GetParent().RemoveChild(tab);
-                tab.QueueFree();
-                MapTabs.Remove(name);
-                break;
-        }
-    }
-
     public MapNavigator FindMapByName(string name)
         => MapNavigators.FirstOrDefault(map => map.CoreMap.MapName == name, null);
 
-    public void ManageTabs() => ManageTabPopup.OpenPopup<TabManager>(
-        this,
-        p => p.ConfirmAction += (action, name, dest) => CallDeferred("OnPopupOnConfirmAction", (int)action, name, dest)
-    );
+    public void ManageTabs() => ManageTabPopup.OpenPopup<TabManager>(this, p => p.Setup(this));
 
     public void EditLocationGroup()
         => LocationGroupsManagerPopup.OpenPopup<LocationGroupsManagement>(this, p => p.Setup(this));
