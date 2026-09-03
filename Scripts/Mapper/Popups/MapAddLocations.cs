@@ -53,8 +53,8 @@ public partial class MapAddLocations : WindowSetter
         LastLocations.Clear();
         ItemListContainer.Visible = LastLocationList.Count > 0;
         if (LastLocationList.Count == 0) return;
-        var list = SaveType<bool>.Load("mapAddLocations/SortAlpha", false) ? LastLocationList
-            : [.. LastLocationList.Order()];
+        var list = SaveType<bool>.Load("mapAddLocations/SortAlpha", false) ? [.. LastLocationList.Order()]
+            : LastLocationList;
         foreach (var loc in list) LastLocations.AddItem(loc);
     }
 }
