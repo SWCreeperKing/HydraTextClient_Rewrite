@@ -280,7 +280,7 @@ public partial class SlotPortrait : TextureRect
     public void UpdateLabelSizes(double size)
     {
         SlotNameBacker.SetAnchorAndOffset(Side.Bottom, SlotNameBacker.AnchorBottom, (float)size);
-        CheckCountBacker.SetAnchorAndOffset(Side.Top, CheckCountBacker.AnchorTop, (float)size);
+        CheckCountBacker.SetAnchorAndOffset(Side.Top, CheckCountBacker.AnchorTop, -(float)size);
     }
 
     protected override void Dispose(bool disposing)
