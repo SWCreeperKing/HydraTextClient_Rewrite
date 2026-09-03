@@ -37,8 +37,15 @@ public partial class EditNodeDataPopup : WindowSetter
             LocationGroup.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
             foreach (var groupName in Groups)
             {
+                if (groupName is "")
+                {
+                    LocationGroup.AddItem("");
+                    continue;
+                }
+
                 var group = Loader.LocationGroupingMap[groupName];
-                if (Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img)) LocationGroup.AddIconItem(img, groupName);
+                if (Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img))
+                    LocationGroup.AddIconItem(img, groupName);
                 else LocationGroup.AddItem(groupName);
             }
             LocationGroup.Selected = Groups.IndexOf(Node.Group);
@@ -85,7 +92,7 @@ public partial class EditNodeDataPopup : WindowSetter
     public void SetGroup(string groupName)
     {
         Node.RawNodeData.LocationGroup = groupName;
-        Node.SetImage(Loader.LocationGroupingMap[groupName].MappedIcon);
+        Node.SetImage(groupName is not "" ? Loader.LocationGroupingMap[groupName].MappedIcon : "");
         Loader.UpdateUI = true;
     }
 
