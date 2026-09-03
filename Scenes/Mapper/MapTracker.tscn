@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://brl2lxca8asui" path="res://Scenes/Mapper/Popups/MapEditorWindow.tscn" id="5_t3xfa"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="6_js3tx"]
 
-[node name="Map Tracker" type="HSplitContainer" unique_id=1830903005 node_paths=PackedStringArray("MapContainer", "ButtonContainer")]
+[node name="Map Tracker" type="HSplitContainer" unique_id=1830903005 node_paths=PackedStringArray("MapContainer", "ButtonContainer", "MapEditorButton")]
 offset_right = 1152.0
 offset_bottom = 648.0
 theme = ExtResource("1_dgvn7")
@@ -17,6 +17,7 @@ split_offset = 270
 script = ExtResource("2_so8ey")
 MapContainer = NodePath("TabContainer")
 ButtonContainer = NodePath("MarginContainer/VBoxContainer/ScrollContainer/Container")
+MapEditorButton = NodePath("MarginContainer/VBoxContainer/Button2")
 MapScene = ExtResource("3_yrvkc")
 PackImporterPopup = ExtResource("4_so8ey")
 PackEditorPopup = ExtResource("5_t3xfa")

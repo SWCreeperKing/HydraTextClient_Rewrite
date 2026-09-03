@@ -13,6 +13,7 @@ public partial class MapTracker : HSplitContainer
 {
     [Export] private Control MapContainer;
     [Export] private Control ButtonContainer;
+    [Export] private ButtonAnimation MapEditorButton;
     [Export] public PackedScene MapScene;
     [Export] private PackedScene PackImporterPopup;
     [Export] private PackedScene PackEditorPopup;
@@ -107,8 +108,13 @@ public partial class MapTracker : HSplitContainer
     {
         Reload();
         var popup = PackEditorPopup.Instantiate<Popups.MapEditorPopup>();
+        MapEditorButton.Disabled = true;
         popup.Tracker = this;
-        popup.CloseCalled += Reload;
+        popup.CloseCalled += () =>
+        {
+            Reload();
+            MapEditorButton.Disabled = false;
+        };
         AddChild(popup);
         popup.Show();
     }
