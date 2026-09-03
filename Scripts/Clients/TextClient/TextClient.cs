@@ -30,6 +30,7 @@ public partial class TextClient : Control
     public const string ShowFoundHints = "TextClient/show_found_hints";
     public const string ShowGamePortraits = "TextClient/show_portraits";
     public const string ShowTimestamps = "TextClient/show_timestamps";
+    public const string ShowGoaledItems = "TextClient/show_goaled_items";
     [Export] private Dictionary<MessageType, ChildLimiter> Containers = [];
     [Export] private Dictionary<MessageType, PackedScene> MessageScenes = [];
     [Export] private Array<ScrollFix> ScrollFixes = [];
@@ -306,9 +307,11 @@ public partial class TextClient : Control
                 if (!SaveType<bool>.Load(ShowTrap, true)) return;
             }
             else if (flags is ItemFlags.None && !SaveType<bool>.Load(ShowNormal, true)) return;
+            if (!ConnectionController.HasLeaderClient) return;
             var leader = ConnectionController.LeaderClient!;
             var receiver = leader.PlayerNames[itemPacket.ReceivingPlayer];
             var finder = leader.PlayerNames[itemPacket.FindingPlayer];
+            if (!SaveType<bool>.Load(ShowGoaledItems, false) && leader.PlayerStates[itemPacket.ReceivingPlayer] is ArchipelagoClientState.ClientGoal) return;
             if (SaveType<bool>.Load(ShowOnlyYou, false) && !SlotView.ContainsSlot(receiver)
                                                         && !SlotView.ContainsSlot(finder)) return;
         }

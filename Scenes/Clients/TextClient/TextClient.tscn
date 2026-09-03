@@ -98,6 +98,10 @@ text = "Show Items Only Related to You"
 layout_mode = 2
 text = "Show Found Hints"
 
+[node name="CheckBox7" type="CheckBox" parent="FoldableContainer/HFlowContainer" unique_id=1521649561]
+layout_mode = 2
+text = "Show Items Sent to Goaled Slots"
+
 [node name="TabContainer" type="TabContainer" parent="." unique_id=1908550667]
 layout_mode = 2
 size_flags_vertical = 3
@@ -306,7 +310,7 @@ Controls = {
 }
 
 [connection signal="pressed" from="MarginContainer5/HBoxContainer/Button" to="." method="SubmitMsg"]
-[connection signal="text_submitted" from="MarginContainer5/HBoxContainer/LineEdit" to="." method="SendMessage"]
 [connection signal="text_submitted" from="MarginContainer5/HBoxContainer/LineEdit" to="." method="Clear" flags=18]
+[connection signal="text_submitted" from="MarginContainer5/HBoxContainer/LineEdit" to="." method="SendMessage"]
 [connection signal="pressed" from="MarginContainer5/HBoxContainer/Button3" to="EmotePicker" method="show"]
 [connection signal="pressed" from="MarginContainer5/HBoxContainer/Button2" to="." method="ScrollToBottom"]
