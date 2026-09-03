@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bvm64478byib1"]
 
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="1_s5cbg"]
+[ext_resource type="Script" uid="uid://cykum067k5itp" path="res://Scripts/Utility/UIHelpers/AnimatedProgressBar.cs" id="2_k2v0s"]
 [ext_resource type="Script" uid="uid://mkwym5gbr8rr" path="res://Scripts/Hints/HintTable.cs" id="2_ks14s"]
 [ext_resource type="Script" uid="uid://7agnoy5egtoa" path="res://Scripts/Utility/UIHelpers/UISaver.cs" id="3_k2v0s"]
 
@@ -98,6 +99,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_s5cbg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ks14s")
 max_value = 1.0
 show_percentage = false
+script = ExtResource("2_k2v0s")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=1701859526]
 layout_mode = 2

@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="3_a8rg6"]
 [ext_resource type="Theme" uid="uid://doy8rp1q74ye0" path="res://Resources/MainUITheme.tres" id="3_jxosy"]
 [ext_resource type="PackedScene" uid="uid://duftnvs8wyydo" path="res://Scenes/Utilities/SearchingList.tscn" id="3_mknbs"]
+[ext_resource type="Script" uid="uid://cykum067k5itp" path="res://Scripts/Utility/UIHelpers/AnimatedProgressBar.cs" id="4_icbdy"]
 [ext_resource type="PackedScene" uid="uid://lhi65rdnf4eg" path="res://Scenes/Utilities/Popups/InventoryCounter.tscn" id="4_p40g0"]
 [ext_resource type="PackedScene" uid="uid://cbwouwen0n4nl" path="res://Scenes/Utilities/Popups/InventoryHistory.tscn" id="5_3y6xe"]
 
@@ -72,6 +73,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_icbdy")
 theme_override_styles/fill = SubResource("StyleBoxFlat_eo764")
 max_value = 1.0
 show_percentage = false
+script = ExtResource("4_icbdy")
 
 [node name="Button" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1978777269]
 layout_mode = 2

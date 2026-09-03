@@ -24,7 +24,7 @@ namespace HydraTextClient.Scripts.Hints;
 public partial class HintTable : TextTable
 {
     [Export] private Label HintInfo;
-    [Export] private ProgressBar HintProgress;
+    [Export] private AnimatedProgressBar HintProgress;
 
     public const string SortOrderSaveId = "hint_table_sort";
     public override string[] EffectGroups => ["default", "hinttable"];
@@ -368,7 +368,7 @@ public partial class HintTable : TextTable
         if (!ConnectionController.HasLeaderClient)
         {
             HintInfo.Text = "";
-            HintProgress.Value = 0;
+            HintProgress.Target = 0;
         }
         var leader = ConnectionController.LeaderClient!;
         var costPercent = leader.HintCostPercent;
@@ -376,7 +376,7 @@ public partial class HintTable : TextTable
         if (costPercent is 0)
         {
             HintInfo.Text = "Hint cost percent is 0, Unlimited Hints!";
-            HintProgress.Value = 1;
+            HintProgress.Target = 1;
             return;
         }
 
@@ -390,6 +390,6 @@ public partial class HintTable : TextTable
              Leader ({leader.PlayerName})'s points: [{points}], cost: [{cost}]{(hintAmount > 0 ? $"| Hint(s) available: [{hintAmount}]" : "")}
              Progress to next hint ({cost - points % cost} points):
              """;
-        HintProgress.Value = (double)(points % cost) / cost;
+        HintProgress.Target = (double)(points % cost) / cost;
     }
 }

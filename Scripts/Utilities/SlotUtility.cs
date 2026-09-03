@@ -1,21 +1,19 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using HydraTextClient.Scripts.Clients.TextClient.ParserEffects;
-using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Settings;
 using HydraTextClient.Scripts.Utilities.Popups;
 using HydraTextClient.Scripts.Utility.Loaders;
+using HydraTextClient.Scripts.Utility.UIHelpers;
 
 namespace HydraTextClient.Scripts.Utilities;
 
 public partial class SlotUtility : HSplitContainer
 {
     [Export] private Label HintInfo;
-    [Export] private ProgressBar HintProgress;
+    [Export] private AnimatedProgressBar HintProgress;
     [Export] private PackedScene HintPopup;
     [Export] private PlayerInventory Inventory;
     [Export] private SearchingList ItemList;
@@ -111,14 +109,14 @@ public partial class SlotUtility : HSplitContainer
         if (!Client.IsConnected)
         {
             HintInfo.Text = "";
-            HintProgress.Value = 0;
+            HintProgress.Target = 0;
         }
         var costPercent = Client.HintCostPercent;
 
         if (costPercent is 0)
         {
             HintInfo.Text = "Hint cost percent is 0, Unlimited Hints!";
-            HintProgress.Value = 1;
+            HintProgress.Target = 1;
             return;
         }
 
@@ -130,6 +128,6 @@ public partial class SlotUtility : HSplitContainer
              points: [{points}], cost: [{cost}]{(hintAmount > 0 ? $"\nHint(s) available: [{hintAmount}]" : "")}
              Progress to next hint ({cost - points % cost} points):
              """;
-        HintProgress.Value = (double)(points % cost) / cost;
+        HintProgress.Target = (double)(points % cost) / cost;
     }
 }

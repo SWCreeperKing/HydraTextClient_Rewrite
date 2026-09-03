@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using CreepyUtil.Archipelago.ApClient;
@@ -11,7 +10,6 @@ using Godot;
 using HydraTextClient.Scripts.Clients.TextClient;
 using HydraTextClient.Scripts.Clients.TextClient.ParserEffects;
 using HydraTextClient.Scripts.Controllers;
-using HydraTextClient.Scripts.Settings;
 using HydraTextClient.Scripts.Utilities.ItemFilter;
 using HydraTextClient.Scripts.Utility;
 using HydraTextClient.Scripts.Utility.Loaders;
@@ -28,7 +26,7 @@ public partial class TrackerPage : Control
 
     [Export] private PopoutWindow PopoutWindow;
     [Export] private Label RenderProgressLabel;
-    [Export] private ProgressBar RenderProgressProgress;
+    [Export] private AnimatedProgressBar RenderProgressProgress;
     [Export] private ProgressionItemTable NextProgressionLabel;
     [Export] private Control CircleLabelContainer;
     [Export] private PackedScene CircleLabel;
@@ -102,25 +100,29 @@ public partial class TrackerPage : Control
 
     public override void _Process(double delta)
     {
-        if (Entry.LastRanCircle != LastRenderedCircleProgress)
+        try
         {
-            var cur = LastRenderedCircleProgress = Entry.LastRanCircle;
-            var total = Math.Max(CircleLabels.Count == 0 ? 0 : CircleLabels.Keys.Max(), cur);
-            RenderProgressLabel.Text = $"Circle Calculations [{cur:###,##0}/{total:###,##0}]";
-            RenderProgressProgress.Value = (double)cur / total;
+            if (Entry.LastRanCircle != LastRenderedCircleProgress)
+            {
+                var cur = LastRenderedCircleProgress = Entry.LastRanCircle;
+                var total = Math.Max(CircleLabels.Count == 0 ? 0 : CircleLabels.Keys.Max(), cur);
+                RenderProgressLabel.Text = $"Circle Calculations [{cur:###,##0}/{total:###,##0}]";
+                RenderProgressProgress.Target = (double)cur / total;
+            }
+
+            if (UpdateQueue.IsEmpty) return;
+            var recompile = UpdateQueue.Contains(true);
+            UpdateQueue.Clear();
+            NextProgressionLabel.Clear();
+
+            if (!recompile) return;
+            InLogicEntrances = [.. Entrances.SelectMany(kv => kv.Value).DistinctBy(s => s)];
+            RenderCirclePage();
+            NextProgressionLabel.QueueUiRefresh(true);
+            CircleTracker.Singleton.SendTrackerNotify();
+            OnLogicUpdated?.Invoke();
         }
-
-        if (UpdateQueue.IsEmpty) return;
-        var recompile = UpdateQueue.Contains(true);
-        UpdateQueue.Clear();
-        NextProgressionLabel.Clear();
-
-        if (!recompile) return;
-        InLogicEntrances = [.. Entrances.SelectMany(kv => kv.Value).DistinctBy(s => s)];
-        RenderCirclePage();
-        NextProgressionLabel.QueueUiRefresh(true);
-        CircleTracker.Singleton.SendTrackerNotify();
-        OnLogicUpdated?.Invoke();
+        catch (Exception e) { GD.PrintErr(e); }
     }
 
     public void ListenForEntrances(string[] rawEntrances)

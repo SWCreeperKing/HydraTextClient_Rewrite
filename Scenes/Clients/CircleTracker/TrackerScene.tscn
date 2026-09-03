@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bqisbomfxfu6r" path="res://Scenes/Utility/Popout.tscn" id="3_iqac5"]
 [ext_resource type="Script" uid="uid://ci4bcdb7cbtm3" path="res://Scripts/Clients/CircleTracker/ProgressionItemTable.cs" id="5_5b2u4"]
 [ext_resource type="PackedScene" uid="uid://d1unnc4t8u5xh" path="res://Scenes/Utilities/Popups/HintPopup.tscn" id="6_1e3v1"]
+[ext_resource type="Script" uid="uid://cykum067k5itp" path="res://Scripts/Utility/UIHelpers/AnimatedProgressBar.cs" id="6_ib7yh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1e3v1"]
 content_margin_left = 2.0
@@ -93,6 +94,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_1e3v1")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ib7yh")
 max_value = 1.0
 show_percentage = false
+script = ExtResource("6_ib7yh")
 
 [node name="FoldableContainer" type="FoldableContainer" parent="Popout/VBoxContainer/ScrollContainer/VBoxContainer" unique_id=1696324153]
 layout_mode = 2
