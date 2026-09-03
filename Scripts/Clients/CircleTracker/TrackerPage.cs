@@ -132,26 +132,26 @@ public partial class TrackerPage : Control
             var entranceId = rawEntranceId.Split(':')[^1];
             Entry.EntranceKeyMap[entranceId] = rawEntranceId;
             ListeningEntrances.Add(entranceId);
-            Client.GetFromStorageAsync(
-                entranceId, val =>
-                {
-                    if (!val) return;
-                    Entry.EntrancesQueued.Enqueue(entranceId);
-                    Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
-                }, def: false
-            );
-
             Client!.AddDataStorageListener(
                 entranceId, FunctionIdString, (_, newValue, _) =>
                 {
                     try
                     {
                         if (!(bool)newValue) return;
-                        Entry.EntrancesQueued.Enqueue(entranceId);
-                        Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+                        if (!Entry.EntranceList.Contains(entranceId)) Entry.EntrancesQueued.Enqueue(entranceId);
+                        else Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
                     }
                     catch { Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot); }
                 }, Scope.Slot
+            );
+
+            Client.GetFromStorageAsync(
+                entranceId, val =>
+                {
+                    if (!val) return;
+                    if (!Entry.EntranceList.Contains(entranceId)) Entry.EntrancesQueued.Enqueue(entranceId);
+                    else Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+                }, def: false
             );
         }
     }

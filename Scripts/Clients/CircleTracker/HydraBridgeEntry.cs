@@ -117,7 +117,7 @@ public class HydraBridgeEntry(string apDir, string executable, ApClient client, 
 
                             var earliestCircle = page.EntranceEarliestCircle.Values.Min();
                             LastRanCircle = 0;
-                            ItemsQueued.Clear(); // only re-calc circles if entrance was in logic
+                            ItemsQueued.Clear();
                             for (var i = earliestCircle; i <= page.RawCircleItems.Keys.Max(); i++)
                             {
                                 if (!page.RawCircleItems.TryGetValue(i, out var item)) continue;

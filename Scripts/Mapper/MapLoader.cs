@@ -288,7 +288,8 @@ public partial class MapLoader : Control
 
     public void EntranceFound(string entranceId)
     {
-        Client?.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
+        if (FoundEntrances.Contains(entranceId))
+            Client?.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
         FoundEntrances.Add(entranceId);
         if (!EntranceNodes.TryGetValue(entranceId, out var entranceNode)) return;
         foreach (var node in entranceNode) node.UpdateEntrance = true;
