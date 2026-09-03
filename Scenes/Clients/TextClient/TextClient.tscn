@@ -302,6 +302,7 @@ Prefix = "TextClient"
 Controls = {
 "ShowItemsFolding": NodePath("../FoldableContainer"),
 "show_found_hints": NodePath("../FoldableContainer/HFlowContainer/CheckBox6"),
+"show_goaled_items": NodePath("../FoldableContainer/HFlowContainer/CheckBox7"),
 "show_normal": NodePath("../FoldableContainer/HFlowContainer/CheckBox3"),
 "show_only_you": NodePath("../FoldableContainer/HFlowContainer/CheckBox5"),
 "show_progressive": NodePath("../FoldableContainer/HFlowContainer/CheckBox"),
