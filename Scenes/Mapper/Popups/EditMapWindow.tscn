@@ -8,12 +8,12 @@
 [node name="EditMapWindow" type="Window" unique_id=1427444570 node_paths=PackedStringArray("MapName", "MapImage", "MapAutoTabId")]
 oversampling_override = 1.0
 title = "Edit Map"
-size = Vector2i(550, 375)
+size = Vector2i(620, 568)
 theme = ExtResource("1_kfaqn")
 script = ExtResource("2_cjjud")
 MapName = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/LineEdit")
 MapImage = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
-MapAutoTabId = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit")
+MapAutoTabId = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/TextEdit")
 
 [node name="Panel" type="Panel" parent="." unique_id=323802724]
 anchors_preset = 15
@@ -78,23 +78,15 @@ layout_mode = 2
 [node name="Label2" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=465229423]
 modulate = Color(1, 0.68, 0.68, 1)
 layout_mode = 2
-text = "leave blank to use the map name as the ID, duplicate IDs can lead to incorrect behavior"
+text = "leave blank to use the map name as the ID, duplicate IDs can lead to incorrect behavior, Each new line is a new id to match with"
 autowrap_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1214175691]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=1655295032]
+[node name="Label3" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1655295032]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Map Auto-Tab ID"
 
-[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3" unique_id=602618182]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HSeparator5" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=2133349355]
-modulate = Color(1, 1, 1, 0)
+[node name="TextEdit" type="TextEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=751754709]
 layout_mode = 2
 size_flags_vertical = 3
 

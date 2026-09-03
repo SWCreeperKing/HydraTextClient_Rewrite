@@ -68,7 +68,7 @@ script = ExtResource("6_28ygy")
 
 [node name="FoldableContainer" type="FoldableContainer" parent="VBoxContainer" unique_id=1425850075]
 layout_mode = 2
-title = "Slot Settings"
+title = "Slot View Settings"
 title_alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/FoldableContainer" unique_id=1231993500]

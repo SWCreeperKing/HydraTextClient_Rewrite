@@ -143,7 +143,7 @@ public partial class MapLoader : Control
             MainController.ShowError($"Failed to read pack [{Path.GetFileName(path)}]", e);
             ((MapTracker)parent).UnloadMap(trackerName);
             return;
-        } 
+        }
 
         Client?.HintsTrackedEvent += UpdateNodes;
         if (!IsInEditMode && !CircleTracker.Singleton.Pages.TryGetValue(trackerName, out Page))
@@ -219,10 +219,10 @@ public partial class MapLoader : Control
 
         foreach (var map in MapsList) CreateMap(path, map);
 
-        if (HasAutoTrackingData && AutoTrackingData.MapKey is not "")
+        if (HasAutoTrackingData && AutoTrackingData.RawMapKey is not "")
             Client?.AddDataStorageListener(
-                AutoTrackingData.MapKey, FunctionIdString,
-                (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), Scope.Slot
+                AutoTrackingData.GetMapKey(Client.PlayerSlot, Client.PlayerTeam), FunctionIdString,
+                (_, newValue, _) => CallDeferred("SelectMap", (string)newValue), AutoTrackingData.GetScope()
             );
 
         if (IsInEditMode || !IsEntranceRando) return; // entrance tracker
@@ -445,7 +445,7 @@ public partial class MapLoader : Control
 
     public bool TryGetMapWithId(string id, out MapNavigator? foundMap)
     {
-        foundMap = MapNavigators.FirstOrDefault(map => map.MapId == id, null);
+        foundMap = MapNavigators.FirstOrDefault(map => map.MapIds.Contains(id), null);
         return foundMap is not null;
     }
 
@@ -502,7 +502,7 @@ public partial class MapLoader : Control
                 if (TrueEntranceMap.TryGetValue(loc.EntranceId, out var foundId)
                     && EntranceNodes.TryGetValue(foundId, out var nodes) && nodes.Count > 0)
                 {
-                    CallDeferred("SelectMap", nodes[0].Map.MapId);
+                    CallDeferred("SelectMap", nodes[0].Map.MapIds[0]);
                     nodes[0].Highlighter.Blink();
                 }
             }
@@ -513,7 +513,7 @@ public partial class MapLoader : Control
                 ).Key;
                 if (backwards is not null && EntranceNodes.TryGetValue(backwards, out var nodes) && nodes.Count > 0)
                 {
-                    CallDeferred("SelectMap", nodes[0].Map.MapId);
+                    CallDeferred("SelectMap", nodes[0].Map.MapIds[0]);
                     nodes[0].Highlighter.Blink();
                 }
             }
@@ -522,7 +522,7 @@ public partial class MapLoader : Control
         if (switchTo is "") switchTo = FindLinkingEntrance(loc.EntranceId, !Input.IsKeyPressed(Key.Shift));
         if (switchTo is "" || !EntranceNodes.TryGetValue(switchTo, out var entranceNodes)
                            || entranceNodes.Count == 0) return;
-        CallDeferred("SelectMap", entranceNodes[0].Map.MapId);
+        CallDeferred("SelectMap", entranceNodes[0].Map.MapIds[0]);
         entranceNodes[0].Highlighter.EnterAnimation();
     }
 
@@ -656,7 +656,7 @@ public partial class MapLoader : Control
         RightClickSelectedEntranceNode = null;
     }
 
-    public void UpdateNodes(Hint[] hints) => UpdateNodes();
+    public void UpdateNodes(Hint[] hints, Hint[] newHints) => UpdateNodes();
 
     public void UpdateNodes()
     {
@@ -870,8 +870,11 @@ public partial class MapLoader : Control
     {
         if (IsInEditMode && IsEditorOpen) IsEditorOpen = false;
         Client?.HintsTrackedEvent -= UpdateNodes;
-        if (HasAutoTrackingData && AutoTrackingData.MapKey is not "")
-            Client?.RemoveDataStorageListeners(AutoTrackingData.MapKey, FunctionIdString, Scope.Slot);
+        if (HasAutoTrackingData && AutoTrackingData.RawMapKey is not "")
+            Client?.RemoveDataStorageListeners(
+                AutoTrackingData.GetMapKey(Client.PlayerSlot, Client.PlayerTeam), FunctionIdString,
+                AutoTrackingData.GetScope()
+            );
         Page?.OnLogicUpdated -= UpdateNodes;
         Page?.OnLogicUpdated -= UpdateEntrances;
         Page?.OnLogicUpdated -= CallUpdateUI;

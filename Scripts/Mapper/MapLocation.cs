@@ -108,28 +108,32 @@ public partial class MapLocation : TextureRect
     private void LocationUpdate()
     {
         if (!Loader.IsInEditMode && NodeDead) return;
-        var page = Loader.Page;
-        var applicableHints = Client is null ? []
-            : Client.Hints
-                    .Where(hint => hint.FindingPlayer
-                         == Client.PlayerSlot && !hint.Found
-                                              && hint.Status is HintStatus.Priority
-                     )
-                    .Select(hint => hint.LocationName)
-                    .ToArray();
+        try
+        {
+            var page = Loader.Page;
+            var applicableHints = Client is null ? []
+                : Client.Hints
+                        .Where(hint => hint.FindingPlayer
+                             == Client.PlayerSlot && !hint.Found
+                                                  && hint.Status is HintStatus.Priority
+                         )
+                        .Select(hint => hint.LocationName)
+                        .ToArray();
 
-        LocationValueDict = OrderedLocations.ToDictionary(
-            l => l, l =>
-            {
-                if (Client is null && Loader.IsInEditMode) return 4;
-                if (Client is null || Client.Locations.All(kv => kv.Key != l)) return 5;
-                if (!Client.IsMissingLocation(l)) return 4;
-                var locColor = 3;
-                if (page is not null && page.LocationNamesInLogic.Contains(l)) locColor = 1;
-                if (applicableHints.Contains(l)) locColor -= 1;
-                return locColor;
-            }
-        );
+            LocationValueDict = OrderedLocations.ToDictionary(
+                l => l, l =>
+                {
+                    if (Client is null && Loader.IsInEditMode) return 4;
+                    if (Client is null || Client.Locations.All(kv => kv.Key != l)) return 5;
+                    if (!Client.IsMissingLocation(l)) return 4;
+                    var locColor = 3;
+                    if (page is not null && page.LocationNamesInLogic.Contains(l)) locColor = 1;
+                    if (applicableHints.Contains(l)) locColor -= 1;
+                    return locColor;
+                }
+            );
+        }
+        catch (Exception e) { LocationValueDict = []; }
 
         var min = Math.Clamp(LocationValueDict.Count == 0 ? 4 : LocationValueDict.MinBy(kv => kv.Value).Value, 0, 4);
         NodeColor = min switch
@@ -140,7 +144,6 @@ public partial class MapLocation : TextureRect
             3 => ColorIdConstants.ColorConstant.NotInLogic.Color(),
             4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(),
         };
-
         NodeDead = min is 4;
     }
 

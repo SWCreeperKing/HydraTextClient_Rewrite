@@ -16,7 +16,7 @@ public partial class MapNavigator : ScrollContainer
     public string MapPath;
     public List<MapLocation> Locations = [];
     public List<EntranceLocation> Entrances = [];
-    public string MapId => CoreMap.GetId;
+    public string[] MapIds => [CoreMap.MapName,.. CoreMap.MapIds];
 
     public Vector2 GetMapSize => Container.MapImage.Texture.GetSize();
     private bool ToUpdateNodes;
@@ -82,11 +82,11 @@ public partial class MapNavigator : ScrollContainer
         Container.ResetZoom();
     }
 
-    public void EditMapData(string mapName, string image, string mapId)
+    public void EditMapData(string mapName, string image, string[] mapIds)
     {
         SetMapName(mapName);
         SetImage(image);
-        CoreMap.MapId = mapId;
+        CoreMap.MapIds = mapIds;
     }
 
     public MapLocation CreateNewNode(Vector2 pos, Vector2 size, string group, params List<string> locs)

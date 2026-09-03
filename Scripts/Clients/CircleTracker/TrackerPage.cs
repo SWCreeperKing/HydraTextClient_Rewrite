@@ -54,7 +54,7 @@ public partial class TrackerPage : Control
     private int LastRenderedCircleProgress = -1;
     private Action<ItemInfo[], int> OnItemsReceived;
     private Action<ReadOnlyCollection<long>> OnLocationsChecked;
-    private Action<Hint[]> OnHintsUpdated;
+    private Action<Hint[], Hint[]> OnHintsUpdated;
     private Action<string, bool> OnBoolSaveDataUpdated;
     private Action<string, FilterType> OnFilterDataUpdated;
     private HydraBridgeEntry Entry;
@@ -81,7 +81,7 @@ public partial class TrackerPage : Control
         OnLocationsChecked = _ => QueueUpdate();
         client.CheckedLocationsUpdated += OnLocationsChecked;
 
-        OnHintsUpdated = _ => QueueUpdate();
+        OnHintsUpdated = (_, _) => QueueUpdate();
         client.HintsTrackedEvent += OnHintsUpdated;
 
         OnBoolSaveDataUpdated = (id, _) =>

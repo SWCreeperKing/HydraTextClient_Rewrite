@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.Packets;
 using CreepyUtil.Archipelago;
 using Godot;
@@ -135,6 +136,27 @@ public partial class TextClient : Control
                     if (ConnectionController.LeaderClient! != client) return;
                     MessageQueue.Enqueue(new TrapLinkPacket(player, trap));
                 };
+                client.HintsTrackedEvent += (_, newHints) =>
+                {
+                    var leader = ConnectionController.LeaderClient!;
+                    foreach (var hint in newHints)
+                    {
+                        if (hint.ReceivingPlayer == leader.PlayerSlot) continue;
+                        if (hint.FindingPlayer == leader.PlayerSlot) continue;
+                        Enqueue(
+                            MessageType.HintMessage, new HintPrintJsonPacket
+                            {
+                                Found = hint.Found, Item = new NetworkItem
+                                {
+                                    Flags = hint.ItemFlags, Item = hint.ItemId, Location = hint.LocationId,
+                                    Player = hint.FindingPlayer,
+                                },
+                                MessageType = JsonMessageType.Hint, ReceivingPlayer = hint.ReceivingPlayer,
+                            }
+                        );
+                    }
+                };
+
                 // client.OnUnhandledPacketReceived += packet => { };
             }
             catch (Exception e) { MainController.ShowError("Error with setting up client data", e); }

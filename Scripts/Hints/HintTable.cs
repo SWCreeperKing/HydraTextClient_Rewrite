@@ -103,7 +103,7 @@ public partial class HintTable : TextTable
 
         ConnectionController.OnClientConnection += (slot, client, _) =>
         {
-            client.HintsTrackedEvent += hints =>
+            client.HintsTrackedEvent += (hints, _) =>
             {
                 var mw = ConnectionController.GetCurrentMultiworld;
                 if (mw is null) return;

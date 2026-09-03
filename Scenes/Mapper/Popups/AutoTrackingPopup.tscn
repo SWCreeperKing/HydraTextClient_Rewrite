@@ -3,12 +3,13 @@
 [ext_resource type="Script" uid="uid://dbpxtpaalq0p4" path="res://Scripts/Mapper/Popups/AutoTrackingInputPopup.cs" id="1_ctit2"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_cyqh6"]
 
-[node name="AutoTrackingPopup" type="Window" unique_id=312272736 node_paths=PackedStringArray("MapKey", "OnOffKey", "TruthMapKey")]
+[node name="AutoTrackingPopup" type="Window" unique_id=312272736 node_paths=PackedStringArray("MapKey", "ScopeOption", "OnOffKey", "TruthMapKey")]
 oversampling_override = 1.0
 title = "Map Auto Tracking"
-size = Vector2i(400, 250)
+size = Vector2i(400, 330)
 script = ExtResource("1_ctit2")
 MapKey = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/LineEdit")
+ScopeOption = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4/OptionButton")
 OnOffKey = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/LineEdit")
 TruthMapKey = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit")
 
@@ -44,6 +45,12 @@ autowrap_mode = 3
 [node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1402321042]
 layout_mode = 2
 
+[node name="Label2" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=691604382]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "{{player}} will be replaced with the player slot
+{{team}} will be replaced with the player team"
+
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1218364223]
 layout_mode = 2
 
@@ -55,6 +62,30 @@ text = "Map Tabbing Key"
 [node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1542698914]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=49132013]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=872494944]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Key Scope"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer4" unique_id=327286284]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 5
+popup/item_0/text = "Slot"
+popup/item_0/id = 0
+popup/item_1/text = "Game"
+popup/item_1/id = 1
+popup/item_2/text = "Team"
+popup/item_2/id = 2
+popup/item_3/text = "Global"
+popup/item_3/id = 3
+popup/item_4/text = "Incorrect Format"
+popup/item_4/id = 4
 
 [node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1994613503]
 layout_mode = 2

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Archipelago.MultiClient.Net.Enums;
 using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,17 +16,21 @@ public struct TabStructure(string name = "", params List<TabStructure> subTabs)
     public override int GetHashCode() => HashCode.Combine(Name, SubTabs);
 }
 
-public class Maps(string mapName, string imageName, string tab = "", string mapId = "",
+public class Maps(string mapName, string imageName, string tab = "", string mapId = "", string[] mapIds = null,
     List<EntranceNode>? entrances = null, params List<MapNode> nodes)
 {
     public string MapName = mapName;
-    public string MapId = mapId;
+    public string[] MapIds = mapIds ?? (mapId is null or "" ? [] : [mapId]);
     public string ImageName = imageName;
     public string Tab = tab;
     public List<MapNode> Nodes = nodes;
     public List<EntranceNode> Entrances = entrances ?? [];
 
-    [JsonIgnore] public string GetId => MapId is "" or null ? MapName ?? "" : MapId;
+    public string MapId
+    {
+        set => MapIds = [value];
+    }
+    // [JsonIgnore] public string GetId => MapIds.Length or null ? MapName ?? "" : MapId;
 }
 
 public class MapNode(float x, float y, float w, float h, string group = "",
@@ -95,10 +100,7 @@ public class LocationGroup(string name, string mapIcon, string openIcon = "", st
                 case DataStorageType.Bool:
                 {
                     try { return (bool)val == BoolCompare; }
-                    catch (InvalidCastException)
-                    {
-                        return (long)val == 1;
-                    }
+                    catch (InvalidCastException) { return (long)val == 1; }
                 }
                 default: return false;
             }
@@ -108,11 +110,24 @@ public class LocationGroup(string name, string mapIcon, string openIcon = "", st
     }
 }
 
-public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKey = "", string entranceMapKey = "")
+public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKey = "", string entranceMapKey = "", int scope = 0)
 {
-    public string MapKey = mapKey;
+    [JsonProperty("MapKey")] public string RawMapKey = mapKey; 
+    public int KeyScope = 0;
     public string EntranceRandoIndicatorKey = entranceRandoEnabledKey;
     public string EntranceRandoTrueMapKey = entranceMapKey;
+
+    public string GetMapKey(int playerSlot, int team) => RawMapKey.Replace("{{player}}", $"{playerSlot}")
+                                                                  .Replace("{{team}}", $"{team}");
+
+    public int GetScope() => KeyScope switch
+    {
+        1 => (int)Scope.Game,
+        2 => (int)Scope.Team,
+        3 => (int)Scope.Global,
+        4 => -1,
+        _ => (int)Scope.Slot, 
+    };
 }
 
 #region ugly poptracker imports
@@ -221,6 +236,9 @@ public class PoptrackerLayout // needed to find the stupid tabs and subtabs ;-;
     public string[] Maps = [];
 
     [JsonProperty("title")] public string Title = "";
+
+    [JsonProperty("map_tabs"), JsonConverter(typeof(SingleOrArray<PoptrackerLayout>))]
+    public PoptrackerLayout[] MapTabs = [];
 }
 
 public class SingleOrArray<T> : JsonConverter

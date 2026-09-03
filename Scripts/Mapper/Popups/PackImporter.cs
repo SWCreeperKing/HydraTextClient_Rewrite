@@ -175,6 +175,7 @@ public partial class PackImporter : WindowSetter
                     Queue<PoptrackerLayout> searchQueue = [];
                     if (parentLayout.DefaultLayout is not null) searchQueue.Enqueue(parentLayout.DefaultLayout);
                     if (parentLayout.HorizontalLayout is not null) searchQueue.Enqueue(parentLayout.HorizontalLayout);
+                    if (parentLayout.VerticalLayout is not null) searchQueue.Enqueue(parentLayout.VerticalLayout);
                     searchQueue.Enqueue(parentLayout);
 
                     while (searchQueue.Count != 0)
@@ -197,6 +198,7 @@ public partial class PackImporter : WindowSetter
                         }
 
                         foreach (var child in layout.Content) searchQueue.Enqueue(child);
+                        foreach (var child in layout.MapTabs) searchQueue.Enqueue(child);
                     }
                 }
                 catch (Exception e)
@@ -344,6 +346,7 @@ public partial class PackImporter : WindowSetter
 
             foreach (var child in layout.Content) searchQueue.Enqueue(child);
             foreach (var child in layout.Tabs) searchQueue.Enqueue(child);
+            foreach (var child in layout.MapTabs) searchQueue.Enqueue(child);
         }
         return false;
     }
@@ -397,8 +400,10 @@ public partial class PackImporter : WindowSetter
 
                     var map = layout.Content[0];
                     if (map.Type is not "map" || map.Maps.Length < 1)
-                        foreach (var content in layout.Content)
-                            convertQueue.Enqueue((content, layout.Title));
+                    {
+                        foreach (var content in layout.Content) convertQueue.Enqueue((content, layout.Title));
+                        foreach (var content in layout.MapTabs) convertQueue.Enqueue((content, layout.Title));
+                    }
                     break;
             }
         }

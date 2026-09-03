@@ -39,7 +39,7 @@ public partial class SlotUtility : HSplitContainer
             );
         };
 
-        client.HintsTrackedEvent += _ => RefreshUI = true;
+        client.HintsTrackedEvent += (_, _) => RefreshUI = true;
         client.OnRoomInfoPacketReceived += _ => RefreshUI = true;
         client.OnRoomUpdatePacketReceived += _ => RefreshUI = true;
 
