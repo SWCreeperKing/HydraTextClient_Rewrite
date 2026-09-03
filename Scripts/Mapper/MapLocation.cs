@@ -41,7 +41,7 @@ public partial class MapLocation : TextureRect
     public ApClient Client => Loader.Client;
     public List<string> DisplayedLocations = [];
     public string[] OrderedLocations;
-    private Dictionary<string, int> LocationValueDict;
+    private Dictionary<string, int> LocationValueDict = [];
     private bool NodeDead = false;
 
     [Signal] public delegate void OnSelectedEventHandler();
