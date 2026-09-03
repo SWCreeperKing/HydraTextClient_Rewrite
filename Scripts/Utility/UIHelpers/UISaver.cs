@@ -46,8 +46,7 @@ public partial class UISaver : Node
                 sc.Dragged += _ => SaveType<int[]>.Save(id, sc.SplitOffsets, true);
                 break;
             case TabContainer tc:
-                if (tc.GetTabCount() > 0)
-                    tc.CurrentTab = Math.Clamp(SaveType<int>.Load(id, 0), 0, (int)def - 1);
+                if (tc.GetTabCount() > 0) tc.CurrentTab = Math.Clamp(SaveType<int>.Load(id, 0), 0, (int)def - 1);
                 tc.TabChanged += _ => SaveType<int>.Save(id, tc.CurrentTab, true);
                 break;
             case SpinBox sb:
@@ -69,7 +68,11 @@ public partial class UISaver : Node
             case Window win:
                 win.Position = SaveType<Vector2I>.Load($"{id}_pos", win.GetPosition());
                 win.Size = SaveType<Vector2I>.Load($"{id}_size", win.GetSize());
-                win.TreeExiting += () => SaveType<Vector2I>.Save($"{id}_pos", win.Position, true);
+                win.TreeExiting += () =>
+                {
+                    SaveType<Vector2I>.Save($"{id}_pos", win.Position, true);
+                    SaveType<Vector2I>.Save($"{id}_size", win.Size, true);
+                };
                 win.SizeChanged += () => SaveType<Vector2I>.Save($"{id}_size", win.Size, true);
                 break;
             default: GD.Print($"{node.GetType()} is not configured UiSaver (can ignore if not dev)"); break;

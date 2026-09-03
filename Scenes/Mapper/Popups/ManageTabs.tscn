@@ -6,7 +6,7 @@
 [node name="Window" type="Window" unique_id=1137080991 node_paths=PackedStringArray("Action", "NameEdit", "Destination")]
 oversampling_override = 1.0
 title = "Manage Tabs"
-size = Vector2i(400, 160)
+size = Vector2i(450, 180)
 script = ExtResource("1_l0sj6")
 Action = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton")
 NameEdit = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/LineEdit")
@@ -31,6 +31,7 @@ grow_vertical = 2
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=1264299188]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -86,6 +87,71 @@ text = "Confirm"
 script = ExtResource("2_0aqj5")
 
 [node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=194435867]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+script = ExtResource("2_0aqj5")
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=1864956841]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TabContainer" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2" unique_id=759711012]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Maps" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer" unique_id=1693911647]
+layout_mode = 2
+current_tab = 0
+metadata/_tab_index = 0
+
+[node name="Add Map" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps" unique_id=328832888]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map" unique_id=163002372]
+layout_mode = 2
+placeholder_text = "Name"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map" unique_id=1530998127]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map/HBoxContainer" unique_id=1577712882]
+layout_mode = 2
+text = "Destination"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps/Add Map/HBoxContainer" unique_id=1715064123]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Move Map" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps" unique_id=5316108]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Delete Map" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer/Maps" unique_id=830349345]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Tabs" type="TabContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/TabContainer" unique_id=46657898]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2" unique_id=2141078334]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/HBoxContainer2" unique_id=1650228901]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Confirm"
+script = ExtResource("2_0aqj5")
+
+[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer2/HBoxContainer2" unique_id=637507348]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
