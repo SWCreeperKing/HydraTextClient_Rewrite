@@ -107,7 +107,7 @@ public partial class TrackerPage : Control
                 var cur = LastRenderedCircleProgress = Entry.LastRanCircle;
                 var total = Math.Max(CircleLabels.Count == 0 ? 0 : CircleLabels.Keys.Max(), cur);
                 RenderProgressLabel.Text = $"Circle Calculations [{cur:###,##0}/{total:###,##0}]";
-                RenderProgressProgress.Target = (double)cur / total;
+                RenderProgressProgress.SetTarget(cur, total);
             }
 
             if (UpdateQueue.IsEmpty) return;

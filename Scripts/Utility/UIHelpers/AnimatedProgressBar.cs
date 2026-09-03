@@ -7,8 +7,8 @@ public partial class AnimatedProgressBar : ProgressBar
     [Export] private double Duration = 2;
     [Export] private Tween.EaseType Ease = Tween.EaseType.Out;
     [Export] private Tween.TransitionType Trans = Tween.TransitionType.Quad;
-    
-    public double Target
+
+    private double Target
     {
         get => TargetPercent;
         set
@@ -22,6 +22,12 @@ public partial class AnimatedProgressBar : ProgressBar
     private bool RefreshTween;
     private Tween? ProgressTween;
 
+    public override void _Ready()
+    {
+        MinValue = 0;
+        MaxValue = 1000;
+    }
+
     public override void _Process(double delta)
     {
         if (!RefreshTween) return;
@@ -32,4 +38,7 @@ public partial class AnimatedProgressBar : ProgressBar
         ProgressTween!.SetTrans(Trans);
         ProgressTween!.TweenProperty(this, "value", TargetPercent, Duration);
     }
+
+    public void SetTarget(double current, double max) => Target = current / max * 1000;
+    public void SetTarget(double linearPercent) => Target = linearPercent * 1000;
 }

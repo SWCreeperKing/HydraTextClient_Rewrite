@@ -83,7 +83,6 @@ public partial class TabManager : WindowSetter
             }
         }
 
-
         if (name == destination && CurrentAction is ManageAction.AddTab or ManageAction.MoveTab or ManageAction.DeleteTab)
         {
             MainController.ShowError("Tab Target and Tab Destinations cannot share the same tab");

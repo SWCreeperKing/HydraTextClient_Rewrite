@@ -99,6 +99,7 @@ public partial class HintTable : TextTable
             }
         );
 
+        ConnectionController.OnFullDisconnection += () => QueueUiRefresh(true);
         ConnectionController.OnClientLeaderChanged += (_, _) => QueueUiRefresh(true);
 
         ConnectionController.OnClientConnection += (slot, client, _) =>
@@ -160,7 +161,6 @@ public partial class HintTable : TextTable
             return;
         }
 
-        RoomUpdate();
         if (resort)
         {
             var orderedHints =
@@ -207,6 +207,7 @@ public partial class HintTable : TextTable
         }
 
         UpdateData(resort);
+        RoomUpdate();
         return;
 
         IOrderedEnumerable<Hint> SortingOrder(IOrderedEnumerable<Hint> current, SortObject option,
@@ -368,7 +369,7 @@ public partial class HintTable : TextTable
         if (!ConnectionController.HasLeaderClient)
         {
             HintInfo.Text = "";
-            HintProgress.Target = 0;
+            HintProgress.SetTarget(0);
         }
         var leader = ConnectionController.LeaderClient!;
         var costPercent = leader.HintCostPercent;
@@ -376,7 +377,7 @@ public partial class HintTable : TextTable
         if (costPercent is 0)
         {
             HintInfo.Text = "Hint cost percent is 0, Unlimited Hints!";
-            HintProgress.Target = 1;
+            HintProgress.SetTarget(1);
             return;
         }
 
@@ -390,6 +391,6 @@ public partial class HintTable : TextTable
              Leader ({leader.PlayerName})'s points: [{points}], cost: [{cost}]{(hintAmount > 0 ? $"| Hint(s) available: [{hintAmount}]" : "")}
              Progress to next hint ({cost - points % cost} points):
              """;
-        HintProgress.Target = (double)(points % cost) / cost;
+        HintProgress.SetTarget(points % cost, cost);
     }
 }

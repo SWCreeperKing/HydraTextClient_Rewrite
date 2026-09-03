@@ -109,14 +109,14 @@ public partial class SlotUtility : HSplitContainer
         if (!Client.IsConnected)
         {
             HintInfo.Text = "";
-            HintProgress.Target = 0;
+            HintProgress.SetTarget( 1);
         }
         var costPercent = Client.HintCostPercent;
 
         if (costPercent is 0)
         {
             HintInfo.Text = "Hint cost percent is 0, Unlimited Hints!";
-            HintProgress.Target = 1;
+            HintProgress.SetTarget(1);
             return;
         }
 
@@ -128,6 +128,6 @@ public partial class SlotUtility : HSplitContainer
              points: [{points}], cost: [{cost}]{(hintAmount > 0 ? $"\nHint(s) available: [{hintAmount}]" : "")}
              Progress to next hint ({cost - points % cost} points):
              """;
-        HintProgress.Target = (double)(points % cost) / cost;
+        HintProgress.SetTarget(points % cost, cost);
     }
 }
