@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dbpxtpaalq0p4" path="res://Scripts/Mapper/Popups/AutoTrackingInputPopup.cs" id="1_ctit2"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_cyqh6"]
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_772oy"]
 
 [node name="AutoTrackingPopup" type="Window" unique_id=312272736 node_paths=PackedStringArray("MapKey", "ScopeOption", "OnOffKey", "TruthMapKey")]
 oversampling_override = 1.0
@@ -129,5 +130,11 @@ layout_mode = 2
 layout_mode = 2
 text = "Save and Close"
 script = ExtResource("2_cyqh6")
+
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_772oy")]
+Prefix = "window_nodes"
+Controls = {
+"mapeditor/auto tracking popup": NodePath("..")
+}
 
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/Button" to="." method="Save"]
