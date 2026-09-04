@@ -88,7 +88,7 @@ public partial class MapTracker : HSplitContainer
         foreach (var (client, game) in ClientGames)
         {
             var button = Buttons[client];
-            button.Disabled = !MapPaths.ContainsKey(game);
+            button.Disabled = !MapPaths.ContainsKey(game) || Loaders.ContainsKey(client);
         }
     }
 
