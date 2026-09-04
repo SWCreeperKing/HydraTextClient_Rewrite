@@ -282,6 +282,7 @@ public partial class PackImporter : WindowSetter
                 while (locationsToCheck.Count != 0)
                 {
                     var loc = locationsToCheck.Dequeue();
+                    if (loc is null) continue;
 
                     if (loc.MapLocations is not null)
                     {
