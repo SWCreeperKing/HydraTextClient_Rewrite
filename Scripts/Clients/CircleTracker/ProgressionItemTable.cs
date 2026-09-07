@@ -41,17 +41,17 @@ public partial class ProgressionItemTable : TextTable
         {
             case TextTableClickEffect.ClickedEventMsg:
                 var item = Client.Items[OrderedData[int.Parse(text[0])].Item1];
-                CallDeferred("CreateDialog", "Hint Item", $"Hint for\n{item}?", $"!hint {item}");
+                CallDeferred("CreateDialog", "Hint Item", $"Hint for\n{item}?", $"!hint {item}", item);
                 break;
         }
     }
 
     public override void RunDispose(bool disposing) { }
     
-    public void CreateDialog(string title, string text, string command)
+    public void CreateDialog(string title, string text, string command, string subject)
     {
         var popup = HintPopup.Instantiate<HintPopup>();
-        popup.Set(Client, title, text, command);
+        popup.Set(Client, title, text, command, subject);
         AddChild(popup);
         popup.Show();
     }

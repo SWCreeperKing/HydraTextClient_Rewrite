@@ -228,6 +228,11 @@ layout_mode = 2
 text = "Unselect"
 script = ExtResource("4_1xhnn")
 
+[node name="Button4" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2" unique_id=1286506877]
+layout_mode = 2
+text = "Copy Selected Locations"
+script = ExtResource("4_1xhnn")
+
 [node name="EditControls" type="VBoxContainer" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2" unique_id=951844168]
 layout_mode = 2
 
@@ -242,11 +247,6 @@ script = ExtResource("4_1xhnn")
 [node name="Button2" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1583162094]
 layout_mode = 2
 text = "Add Locations"
-script = ExtResource("4_1xhnn")
-
-[node name="Button4" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1286506877]
-layout_mode = 2
-text = "Copy Selected Locations"
 script = ExtResource("4_1xhnn")
 
 [node name="Button" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer" unique_id=1224080543]
@@ -274,8 +274,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -4.0
+offset_right = 5.0
+offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -293,7 +293,7 @@ autowrap_mode = 0
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button3" to="." method="EditAutoTracking"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer3/Button" to="." method="StopAndClose"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/Button3" to="." method="ResetSelectedNodes"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/Button4" to="." method="CopyLocations"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button3" to="." method="EditNode"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button2" to="." method="AddLocations"]
-[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button4" to="." method="CopyLocations"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/EditControls/HFlowContainer/Button" to="." method="RemoveSelectedLocations"]

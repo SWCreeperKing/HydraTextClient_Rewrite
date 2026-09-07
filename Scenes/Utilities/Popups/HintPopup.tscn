@@ -6,7 +6,7 @@
 
 [node name="HintPopup" type="Window" unique_id=185831893 node_paths=PackedStringArray("Label")]
 oversampling_override = 1.0
-size = Vector2i(300, 150)
+size = Vector2i(450, 150)
 theme = ExtResource("1_xec4r")
 script = ExtResource("2_kr6qn")
 Label = NodePath("Panel/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer2/Label")
@@ -58,17 +58,22 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Hint"
 
+[node name="Button3" type="Button" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1630145420]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Copy Subject"
+
 [node name="Button2" type="Button" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1593679218]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Close"
 
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_a06bc")]
-mouse_filter = 2
 Prefix = "window_nodes"
 Controls = {
 "hint_popup": NodePath("..")
 }
 
 [connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer/Button" to="." method="ConfirmClicked"]
+[connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer/Button3" to="." method="Copy"]
 [connection signal="pressed" from="Panel/MarginContainer/VBoxContainer/HBoxContainer/Button2" to="." method="Close"]

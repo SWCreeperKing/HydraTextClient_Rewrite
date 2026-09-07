@@ -73,19 +73,19 @@ public partial class SlotUtility : HSplitContainer
         ItemList.SetItems([.. client.Items.Select(kv => kv.Key)]);
         ItemList.List.FixedIconSize = new Vector2I(fontSize, fontSize);
         LocationList.SetItems([.. client.Locations.Select(kv => kv.Key).Where(client.IsMissingLocation)]);
-        ItemList.OnItemPressed += s => CallDeferred("CreateDialog", "Hint Item", $"Hint for\n{s}?", $"!hint {s}");
+        ItemList.OnItemPressed += s => CallDeferred("CreateDialog", "Hint Item", $"Hint for\n{s}?", $"!hint {s}", s);
         LocationList.OnItemPressed += s => CallDeferred(
-            "CreateDialog", "Hint Location", $"Hint for whats at\n{s}?", $"!hint_location {s}"
+            "CreateDialog", "Hint Location", $"Hint for whats at\n{s}?", $"!hint_location {s}", s
         );
 
         GameItemImageLoader.OnReload += ItemList.RefreshList;
         RefreshUI = true;
     }
 
-    public void CreateDialog(string title, string text, string command)
+    public void CreateDialog(string title, string text, string command, string subject)
     {
         var popup = HintPopup.Instantiate<HintPopup>();
-        popup.Set(Client, title, text, command);
+        popup.Set(Client, title, text, command, subject);
         AddChild(popup);
         popup.Show();
     }
