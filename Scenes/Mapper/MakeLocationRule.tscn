@@ -1,0 +1,168 @@
+[gd_scene format=3 uid="uid://ccmnugd5ecbrk"]
+
+[ext_resource type="Script" uid="uid://bo261ypn6tfnh" path="res://Scripts/Mapper/MakeLocationRule.cs" id="1_egjtj"]
+
+[node name="MakeLocationRule" type="VBoxContainer" unique_id=713456070 node_paths=PackedStringArray("SlotDataType", "CompareContainer", "SlotDataVariable", "ActionChosen", "IsVariableTrue", "Operator", "ValueCompare", "ValueOptions", "MatchAny", "StringCompareData")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_egjtj")
+SlotDataType = NodePath("HBoxContainer4/OptionButton")
+CompareContainer = NodePath("TabContainer")
+SlotDataVariable = NodePath("LineEdit")
+ActionChosen = NodePath("HBoxContainer6/OptionButton")
+IsVariableTrue = NodePath("TabContainer/Bool/CheckBox")
+Operator = NodePath("TabContainer/Number/HBoxContainer/OptionButton")
+ValueCompare = NodePath("TabContainer/Number/HBoxContainer/SpinBox")
+ValueOptions = NodePath("TabContainer/Number/TextEdit")
+MatchAny = NodePath("TabContainer/String/CheckBox")
+StringCompareData = NodePath("TabContainer/String/TextEdit")
+
+[node name="LineEdit" type="LineEdit" parent="." unique_id=819958919]
+layout_mode = 2
+placeholder_text = "Data Variable Key"
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="." unique_id=1567332273]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer5" unique_id=1934225656]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Scope"
+
+[node name="OptionButton" type="OptionButton" parent="HBoxContainer5" unique_id=1624446456]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 6
+popup/item_0/text = "Slot Data"
+popup/item_0/id = 0
+popup/item_1/text = "Slot"
+popup/item_1/id = 1
+popup/item_2/text = "Game"
+popup/item_2/id = 2
+popup/item_3/text = "Team"
+popup/item_3/id = 3
+popup/item_4/text = "Global"
+popup/item_4/id = 4
+popup/item_5/text = "Incorrect Format"
+popup/item_5/id = 5
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="." unique_id=1436494213]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer4" unique_id=907440968]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Data Compare"
+
+[node name="OptionButton" type="OptionButton" parent="HBoxContainer4" unique_id=60739089]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 3
+popup/item_0/text = "Boolean"
+popup/item_0/id = 0
+popup/item_1/text = "Number"
+popup/item_1/id = 1
+popup/item_2/text = "String"
+popup/item_2/id = 2
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="." unique_id=281302045]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer6" unique_id=457710039]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Image (leave as empty for visibility check)"
+
+[node name="OptionButton" type="OptionButton" parent="HBoxContainer6" unique_id=381731100]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TabContainer" type="TabContainer" parent="." unique_id=200920836]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 1
+tabs_visible = false
+
+[node name="Bool" type="VBoxContainer" parent="TabContainer" unique_id=293819441]
+visible = false
+layout_mode = 2
+alignment = 1
+metadata/_tab_index = 0
+
+[node name="CheckBox" type="CheckBox" parent="TabContainer/Bool" unique_id=1647919276]
+layout_mode = 2
+button_pressed = true
+text = "Variable Is True"
+
+[node name="Number" type="VBoxContainer" parent="TabContainer" unique_id=952212068]
+layout_mode = 2
+alignment = 1
+metadata/_tab_index = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Number" unique_id=779241197]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TabContainer/Number/HBoxContainer" unique_id=1678008000]
+layout_mode = 2
+text = "Variable"
+
+[node name="OptionButton" type="OptionButton" parent="TabContainer/Number/HBoxContainer" unique_id=57839071]
+layout_mode = 2
+selected = 0
+item_count = 7
+popup/item_0/text = "!="
+popup/item_0/id = 0
+popup/item_1/text = "=="
+popup/item_1/id = 1
+popup/item_2/text = ">"
+popup/item_2/id = 2
+popup/item_3/text = ">="
+popup/item_3/id = 3
+popup/item_4/text = "<"
+popup/item_4/id = 4
+popup/item_5/text = "<="
+popup/item_5/id = 5
+popup/item_6/text = "Any"
+popup/item_6/id = 6
+
+[node name="SpinBox" type="SpinBox" parent="TabContainer/Number/HBoxContainer" unique_id=1706145024]
+layout_mode = 2
+size_flags_horizontal = 3
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
+[node name="TextEdit" type="TextEdit" parent="TabContainer/Number" unique_id=637556673]
+visible = false
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Possible number values
+each new line is a new value to match"
+
+[node name="String" type="VBoxContainer" parent="TabContainer" unique_id=1364799357]
+visible = false
+layout_mode = 2
+alignment = 1
+metadata/_tab_index = 2
+
+[node name="CheckBox" type="CheckBox" parent="TabContainer/String" unique_id=862651245]
+layout_mode = 2
+button_pressed = true
+text = "Match Any if true, Match None if false"
+
+[node name="TextEdit" type="TextEdit" parent="TabContainer/String" unique_id=219931687]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Possible string values
+each new line is a new value to match"
+
+[connection signal="item_selected" from="HBoxContainer4/OptionButton" to="TabContainer" method="set_current_tab"]

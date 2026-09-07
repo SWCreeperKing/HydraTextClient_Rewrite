@@ -229,20 +229,16 @@ public static class Extensions // sorted alphabetically for the memes
         public void AppendText(string text) => edit.Text += text;
     }
 
-    extension(LocationGroup.NumberCompareType compareType)
+    public static int ToSelected(this LocationRule.NumberCompareType compareType)
     {
-        public int ToSelected()
+        return compareType switch
         {
-            switch (compareType)
-            {
-                case LocationGroup.NumberCompareType.EqualTo: return 1;
-                case LocationGroup.NumberCompareType.GreaterThan: return 2;
-                case LocationGroup.NumberCompareType.GreaterThan | LocationGroup.NumberCompareType.EqualTo: return 3;
-                case LocationGroup.NumberCompareType.LessThan: return 4;
-                case LocationGroup.NumberCompareType.LessThan | LocationGroup.NumberCompareType.EqualTo: return 5;
-                default: return 0;
-            }
-        }
+            LocationRule.NumberCompareType.EqualTo => 1, LocationRule.NumberCompareType.GreaterThan => 2,
+            LocationRule.NumberCompareType.GreaterThan | LocationRule.NumberCompareType.EqualTo => 3,
+            LocationRule.NumberCompareType.LessThan => 4,
+            LocationRule.NumberCompareType.LessThan | LocationRule.NumberCompareType.EqualTo => 5,
+            LocationRule.NumberCompareType.AnyOf => 6, _ => 0,
+        };
     }
 
     extension(RichTextLabel label)

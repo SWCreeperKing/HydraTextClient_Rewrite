@@ -32,6 +32,7 @@ public partial class MapLocation : TextureRect
 
     public bool HasCustomImage;
     public bool QueueUpdate;
+    public bool QueueRender;
     public MapNavigator Map;
     public MapNode RawNodeData;
 
@@ -98,16 +99,62 @@ public partial class MapLocation : TextureRect
 
     public override void _Process(double delta)
     {
+        if (QueueRender)
+        {
+            QueueRender = false;
+            UpdateVisuals();
+        }
+        
         if (Map is null) return;
         if (!QueueUpdate) return;
         QueueUpdate = false;
+        UpdateVisuals();
         LocationUpdate();
     }
 
+    public void UpdateVisuals()
+    {
+        if (Group is "" || !Loader.LocationGroupingMap.TryGetValue(Group, out var group)) return;
+        if (group.MappedIcon is "") SetImage("");
+        TrySetIcon(group.MappedIcon);
+            
+        if (Loader.IsInEditMode) return;
+        bool? visible = null;
+        string? image = null;
+
+        foreach (var rule in group.LocationRules.Where(r => r.DataKey is not ("" or null)))
+        {
+            if (visible is null && rule.Action is "") visible = false;
+            if (image is not null && rule.Action is not "") continue;
+            if (!Loader.DataDictionary.TryGetValue(rule.GetKeyHash(), out var obj) || obj is null) continue;
+            if (!rule.CompareDataValue(obj)) continue;
+            if (rule.Action is "") visible = true;
+            else image = rule.Action;
+        }
+
+        if (visible is not null) Visible = visible.Value;
+        if (image is not null) TrySetIcon(image);
+    }
+
+    private void TrySetIcon(string image)
+    {
+        if (Loader.ItemImageLoader.TryGet(image, out var img))
+        {
+            Texture = img;
+            SetImage(image);
+            HasCustomImage = true;
+        }
+        else
+        {
+            SetImage("");
+            GD.PrintErr($"Location Icon not found for: [{image}]");
+        }
+    }
+    
     // 0: in logic (hinted) <- 1: in logic <- 2: not logic (hinted) <- 3: not in logic <- 4: nothing, location checked <- 5 doesn't exist
     private void LocationUpdate()
     {
-        if (!Loader.IsInEditMode && NodeDead) return;
+        if (!Loader.IsInEditMode && NodeDead || !Visible) return;
         try
         {
             var page = Loader.Page;

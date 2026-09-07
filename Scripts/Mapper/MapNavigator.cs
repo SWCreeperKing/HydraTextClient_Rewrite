@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Godot;
 
 namespace HydraTextClient.Scripts.Mapper;
@@ -16,16 +17,23 @@ public partial class MapNavigator : ScrollContainer
     public string MapPath;
     public List<MapLocation> Locations = [];
     public List<EntranceLocation> Entrances = [];
-    public string[] MapIds => [CoreMap.MapName,.. CoreMap.MapIds];
+    public string[] MapIds => [CoreMap.MapName, .. CoreMap.MapIds];
 
     public Vector2 GetMapSize => Container.MapImage.Texture.GetSize();
     private bool ToUpdateNodes;
+    private bool ToReRenderNodes;
     private bool ToUpdateEntrances;
 
     public override void _Process(double delta)
     {
         if (!IsVisibleInTree()) return;
 
+        if (ToReRenderNodes)
+        {
+            ToReRenderNodes = false;
+            foreach (var node in Locations) node.QueueRender = true;
+        }
+        
         if (ToUpdateNodes)
         {
             ToUpdateNodes = false;
@@ -40,6 +48,7 @@ public partial class MapNavigator : ScrollContainer
     }
 
     public void UpdateNodes() => ToUpdateNodes = true;
+    public void ReRenderNodes() => ToReRenderNodes = true;
     public void UpdateEntranceColors() => ToUpdateEntrances = true;
 
     public void SetupMap(MapLoader loader, Maps map, string packPath)
@@ -157,11 +166,6 @@ public partial class MapNavigator : ScrollContainer
 
         node.SetNodeSize(new Vector2(Math.Abs(loc.W), Math.Abs(loc.H)));
         node.SetData(this);
-        if (!UpdateLocationGroup(node))
-        {
-            node.QueueFree();
-            return null; // return if slot data doesn't match
-        }
         node.OnEntered += () => Loader.SetHoverLocation(node);
         node.OnExited += () => Loader.RemoveHoverLocation(node);
         node.OnSelected += () => Loader.SetSelectedLocation(node);
@@ -174,34 +178,6 @@ public partial class MapNavigator : ScrollContainer
         node.Pos = new Vector2(loc.X, loc.Y);
         return node;
     }
-
-    public bool UpdateLocationGroup(MapLocation node)
-    {
-        if (node.Group is not "" && Loader.LocationGroupingMap.TryGetValue(node.Group, out var group))
-        {
-            if (group.MappedIcon is "") node.SetImage("");
-            else if (Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img))
-            {
-                node.Texture = img;
-                node.SetImage(group.MappedIcon);
-                node.HasCustomImage = true;
-            }
-            else
-            {
-                node.SetImage("");
-                GD.PrintErr($"Location Icon not found for: [{group.MappedIcon}]");
-            }
-
-            if (group.SlotDataKey is not ("" or null) && !Loader.IsInEditMode)
-            {
-                if (Loader.Client!.SlotData.TryGetValue(group.SlotDataKey, out var slotDataVal))
-                    return group.CompareDataValue(slotDataVal);
-                GD.PrintErr($"Slot data key is invalid: [{group.SlotDataKey}]");
-            }
-        }
-        else node.SetImage("");
-        return true;
-    }
-
+    
     public Vector2 ToLocalPos(Vector2 pos) => (pos - Container.MapImage.GlobalPosition) / Container.MapImage.Scale;
 }

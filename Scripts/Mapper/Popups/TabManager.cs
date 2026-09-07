@@ -55,7 +55,7 @@ public partial class TabManager : WindowSetter
     {
         var showLineEdit = CurrentAction is ManageAction.AddMap or ManageAction.AddTab;
         var isMapTab = CurrentAction is ManageAction.AddMap or ManageAction.MoveMap or ManageAction.DeleteMap;
-        if (showLineEdit) return NameEdit.Text;
+        if (showLineEdit) return NameEdit.Text.Replace('/', '_');
         return isMapTab ? MapNames[MapNamePicker.Selected] : TabContainers[TabNamePicker.Selected];
     }
 

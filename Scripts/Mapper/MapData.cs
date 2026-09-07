@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Archipelago.MultiClient.Net.Enums;
+using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -26,15 +28,11 @@ public class Maps(string mapName, string imageName, string tab = "", string mapI
     public List<MapNode> Nodes = nodes;
     public List<EntranceNode> Entrances = entrances ?? [];
 
-    public string MapId
-    {
-        set => MapIds = [value];
-    }
+    public string MapId { set => MapIds = [value]; }
     // [JsonIgnore] public string GetId => MapIds.Length or null ? MapName ?? "" : MapId;
 }
 
-public class MapNode(float x, float y, float w, float h, string group = "",
-    params List<string> locationChecks)
+public class MapNode(float x, float y, float w, float h, string group = "", params List<string> locationChecks)
 {
     public string LocationGroup = group;
     public List<string> Locations = locationChecks;
@@ -53,33 +51,50 @@ public class EntranceNode(float x, float y, float w, float h, string entrance)
     public float H = h;
 }
 
-public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
+public class LocationGrouping(string name, string mapIcon, string openIcon = "", string closeIcon = "",
+    params LocationRule[] rules)
+{
+    public string GroupName = name;
+    public string MappedIcon = mapIcon;
+    public string AvailableIcon = openIcon;
+    public string CollectedIcon = closeIcon;
+    public LocationRule[] LocationRules = rules;
+}
+
+public struct LocationRule()
 {
     public const float Tolerance = .00001f;
 
     public enum DataStorageType { Bool, Number, Text }
+
+    public enum DataScope
+    {
+        SlotData, Slot, Game,
+        Team, Global, Invalid,
+    }
 
     [Flags]
     public enum NumberCompareType // storage value [compare type] data compare 
     {
         NotEqualTo = 0, // defaults to equal to
         EqualTo = 1, GreaterThan = 1 << 1, LessThan = 1 << 2,
+        AnyOf = 1 << 3,
     }
 
-    public string GroupName = name;
-    public string MappedIcon = mapIcon;
-    public string AvailableIcon = openIcon;
-    public string CollectedIcon = closeIcon;
-
     // slot data conditions
-    public string SlotDataKey;
-    public DataStorageType StoreType;
+    public DataScope Scope;
+    public string DataKey;
+    public DataStorageType StoreType = DataStorageType.Bool;
     public string[] DataCompare = [];
+    public double[] DoubleDataCompare = [];
     public bool BoolCompare = true;
-    public double NumberCompare;
-    public NumberCompareType CompareType;
+    public double NumberCompare = 0;
+    public NumberCompareType CompareType = NumberCompareType.NotEqualTo;
     public bool MatchAny = true; // false means to match none
+    public string Action = "";
 
+    public int GetKeyHash() => HashCode.Combine(Scope, DataKey);
+    
     public bool CompareDataValue(object val)
     {
         try
@@ -91,7 +106,13 @@ public class LocationGroup(string name, string mapIcon, string openIcon = "", st
                     return MatchAny ? DataCompare.Contains(text) : !DataCompare.Contains(text);
                 case DataStorageType.Number:
                     var num = (long)val;
-                    if (CompareType is NumberCompareType.NotEqualTo) return Math.Abs(num - NumberCompare) > Tolerance;
+
+                    switch (CompareType)
+                    {
+                        case NumberCompareType.AnyOf: return DoubleDataCompare.Any(d => Math.Abs(num - d) < Tolerance);
+                        case NumberCompareType.NotEqualTo: return Math.Abs(num - NumberCompare) > Tolerance;
+                    }
+
                     if (CompareType.HasFlag(NumberCompareType.EqualTo))
                         return Math.Abs(num - NumberCompare) < Tolerance;
                     if (CompareType.HasFlag(NumberCompareType.GreaterThan)) return num > NumberCompare;
@@ -105,14 +126,31 @@ public class LocationGroup(string name, string mapIcon, string openIcon = "", st
                 default: return false;
             }
         }
-        catch (Exception e) { GD.PrintErr($"Error with reading [{SlotDataKey}]", e); }
+        catch (Exception e) { GD.PrintErr($"Error with reading [{DataKey}]", e); }
         return false;
     }
 }
 
-public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKey = "", string entranceMapKey = "", int scope = 0)
+[Obsolete("Legacy, replaced with: LocationGrouping & LocationRule")]
+public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
 {
-    [JsonProperty("MapKey")] public string RawMapKey = mapKey; 
+    public string GroupName = name;
+    public string MappedIcon = mapIcon;
+    public string AvailableIcon = openIcon;
+    public string CollectedIcon = closeIcon;
+    public string SlotDataKey;
+    public long StoreType;
+    public string[] DataCompare = [];
+    public bool BoolCompare = true;
+    public double NumberCompare;
+    public long CompareType;
+    public bool MatchAny = true; // false means to match none
+}
+
+public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKey = "", string entranceMapKey = "",
+    int scope = 0)
+{
+    [JsonProperty("MapKey")] public string RawMapKey = mapKey;
     public int KeyScope = 0;
     public string EntranceRandoIndicatorKey = entranceRandoEnabledKey;
     public string EntranceRandoTrueMapKey = entranceMapKey;
@@ -122,11 +160,7 @@ public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKe
 
     public int GetScope() => KeyScope switch
     {
-        1 => (int)Scope.Game,
-        2 => (int)Scope.Team,
-        3 => (int)Scope.Global,
-        4 => -1,
-        _ => (int)Scope.Slot, 
+        1 => (int)Scope.Game, 2 => (int)Scope.Team, 3 => (int)Scope.Global, 4 => -1, _ => (int)Scope.Slot,
     };
 }
 
@@ -160,14 +194,6 @@ public struct PoptrackerVariant
 public class PoptrackerLocation
 {
     [JsonProperty("name")] public string Name;
-    [JsonProperty("short_name")] public string ShortName;
-    [JsonProperty("access_rules")] public dynamic _AccessRules;
-    [JsonProperty("visibility_rules")] public dynamic _VisibilityRules;
-    [JsonProperty("chest_unopened_img")] public string UnopenedImage;
-    [JsonProperty("chest_opened_img")] public string OpenedImage;
-    [JsonProperty("overlay_background")] public string OverlayBackground; // #(AA)RRGGBB
-    [JsonProperty("color")] public string Color;
-    [JsonProperty("parent")] public string Parent;
 
     [JsonProperty("children"), JsonConverter(typeof(SingleOrArray<PoptrackerLocation>))]
     public PoptrackerLocation[] Locations;
@@ -185,7 +211,6 @@ public struct PoptrackerMapLocation
     [JsonProperty("y")] public float Y;
     [JsonProperty("size")] public float Size;
     [JsonProperty("border_thickness")] public float BorderThickness;
-    [JsonProperty("shape")] public string Shape;
 
     [JsonProperty("restrict_visibility_rules")]
     public string[] RestrictedVisibilityRules;
@@ -197,14 +222,6 @@ public struct PoptrackerMapLocation
 public struct PoptrackerSection
 {
     [JsonProperty("name")] public string Name;
-    [JsonProperty("clear_as_group")] public bool ClearAsGroup;
-    [JsonProperty("chest_unopened_img")] public string UnopenedImage;
-    [JsonProperty("chest_opened_img")] public string OpenedImage;
-    [JsonProperty("item_count")] public int ItemCount;
-    [JsonProperty("hosted_item")] public string HostedItem;
-    [JsonProperty("access_rules")] public dynamic AccessRules;
-    [JsonProperty("visibility_rules")] public dynamic VisibilityRules;
-    [JsonProperty("ref")] public string Reference;
 }
 
 public class PoptrackerMap

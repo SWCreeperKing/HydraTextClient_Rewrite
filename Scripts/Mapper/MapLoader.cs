@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,20 +49,21 @@ public partial class MapLoader : Control
     public TabStructure Structure;
     public Dictionary<string, TabContainer> MapTabs = [];
     public List<MapNavigator> MapNavigators = [];
-    public List<LocationGroup> LocationGroups = [];
+    public List<LocationGrouping> LocationGroups = [];
     public Action<MapLoader> ExitEvent;
     public ApClient? Client;
     public TrackerPage? Page;
     public Control Parent;
     public bool IsInEditMode;
     public List<string> CollectedLocations = [];
-    public Dictionary<string, LocationGroup> LocationGroupingMap = [];
+    public Dictionary<string, LocationGrouping> LocationGroupingMap = [];
     public Dictionary<string, string> LocationClosedIconOverride = [];
     public Dictionary<string, string> LocationOpenedIconOverride = [];
     public Dictionary<string, string> EntranceMap = [];
     public Dictionary<string, string> EntranceNicknames = [];
     public Dictionary<string, string> TrueEntranceMap = [];
     public Dictionary<string, List<EntranceLocation>> EntranceNodes = [];
+    public ConcurrentDictionary<int, object> DataDictionary = [];
     public HashSet<string> FoundEntrances = [];
     public bool UpdateUI;
     public bool IsEntranceRando;
@@ -85,6 +87,7 @@ public partial class MapLoader : Control
     private bool AutoTrackEntrances;
     private string FunctionIdString;
     private bool UpdateUILater;
+    private List<(int, string)> DataStorageKeyCache = [];
 
     public void Setup(string path, string trackerName, Control parent)
     {
@@ -134,9 +137,39 @@ public partial class MapLoader : Control
                 HasAutoTrackingData = true;
             }
 
-            LocationGroups = JsonConvert.DeserializeObject<List<LocationGroup>>(
-                File.ReadAllText($"{path}/locationgroups.json")
-            );
+#pragma warning disable CS0618 // Type or member is obsolete
+            if (File.Exists($"{path}/locationgroups.json"))
+            {
+                var legacyGroups = JsonConvert.DeserializeObject<List<LocationGroup>>(
+                    File.ReadAllText($"{path}/locationgroups.json")
+                );
+
+                List<LocationGrouping> groupings =
+                [
+                    .. legacyGroups.Select(group => new LocationGrouping(
+                            group.GroupName, group.MappedIcon, group.AvailableIcon, group.CollectedIcon,
+                            new LocationRule
+                            {
+                                BoolCompare = group.BoolCompare,
+                                CompareType = (LocationRule.NumberCompareType)group.CompareType,
+                                DataCompare = group.DataCompare, DataKey = group.SlotDataKey,
+                                Scope = LocationRule.DataScope.SlotData, MatchAny = group.MatchAny,
+                                StoreType = (LocationRule.DataStorageType)group.StoreType,
+                                NumberCompare = group.NumberCompare, DoubleDataCompare = [],
+                            }
+                        )
+                    ),
+                ];
+
+                File.WriteAllText($"{path}/locationgroupings.json", JsonConvert.SerializeObject(groupings));
+                File.Delete($"{path}/locationgroups.json");
+            }
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            if (File.Exists($"{path}/locationgroupings.json"))
+                LocationGroups = JsonConvert.DeserializeObject<List<LocationGrouping>>(
+                    File.ReadAllText($"{path}/locationgroupings.json")
+                );
         }
         catch (Exception e)
         {
@@ -165,6 +198,46 @@ public partial class MapLoader : Control
                 CollectedLocations.Add(locName);
                 AllLocations.Add(locName);
             };
+        }
+        else
+        {
+            HashSet<int> alreadyRecordedRules = [];
+            foreach (var rule in LocationGroups.SelectMany(group => group.LocationRules))
+            {
+                var key = rule.GetKeyHash();
+                if (!alreadyRecordedRules.Add(key)) continue;
+                switch (rule.Scope)
+                {
+                    case LocationRule.DataScope.SlotData:
+                        if (!Client!.SlotData.TryGetValue(rule.DataKey, out var obj)) continue;
+                        DataDictionary[key] = obj;
+                        break;
+                    default:
+                        var scope = rule.Scope switch
+                        {
+                            LocationRule.DataScope.Slot => (int)Scope.Slot,
+                            LocationRule.DataScope.Game => (int)Scope.Game,
+                            LocationRule.DataScope.Team => (int)Scope.Team,
+                            LocationRule.DataScope.Global => (int)Scope.Global,
+                            LocationRule.DataScope.Invalid => -1, _ => -2,
+                        };
+                        if (scope is -2) continue;
+                        DataStorageKeyCache.Add((scope, rule.DataKey));
+                        Client?.AddDataStorageListener(
+                            rule.DataKey, FunctionIdString, (_, newValue, _) =>
+                            {
+                                DataDictionary[key] = newValue.ToObject<object>();
+                                ReRenderNodes();
+                            }, scope
+                        );
+                        Client?.GetFromStorageAsync<object>(rule.DataKey, obj =>
+                        {
+                            DataDictionary[key] = obj!;
+                            ReRenderNodes();
+                        }, scope);
+                        break;
+                }
+            }
         }
 
         IsEntranceRando = CheckIfEntranceRandoEnabled(out AutoTrackEntrances);
@@ -256,7 +329,7 @@ public partial class MapLoader : Control
                 entranceId, val =>
                 {
                     if (val) CallDeferred("EntranceFound", entranceId);
-                }, def: false
+                }, Scope.Slot, def: false
             );
 
             Client!.AddDataStorageListener(
@@ -658,6 +731,11 @@ public partial class MapLoader : Control
         RightClickSelectedEntranceNode = null;
     }
 
+    public void ReRenderNodes()
+    {
+        foreach (var map in MapNavigators) map.ReRenderNodes();
+    }
+
     public void UpdateNodes(Hint[] hints, Hint[] newHints) => UpdateNodes();
 
     public void UpdateNodes()
@@ -823,6 +901,10 @@ public partial class MapLoader : Control
                 AutoTrackingData.GetMapKey(Client.PlayerSlot, Client.PlayerTeam), FunctionIdString,
                 AutoTrackingData.GetScope()
             );
+
+        foreach (var (scope, key) in DataStorageKeyCache)
+            Client?.RemoveDataStorageListeners(key, FunctionIdString, scope);
+
         Page?.OnLogicUpdated -= UpdateNodes;
         Page?.OnLogicUpdated -= UpdateEntrances;
         Page?.OnLogicUpdated -= CallUpdateUI;

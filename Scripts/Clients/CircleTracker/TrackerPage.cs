@@ -151,7 +151,7 @@ public partial class TrackerPage : Control
                     if (!val) return;
                     if (!Entry.EntranceList.Contains(entranceId)) Entry.EntrancesQueued.Enqueue(entranceId);
                     else Client!.RemoveDataStorageListeners(entranceId, FunctionIdString, Scope.Slot);
-                }, def: false
+                }, Scope.Slot, def: false
             );
         }
     }

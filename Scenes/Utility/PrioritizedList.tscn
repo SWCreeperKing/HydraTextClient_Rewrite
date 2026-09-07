@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bkyevbq2d061s"]
+
+[ext_resource type="Script" uid="uid://dohr2d1xia8x7" path="res://Scripts/Utility/UIHelpers/PrioritizedList.cs" id="1_swrhy"]
+
+[node name="PrioritizedList" type="ScrollContainer" unique_id=1181288257 node_paths=PackedStringArray("ListView")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_swrhy")
+ListView = NodePath("VBoxContainer")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1760563105]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
