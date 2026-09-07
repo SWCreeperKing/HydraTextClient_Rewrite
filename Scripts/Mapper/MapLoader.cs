@@ -875,7 +875,7 @@ public partial class MapLoader : Control
 
         File.WriteAllText($"{MapPath}/atlas.json", JsonConvert.SerializeObject(newMapList));
         File.WriteAllText($"{MapPath}/tabs.json", JsonConvert.SerializeObject(newStructure));
-        File.WriteAllText($"{MapPath}/locationgroups.json", JsonConvert.SerializeObject(LocationGroups));
+        File.WriteAllText($"{MapPath}/locationgroupings.json", JsonConvert.SerializeObject(LocationGroups));
         File.WriteAllText($"{MapPath}/locationiconopen.json", JsonConvert.SerializeObject(LocationOpenedIconOverride));
         File.WriteAllText($"{MapPath}/locationiconclose.json", JsonConvert.SerializeObject(LocationClosedIconOverride));
         File.WriteAllText($"{MapPath}/entrance_rando_names.json", JsonConvert.SerializeObject(EntranceMap));

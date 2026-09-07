@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bo261ypn6tfnh" path="res://Scripts/Mapper/MakeLocationRule.cs" id="1_egjtj"]
 
-[node name="MakeLocationRule" type="VBoxContainer" unique_id=713456070 node_paths=PackedStringArray("SlotDataType", "CompareContainer", "SlotDataVariable", "ActionChosen", "IsVariableTrue", "Operator", "ValueCompare", "ValueOptions", "MatchAny", "StringCompareData")]
+[node name="MakeLocationRule" type="VBoxContainer" unique_id=713456070 node_paths=PackedStringArray("SlotDataVariable", "ScopeOperator", "SlotDataType", "CompareContainer", "ActionChosen", "IsVariableTrue", "Operator", "ValueCompare", "ValueOptions", "MatchAny", "StringCompareData")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,16 +11,17 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_egjtj")
-SlotDataType = NodePath("HBoxContainer4/OptionButton")
-CompareContainer = NodePath("TabContainer")
 SlotDataVariable = NodePath("LineEdit")
-ActionChosen = NodePath("HBoxContainer6/OptionButton")
+ScopeOperator = NodePath("HBoxContainer5/Scope")
+SlotDataType = NodePath("HBoxContainer4/Data compare")
+CompareContainer = NodePath("TabContainer")
+ActionChosen = NodePath("HBoxContainer6/image action")
 IsVariableTrue = NodePath("TabContainer/Bool/CheckBox")
-Operator = NodePath("TabContainer/Number/HBoxContainer/OptionButton")
+Operator = NodePath("TabContainer/Number/HBoxContainer/number compare")
 ValueCompare = NodePath("TabContainer/Number/HBoxContainer/SpinBox")
-ValueOptions = NodePath("TabContainer/Number/TextEdit")
-MatchAny = NodePath("TabContainer/String/CheckBox")
-StringCompareData = NodePath("TabContainer/String/TextEdit")
+ValueOptions = NodePath("TabContainer/Number/number select")
+MatchAny = NodePath("TabContainer/String/match any string")
+StringCompareData = NodePath("TabContainer/String/string select")
 
 [node name="LineEdit" type="LineEdit" parent="." unique_id=819958919]
 layout_mode = 2
@@ -34,7 +35,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Scope"
 
-[node name="OptionButton" type="OptionButton" parent="HBoxContainer5" unique_id=1624446456]
+[node name="Scope" type="OptionButton" parent="HBoxContainer5" unique_id=1624446456]
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
@@ -60,7 +61,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Data Compare"
 
-[node name="OptionButton" type="OptionButton" parent="HBoxContainer4" unique_id=60739089]
+[node name="Data compare" type="OptionButton" parent="HBoxContainer4" unique_id=60739089]
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
@@ -80,7 +81,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Image (leave as empty for visibility check)"
 
-[node name="OptionButton" type="OptionButton" parent="HBoxContainer6" unique_id=381731100]
+[node name="image action" type="OptionButton" parent="HBoxContainer6" unique_id=381731100]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -113,7 +114,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Variable"
 
-[node name="OptionButton" type="OptionButton" parent="TabContainer/Number/HBoxContainer" unique_id=57839071]
+[node name="number compare" type="OptionButton" parent="TabContainer/Number/HBoxContainer" unique_id=57839071]
 layout_mode = 2
 selected = 0
 item_count = 7
@@ -139,7 +140,7 @@ step = 0.001
 allow_greater = true
 allow_lesser = true
 
-[node name="TextEdit" type="TextEdit" parent="TabContainer/Number" unique_id=637556673]
+[node name="number select" type="TextEdit" parent="TabContainer/Number" unique_id=637556673]
 visible = false
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
@@ -153,16 +154,16 @@ layout_mode = 2
 alignment = 1
 metadata/_tab_index = 2
 
-[node name="CheckBox" type="CheckBox" parent="TabContainer/String" unique_id=862651245]
+[node name="match any string" type="CheckBox" parent="TabContainer/String" unique_id=862651245]
 layout_mode = 2
 button_pressed = true
 text = "Match Any if true, Match None if false"
 
-[node name="TextEdit" type="TextEdit" parent="TabContainer/String" unique_id=219931687]
+[node name="string select" type="TextEdit" parent="TabContainer/String" unique_id=219931687]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Possible string values
 each new line is a new value to match"
 
-[connection signal="item_selected" from="HBoxContainer4/OptionButton" to="TabContainer" method="set_current_tab"]
+[connection signal="item_selected" from="HBoxContainer4/Data compare" to="TabContainer" method="set_current_tab"]

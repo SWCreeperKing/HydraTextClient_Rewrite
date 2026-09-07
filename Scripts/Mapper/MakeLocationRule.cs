@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using HydraTextClient.Scripts.Utility;
 
@@ -6,9 +8,10 @@ namespace HydraTextClient.Scripts.Mapper;
 
 public partial class MakeLocationRule : VBoxContainer
 {
+    [Export] private LineEdit SlotDataVariable;
+    [Export] private OptionButton ScopeOperator;
     [Export] private OptionButton SlotDataType;
     [Export] private TabContainer CompareContainer;
-    [Export] private LineEdit SlotDataVariable;
     [Export] private OptionButton ActionChosen;
 
     [Export, ExportGroup("Edit Groups/Bool SDV")]
@@ -59,25 +62,40 @@ public partial class MakeLocationRule : VBoxContainer
         MatchAny.ButtonPressed = rule.MatchAny; // string
         SlotDataVariable.Text = rule.DataKey;
         StringCompareData.Text = string.Join('\n', rule.DataCompare ?? []);
+        ValueOptions.Text = string.Join('\n', rule.DoubleDataCompare);
+        ScopeOperator.Selected = (int)rule.Scope;
+        
         ValueCompare.Visible = rule.NumberCompare is not 6;
         ValueOptions.Visible = rule.NumberCompare is 6;
     }
 
-    public LocationRule GetData() => new()
+    public LocationRule GetData()
     {
-        StoreType = (LocationRule.DataStorageType)SlotDataType.Selected,
-        BoolCompare = IsVariableTrue.ButtonPressed, // bool
-        CompareType = Operator.Selected switch
+        HashSet<double> doubleList = [];
+        foreach (var s in ValueOptions.Text.Split('\n'))
         {
-            0 => LocationRule.NumberCompareType.NotEqualTo, 1 => LocationRule.NumberCompareType.EqualTo,
-            2 => LocationRule.NumberCompareType.GreaterThan,
-            3 => LocationRule.NumberCompareType.GreaterThan | LocationRule.NumberCompareType.EqualTo,
-            4 => LocationRule.NumberCompareType.LessThan,
-            5 => LocationRule.NumberCompareType.LessThan | LocationRule.NumberCompareType.EqualTo,
-            6 => LocationRule.NumberCompareType.AnyOf,
-        }, // number
-        NumberCompare = ValueCompare.Value, MatchAny = MatchAny.ButtonPressed, // string
-        DataCompare = StringCompareData.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries),
-        DataKey = SlotDataVariable.Text, Action = ActionChosen.Selected is 0 ? "" : Images[ActionChosen.Selected - 1],
-    };
+            if (!double.TryParse(s, out var d)) continue;
+            doubleList.Add(d);
+        }
+        
+        return new LocationRule
+        {
+            StoreType = (LocationRule.DataStorageType)SlotDataType.Selected,
+            BoolCompare = IsVariableTrue.ButtonPressed, // bool
+            CompareType = Operator.Selected switch
+            {
+                0 => LocationRule.NumberCompareType.NotEqualTo, 1 => LocationRule.NumberCompareType.EqualTo,
+                2 => LocationRule.NumberCompareType.GreaterThan,
+                3 => LocationRule.NumberCompareType.GreaterThan | LocationRule.NumberCompareType.EqualTo,
+                4 => LocationRule.NumberCompareType.LessThan,
+                5 => LocationRule.NumberCompareType.LessThan | LocationRule.NumberCompareType.EqualTo,
+                6 => LocationRule.NumberCompareType.AnyOf,
+            }, // number
+            NumberCompare = ValueCompare.Value, MatchAny = MatchAny.ButtonPressed, // string
+            DataCompare = StringCompareData.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries),
+            DataKey = SlotDataVariable.Text,
+            Action = ActionChosen.Selected is 0 ? "" : Images[ActionChosen.Selected - 1],
+            DoubleDataCompare = [.. doubleList], Scope = (LocationRule.DataScope) ScopeOperator.Selected,
+        };
+    }
 }
