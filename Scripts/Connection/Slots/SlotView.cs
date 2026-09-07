@@ -139,9 +139,9 @@ public partial class SlotView : MarginContainer
             var isSub = false;
             var keepMain = false;
 
-            if (mw is not null && leader is not null)
+            if (mw is not null)
             {
-                var names = leader!.PlayerNames;
+                var names = leader is not null ? leader!.PlayerNames : [.. mw.CheckCounts.Keys];
                 if (names.Contains(slot) || names.Contains(mw!.GetSlotName(slot))) keepMain = true;
                 slot = mw!.GetSlotName(slot);
             }
