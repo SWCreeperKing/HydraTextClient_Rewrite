@@ -137,16 +137,18 @@ public partial class SlotView : MarginContainer
         {
             var slot = rawSlot;
             var isSub = false;
+            var keepMain = false;
 
             if (mw is not null && leader is not null)
             {
                 var names = leader!.PlayerNames;
-                if (!(names.Contains(slot) || names.Contains(mw!.GetSlotName(slot)))) isSub = true;
+                if (names.Contains(slot) || names.Contains(mw!.GetSlotName(slot))) keepMain = true;
                 slot = mw!.GetSlotName(slot);
             }
 
-            if (!isSub && searchText is not "")
+            if (searchText is not "")
             {
+                keepMain = false;
                 var slotNameMatches = IsMatch(searchText, slot);
                 var gameNameMatches = IsMatch(searchText, Portraits[rawSlot].GameName);
 
@@ -166,7 +168,9 @@ public partial class SlotView : MarginContainer
                         break;
                 }
             }
+            else isSub = true;
 
+            if (keepMain) isSub = false;
             if (!isSub) MainSlotContainer.AddChild(Portraits[rawSlot]);
             else SubSlotContainer.AddChild(Portraits[rawSlot]);
         }
