@@ -84,7 +84,7 @@ public partial class MultiworldCreator : WindowSetter
         ForceDataClear();
         CurrentMultiworld = world;
         CurrentMultiWorldLabel.Text = $"Current Multiworld: {world}";
-        SaveType<string>.Save("CurrentMultiworld", CurrentMultiworld, false);
+        SaveType<string>.Save("CurrentMultiworld", CurrentMultiworld, true);
         MainController.Save();
     }
 

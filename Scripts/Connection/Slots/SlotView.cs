@@ -52,6 +52,7 @@ public partial class SlotView : MarginContainer
         ConnectionController.OnClientRemoved += (_, _, _) => CallDeferred("ReOrganizeSlots");
         ConnectionController.OnClientRemoved += (_, _, _) => CallDeferred("UpdateLeaderBox");
         ConnectionController.OnClientLeaderChanged += (_, _) => CallDeferred("UpdateLeaderBox");
+        SaveType<string>.AddIndividualEvent("CurrentMultiworld", _ => ReOrganizeSlots());
 
         ReOrganizeSlots();
         LeaderChanger.GetPopup().AddThemeConstantOverride("icon_max_width", 14);
@@ -178,7 +179,8 @@ public partial class SlotView : MarginContainer
 
     public bool IsMatch(string searchText, string candidate)
     {
-        if (SaveType<bool>.Load(UseStrictSearch, false)) return candidate.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
+        if (SaveType<bool>.Load(UseStrictSearch, false))
+            return candidate.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
         return SearchAlg.SearchAll(searchText, [candidate]).Count > 0;
     }
 
