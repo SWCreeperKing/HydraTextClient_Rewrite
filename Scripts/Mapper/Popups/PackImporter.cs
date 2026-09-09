@@ -147,7 +147,7 @@ public partial class PackImporter : WindowSetter
                     if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                     if (File.Exists($"{path}/{dir}/{imgPath[^1]}")) continue;
-                    File.Copy($"{path}/{data.Image}", $"{Directories.MapPacks}/{dir}/{imgPath[^1]}");
+                    File.Copy($"{path}/{data.Image}", $"{Directories.MapPacks}/maps/{imgPath[^1]}");
                 }
 
                 foreach (var marker in data.Markers)
