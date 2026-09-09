@@ -26,11 +26,7 @@ public partial class TabManager : WindowSetter
         MapNames = [.. Loader.MapNavigators.Select(m => m.CoreMap.MapName).Order()];
 
         foreach (var name in MapNames) MapNamePicker.AddItem(name);
-        foreach (var name in TabContainers)
-        {
-            if (name is "") continue;
-            TabNamePicker.AddItem(name);
-        }
+        foreach (var name in TabContainers) TabNamePicker.AddItem(name);
         foreach (var name in TabContainers) DestinationPicker.AddItem(name);
         CallDeferred("Update", 0);
     }
@@ -39,11 +35,11 @@ public partial class TabManager : WindowSetter
     {
         for (var i = 0; i < VisibleTabs.Count; i++)
         {
-            if (!VisibleTabs[i].IsVisibleInTree())continue;
+            if (!VisibleTabs[i].IsVisibleInTree()) continue;
             CurrentAction = (ManageAction)i;
             break;
         }
-        
+
         var showLineEdit = CurrentAction is ManageAction.AddMap or ManageAction.AddTab;
         var isMapTab = CurrentAction is ManageAction.AddMap or ManageAction.MoveMap or ManageAction.DeleteMap;
         NameEdit.Editable = showLineEdit;
@@ -78,15 +74,26 @@ public partial class TabManager : WindowSetter
 
             if (MapNames.Contains(name) || TabContainers.Contains(name))
             {
-                MainController.ShowError("The Name already exists as something else, you can still mess with the .json if you want to\nBUT BE WARNED: duplicate names WILL cause strange behavior");
+                MainController.ShowError(
+                    "The Name already exists as something else, you can still mess with the .json if you want to\nBUT BE WARNED: duplicate names WILL cause strange behavior"
+                );
                 return;
             }
         }
 
-        if (name == destination && CurrentAction is ManageAction.AddTab or ManageAction.MoveTab or ManageAction.DeleteTab)
+        if (CurrentAction is ManageAction.AddTab or ManageAction.MoveTab or ManageAction.DeleteTab)
         {
-            MainController.ShowError("Tab Target and Tab Destinations cannot share the same tab");
-            return;
+            if (name is "")
+            {
+                MainController.ShowError("Tab Target can not be core tab, (it's an option because im lazy)");
+                return;
+            }
+            
+            if (name == destination)
+            {
+                MainController.ShowError("Tab Target and Tab Destinations cannot share the same tab");
+                return;
+            }
         }
 
         if (!MapTabs.ContainsKey(destination)) destination = "";
