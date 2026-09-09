@@ -179,7 +179,7 @@ layout_mode = 2
 
 [node name="Button" type="Button" parent="Panel/MarginContainer/TabContainer/Visual Tracker/VBoxContainer" unique_id=369557643]
 layout_mode = 2
-text = "Import Visual Tracker Folder"
+text = "Import Visual Tracker Map Json"
 script = ExtResource("3_xksft")
 
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_pwhwc")]
