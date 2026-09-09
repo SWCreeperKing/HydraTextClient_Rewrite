@@ -113,83 +113,82 @@ public partial class PackImporter : WindowSetter
 
     public void ReadVisualPack(string file)
     {
-        var path = Path.GetDirectoryName(file);
-        var mapJson = JsonConvert.DeserializeObject<VisualTrackerData>(File.ReadAllText(file));
-        var game = mapJson.Game.Trim();
-        var gameDirectory = $"{Directories.MapPacks}/{game}";
-        var mapDirectory = $"{gameDirectory}/maps";
-        if (Directory.Exists(gameDirectory) || game is "") return;
-        Directory.CreateDirectory(gameDirectory);
-        Directory.CreateDirectory(mapDirectory);
-
-        Dictionary<string, TabStructure> tabs = new() { [""] = new TabStructure("") };
-        Queue<(VisualTrackerData, string)> dataQueue = [];
-        Dictionary<string, Dictionary<int, MapNode>> mapNodes = [];
-        Dictionary<string, Maps> maps = [];
-        dataQueue.Enqueue((mapJson, ""));
-
-        while (dataQueue.Count != 0)
+        try
         {
-            var (data, parent) = dataQueue.Dequeue();
+            var path = Path.GetDirectoryName(file);
+            var mapJson = JsonConvert.DeserializeObject<VisualTrackerData>(File.ReadAllText(file));
+            var game = mapJson.Game.Trim();
+            var gameDirectory = $"{Directories.MapPacks}/{game}";
+            var mapDirectory = $"{gameDirectory}/maps";
+            if (Directory.Exists(gameDirectory) || game is "") return;
+            Directory.CreateDirectory(gameDirectory);
+            Directory.CreateDirectory(mapDirectory);
 
-            if (data.Markers is not null)
+            Dictionary<string, TabStructure> tabs = new() { [""] = new TabStructure("") };
+            Queue<(VisualTrackerData, string)> dataQueue = [];
+            Dictionary<string, Dictionary<int, MapNode>> mapNodes = [];
+            Dictionary<string, Maps> maps = [];
+            dataQueue.Enqueue((mapJson, ""));
+
+            while (dataQueue.Count != 0)
             {
-                var mapName = data.Name ?? "Untitled Map";
+                var (data, parent) = dataQueue.Dequeue();
 
-                if (data.Markers.Length > 0 && !maps.ContainsKey(mapName) && data.Image is not null)
+                if (data.Markers is not null)
                 {
-                    var imgPath = data.Image.Replace(@"\\", "/").Split('/');
-                    var imageName = Path.GetFileName(data.Image);
+                    var mapName = data.Name ?? "Untitled Map";
 
-                    maps[mapName] = new Maps(mapName, imageName, parent);
-
-                    var dir = string.Join('/', imgPath[..^1]);
-                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-
-                    if (File.Exists($"{path}/{dir}/{imgPath[^1]}")) continue;
-                    File.Copy($"{path}/{data.Image}", $"{Directories.MapPacks}/maps/{imgPath[^1]}");
-                }
-
-                foreach (var marker in data.Markers)
-                {
-                    var size = marker.Size <= 0 ? data.LocationSize : marker.Size;
-                    var x = marker.X - size / 2;
-                    var y = marker.Y - size / 2;
-
-                    if (!mapNodes.TryGetValue(mapName, out var possibleNodes)) mapNodes[mapName] = possibleNodes = [];
-                    var posHash = HashCode.Combine(marker.X, marker.Y);
-                    if (!possibleNodes.TryGetValue(posHash, out var node))
+                    if (data.Markers.Length > 0 && !maps.ContainsKey(mapName) && data.Image is not null)
                     {
-                        possibleNodes[posHash] = node = new MapNode(x, y, size, size);
-
-                        if (!maps.ContainsKey(mapName))
-                        {
-                            GD.PrintErr($"Map [{mapName}] (pos: [{marker.X},{marker.Y}]) does not exist");
-                            continue;
-                        }
-                        maps[mapName].Nodes.Add(node);
+                        var imageName = Path.GetFileName(data.Image);
+                        maps[mapName] = new Maps(mapName, imageName, parent);
+                        if (!File.Exists($"{mapDirectory}/{data.Image}")) File.Copy($"{path}/{data.Image}", $"{mapDirectory}/{imageName}");
                     }
 
-                    node.Locations.AddRange(marker.Locations.Select(l => l.Trim()).Where(l => l is not ""));
+                    foreach (var marker in data.Markers)
+                    {
+                        var size = marker.Size <= 0 ? data.LocationSize : marker.Size;
+                        var x = marker.X - size / 2;
+                        var y = marker.Y - size / 2;
+
+                        if (!mapNodes.TryGetValue(mapName, out var possibleNodes))
+                            mapNodes[mapName] = possibleNodes = [];
+                        var posHash = HashCode.Combine(marker.X, marker.Y);
+                        if (!possibleNodes.TryGetValue(posHash, out var node))
+                        {
+                            possibleNodes[posHash] = node = new MapNode(x, y, size, size);
+
+                            if (!maps.ContainsKey(mapName))
+                            {
+                                GD.PrintErr($"Map [{mapName}] (pos: [{marker.X},{marker.Y}]) does not exist");
+                                continue;
+                            }
+                            maps[mapName].Nodes.Add(node);
+                        }
+
+                        var locs = marker.Locations.Select(l => l.Trim()).Where(l => l is not "");
+                        node.Locations.AddRange(locs);
+                    }
                 }
-            }
-            
-            if (data.Tabs is null) continue;
-            foreach (var sub in data.Tabs)
-            {
-                if (!tabs.ContainsKey(sub.Name))
+
+                if (data.Tabs is null) continue;
+                foreach (var sub in data.Tabs)
                 {
-                    tabs[sub.Name] = new TabStructure(sub.Name);
-                    tabs[parent].SubTabs.Add(tabs[sub.Name]);
+                    if (!tabs.ContainsKey(sub.Name) && sub.Markers is null)
+                    {
+                        tabs[sub.Name] = new TabStructure(sub.Name);
+                        tabs[parent].SubTabs.Add(tabs[sub.Name]);
+                    }
+
+                    dataQueue.Enqueue((sub, sub.Markers is null ? sub.Name : parent));
                 }
-
-                dataQueue.Enqueue((sub, sub.Name));
             }
-        }
 
-        File.WriteAllText($"{Directories.MapPacks}/locationgroups.json", "[]");
-        File.WriteAllText($"{Directories.MapPacks}/atlas.json", JsonConvert.SerializeObject(maps.Values.ToArray()));
-        File.WriteAllText($"{Directories.MapPacks}/tabs.json", JsonConvert.SerializeObject(tabs[""]));
+            File.WriteAllText($"{gameDirectory}/locationgroups.json", "[]");
+            File.WriteAllText($"{gameDirectory}/atlas.json", JsonConvert.SerializeObject(maps.Values.ToArray()));
+            File.WriteAllText($"{gameDirectory}/tabs.json", JsonConvert.SerializeObject(tabs[""]));
+        }
+        catch (Exception e) { MainController.ShowError(e); }
         CallDeferred("Close");
     }
 

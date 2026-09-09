@@ -93,6 +93,7 @@ public partial class EditNodeDataPopup : WindowSetter
     {
         Node.RawNodeData.LocationGroup = groupName;
         Node.SetImage(groupName is not "" ? Loader.LocationGroupingMap[groupName].MappedIcon : "");
+        Node.QueueUpdate = true;
         Loader.UpdateUI = true;
     }
 
