@@ -213,10 +213,10 @@ show_hidden_files = true
 use_native_dialog = true
 
 [node name="VisTracker" type="FileDialog" parent="." unique_id=792355981]
-title = "Open a Directory"
-file_mode = 2
+title = "Open a File"
+file_mode = 0
 access = 2
-filters = PackedStringArray("*.json", "")
+filters = PackedStringArray("*.json")
 show_hidden_files = true
 use_native_dialog = true
 
@@ -228,4 +228,4 @@ use_native_dialog = true
 [connection signal="pressed" from="Panel/MarginContainer/TabContainer/Visual Tracker/VBoxContainer/Button" to="VisTracker" method="popup_file_dialog"]
 [connection signal="file_selected" from="Pop part 1" to="." method="CallReadPack"]
 [connection signal="file_selected" from="Pop part 2" to="." method="CallReadMap"]
-[connection signal="dir_selected" from="VisTracker" to="." method="ReadVisualPack"]
+[connection signal="file_selected" from="VisTracker" to="." method="ReadVisualPack"]

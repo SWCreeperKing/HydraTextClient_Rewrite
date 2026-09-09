@@ -111,9 +111,10 @@ public partial class PackImporter : WindowSetter
 
     #region Import Visual Tracker
 
-    public void ReadVisualPack(string path)
+    public void ReadVisualPack(string file)
     {
-        var mapJson = JsonConvert.DeserializeObject<VisualTrackerData>(File.ReadAllText(path));
+        var path = Path.GetDirectoryName(file);
+        var mapJson = JsonConvert.DeserializeObject<VisualTrackerData>(File.ReadAllText(file));
         var game = mapJson.Game.Trim();
         var gameDirectory = $"{Directories.MapPacks}/{game}";
         var mapDirectory = $"{gameDirectory}/maps";
