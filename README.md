@@ -8,6 +8,13 @@
   - grab [universal tracker](https://discord.com/channels/731205301247803413/1367270230635839539) and place it in your custom worlds folder
   - make sure that in hydra `Settings -> Main Settings` that your archipelago directory is set 
   - Hydra *should* auto download/update the HydraUTBridge.apworld when needed
+- Run from source
+  - still might need [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+  - download [godot 4.8 dev 4 .NET Version](https://godotengine.org/article/dev-snapshot-godot-4-8-dev-4/)
+  - download source code as zip
+    - (i think you need to unzip it /shrug)
+  - in godot, import project from the source folder downloaded
+  - if you want to go further then you can probs do stuff with git to make sure you pull from source
 
 ### Support me and hydra's development on [Patreon](https://www.patreon.com/SW_CreeperKing)
 

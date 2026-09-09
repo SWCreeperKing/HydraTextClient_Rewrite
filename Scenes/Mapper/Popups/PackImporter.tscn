@@ -11,12 +11,12 @@ title = "Import Map Pack"
 size = Vector2i(600, 400)
 theme = ExtResource("1_ful1g")
 script = ExtResource("2_ful1g")
-OpenZip = NodePath("FileDialog3")
+OpenZip = NodePath("Hydra")
 LayoutOptions = NodePath("Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer3/OptionButton")
 LocationImports = NodePath("Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/ScrollContainer/VBoxContainer")
 ConfirmButton = NodePath("Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2/Button")
 MapButton = NodePath("Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer4/Button")
-MapSelect = NodePath("FileDialog2")
+MapSelect = NodePath("Pop part 2")
 
 [node name="Panel" type="Panel" parent="." unique_id=1989329588]
 anchors_preset = 15
@@ -37,7 +37,7 @@ grow_vertical = 2
 
 [node name="TabContainer" type="TabContainer" parent="Panel/MarginContainer" unique_id=1153025889]
 layout_mode = 2
-current_tab = 1
+current_tab = 2
 
 [node name="Import Hydra Pack Zip" type="MarginContainer" parent="Panel/MarginContainer/TabContainer" unique_id=1718524007]
 visible = false
@@ -51,7 +51,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Note:
 If you already have a pack with the same name
-it will get not install"
+it will not get imported"
 
 [node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/TabContainer/Import Hydra Pack Zip/VBoxContainer" unique_id=441416685]
 modulate = Color(1, 1, 1, 0)
@@ -67,6 +67,7 @@ text = "Import Hydra Pack Zip"
 script = ExtResource("3_xksft")
 
 [node name="Import PopTracker Pack" type="MarginContainer" parent="Panel/MarginContainer/TabContainer" unique_id=1212581701]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -155,13 +156,39 @@ size_flags_horizontal = 3
 text = "Cancel"
 script = ExtResource("3_xksft")
 
+[node name="Import Visual Tracker Folder" type="MarginContainer" parent="Panel/MarginContainer/TabContainer" unique_id=1870589048]
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/TabContainer/Import Visual Tracker Folder" unique_id=1282386676]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/TabContainer/Import Visual Tracker Folder/VBoxContainer" unique_id=104144160]
+layout_mode = 2
+text = "Note:
+If you already have a pack with the same name
+it will not get imported"
+
+[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/TabContainer/Import Visual Tracker Folder/VBoxContainer" unique_id=894002796]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/TabContainer/Import Visual Tracker Folder/VBoxContainer" unique_id=235942818]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/MarginContainer/TabContainer/Import Visual Tracker Folder/VBoxContainer" unique_id=369557643]
+layout_mode = 2
+text = "Import Visual Tracker Folder"
+script = ExtResource("3_xksft")
+
 [node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_pwhwc")]
 Prefix = "window_nodes"
 Controls = {
 "poptracker_importer": NodePath("..")
 }
 
-[node name="FileDialog" type="FileDialog" parent="." unique_id=1811615197]
+[node name="Pop part 1" type="FileDialog" parent="." unique_id=1811615197]
 title = "Open a File"
 file_mode = 0
 access = 2
@@ -169,7 +196,7 @@ filters = PackedStringArray("manifest.json")
 show_hidden_files = true
 use_native_dialog = true
 
-[node name="FileDialog2" type="FileDialog" parent="." unique_id=174308562]
+[node name="Pop part 2" type="FileDialog" parent="." unique_id=174308562]
 title = "Open a File"
 file_mode = 0
 access = 2
@@ -177,7 +204,7 @@ filters = PackedStringArray("*.json")
 show_hidden_files = true
 use_native_dialog = true
 
-[node name="FileDialog3" type="FileDialog" parent="." unique_id=546106259]
+[node name="Hydra" type="FileDialog" parent="." unique_id=546106259]
 title = "Open a File"
 file_mode = 0
 access = 2
@@ -185,10 +212,18 @@ filters = PackedStringArray("*.zip", "")
 show_hidden_files = true
 use_native_dialog = true
 
-[connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import Hydra Pack Zip/VBoxContainer/Button" to="FileDialog3" method="popup_file_dialog"]
-[connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer/Button" to="FileDialog" method="popup_file_dialog"]
-[connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer4/Button" to="FileDialog2" method="popup_file_dialog"]
+[node name="VisTracker" type="FileDialog" parent="." unique_id=792355981]
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.json", "")
+show_hidden_files = true
+use_native_dialog = true
+
+[connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import Hydra Pack Zip/VBoxContainer/Button" to="Hydra" method="popup_file_dialog"]
+[connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer/Button" to="Pop part 1" method="popup_file_dialog"]
+[connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer4/Button" to="Pop part 2" method="popup_file_dialog"]
 [connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2/Button" to="." method="FinishConversionAndClose"]
 [connection signal="pressed" from="Panel/MarginContainer/TabContainer/Import PopTracker Pack/ScrollContainer/VBoxContainer/HBoxContainer2/Button2" to="." method="Close"]
-[connection signal="file_selected" from="FileDialog" to="." method="CallReadPack"]
-[connection signal="file_selected" from="FileDialog2" to="." method="CallReadMap"]
+[connection signal="file_selected" from="Pop part 1" to="." method="CallReadPack"]
+[connection signal="file_selected" from="Pop part 2" to="." method="CallReadMap"]

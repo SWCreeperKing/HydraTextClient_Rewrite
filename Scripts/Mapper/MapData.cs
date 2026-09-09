@@ -6,8 +6,11 @@ using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace HydraTextClient.Scripts.Mapper;
+
+#region my based hydra imports
 
 public struct TabStructure(string name = "", params List<TabStructure> subTabs)
 {
@@ -29,7 +32,6 @@ public class Maps(string mapName, string imageName, string tab = "", string mapI
     public List<EntranceNode> Entrances = entrances ?? [];
 
     public string MapId { set => MapIds = [value]; }
-    // [JsonIgnore] public string GetId => MapIds.Length or null ? MapName ?? "" : MapId;
 }
 
 public class MapNode(float x, float y, float w, float h, string group = "", params List<string> locationChecks)
@@ -94,7 +96,7 @@ public struct LocationRule()
     public string Action = "";
 
     public int GetKeyHash() => HashCode.Combine(Scope, DataKey);
-    
+
     public bool CompareDataValue(object val)
     {
         try
@@ -163,6 +165,36 @@ public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKe
         1 => (int)Scope.Game, 2 => (int)Scope.Team, 3 => (int)Scope.Global, 4 => -1, _ => (int)Scope.Slot,
     };
 }
+
+#endregion
+
+#region the better than poptracker (visual tracker) imports
+
+public struct VisualTrackerData
+{
+    [JsonProperty("game")] public string Game;
+    [JsonProperty("name")] public string Name;
+    [JsonProperty("image")] public string Image;
+    [JsonProperty("location_size")] public int LocationSize; //?? 
+
+    [JsonProperty("markers"), JsonConverter(typeof(SingleOrArray<VisualMarkerData>))]
+    public VisualMarkerData[] Markers;
+
+    [JsonProperty("tabs"), JsonConverter(typeof(SingleOrArray<VisualTrackerData>))]
+    public VisualTrackerData[] Tabs;
+}
+
+public struct VisualMarkerData // pos is middle
+{
+    [JsonProperty("x")] public int X;
+    [JsonProperty("y")] public int Y;
+    [JsonProperty("size")] public int Size;
+
+    [JsonProperty("locations"), JsonConverter(typeof(SingleOrArray<string>))]
+    public string[] Locations;
+}
+
+#endregion
 
 #region ugly poptracker imports
 
@@ -258,6 +290,8 @@ public class PoptrackerLayout // needed to find the stupid tabs and subtabs ;-;
     public PoptrackerLayout[] MapTabs = [];
 }
 
+#endregion
+
 public class SingleOrArray<T> : JsonConverter
 {
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -278,5 +312,3 @@ public class SingleOrArray<T> : JsonConverter
         };
     }
 }
-
-#endregion

@@ -59,8 +59,7 @@ public partial class PackImporter : WindowSetter
         };
     }
 
-    public void CallReadPack(string manifest) => CallDeferred("ReadPack", manifest);
-    public void CallReadMap(string map) => CallDeferred("ContinueToReadPack", map);
+    # region Import hydra pack zip
 
     private void ReadPackZip(string path)
     {
@@ -68,7 +67,7 @@ public partial class PackImporter : WindowSetter
         {
             var game = Path.GetFileNameWithoutExtension(path);
             var gameDirectory = $"{Directories.MapPacks}/{game}";
-            if (Directory.Exists(gameDirectory)) return;
+            if (Directory.Exists(gameDirectory) || game is "") return;
             Directory.CreateDirectory(gameDirectory);
 
             using var zip = ZipFile.OpenRead(path);
@@ -107,6 +106,93 @@ public partial class PackImporter : WindowSetter
 
         Close();
     }
+
+    #endregion
+
+    #region Import Visual Tracker
+
+    public void ReadVisualPack(string path)
+    {
+        var mapJson = JsonConvert.DeserializeObject<VisualTrackerData>(File.ReadAllText(path));
+        var game = mapJson.Game.Trim();
+        var gameDirectory = $"{Directories.MapPacks}/{game}";
+        var mapDirectory = $"{gameDirectory}/maps";
+        if (Directory.Exists(gameDirectory) || game is "") return;
+        Directory.CreateDirectory(gameDirectory);
+        Directory.CreateDirectory(mapDirectory);
+
+        Dictionary<string, TabStructure> tabs = new() { [""] = new TabStructure("") };
+        Queue<(VisualTrackerData, string)> dataQueue = [];
+        Dictionary<string, Dictionary<int, MapNode>> mapNodes = [];
+        Dictionary<string, Maps> maps = [];
+        dataQueue.Enqueue((mapJson, ""));
+
+        while (dataQueue.Count != 0)
+        {
+            var (data, parent) = dataQueue.Dequeue();
+            var mapName = data.Name;
+
+            if (data.Markers.Length > 0 && !maps.ContainsKey(mapName))
+            {
+                var imgPath = data.Image.Replace(@"\\", "/").Split('/');
+                var imageName = Path.GetFileName(data.Image);
+                
+                maps[mapName] = new Maps(mapName, imageName, parent);
+                
+                var dir = string.Join('/', imgPath[..^1]);
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                
+                if (File.Exists($"{path}/{dir}/{imgPath[^1]}")) continue;
+                File.Copy($"{path}/{data.Image}", $"{path}/{dir}/{imgPath[^1]}");
+            }
+            
+            foreach (var marker in data.Markers)
+            {
+                var size = marker.Size <= 0 ? data.LocationSize : marker.Size;
+                var x = marker.X - size / 2;
+                var y = marker.Y - size / 2;
+
+                if (!mapNodes.TryGetValue(mapName, out var possibleNodes)) mapNodes[mapName] = possibleNodes = [];
+                var posHash = HashCode.Combine(marker.X, marker.Y);
+                if (!possibleNodes.TryGetValue(posHash, out var node))
+                {
+                    possibleNodes[posHash] = node = new MapNode(x, y, size, size);
+
+                    if (!maps.ContainsKey(mapName))
+                    {
+                        GD.PrintErr($"Map [{mapName}] (pos: [{marker.X},{marker.Y}]) does not exist");
+                        continue;
+                    }
+                    maps[mapName].Nodes.Add(node);
+                }
+
+                node.Locations.AddRange(marker.Locations.Select(l => l.Trim()).Where(l => l is not ""));
+            }
+
+            foreach (var sub in data.Tabs)
+            {
+                if (!tabs.ContainsKey(sub.Name))
+                {
+                    tabs[sub.Name] = new TabStructure(sub.Name);
+                    tabs[parent].SubTabs.Add(tabs[sub.Name]);
+                }
+
+                dataQueue.Enqueue((sub, sub.Name));
+            }
+        }
+
+        File.WriteAllText($"{path}/locationgroups.json", "[]");
+        File.WriteAllText($"{path}/atlas.json", JsonConvert.SerializeObject(maps.Values.ToArray()));
+        File.WriteAllText($"{path}/tabs.json", JsonConvert.SerializeObject(tabs[""]));
+        CallDeferred("Close");
+    }
+
+    #endregion
+
+    #region Import the fluid known as PopTracker
+
+    public void CallReadPack(string manifest) => CallDeferred("ReadPack", manifest);
+    public void CallReadMap(string map) => CallDeferred("ContinueToReadPack", map);
 
     private void ReadPack(string manifestFile)
     {
@@ -410,4 +496,7 @@ public partial class PackImporter : WindowSetter
 
         return tabs[""];
     }
+
+    #endregion
+
 }
