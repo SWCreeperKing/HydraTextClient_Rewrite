@@ -131,45 +131,50 @@ public partial class PackImporter : WindowSetter
         while (dataQueue.Count != 0)
         {
             var (data, parent) = dataQueue.Dequeue();
-            var mapName = data.Name;
 
-            if (data.Markers.Length > 0 && !maps.ContainsKey(mapName))
+            if (data.Markers is not null)
             {
-                var imgPath = data.Image.Replace(@"\\", "/").Split('/');
-                var imageName = Path.GetFileName(data.Image);
-                
-                maps[mapName] = new Maps(mapName, imageName, parent);
-                
-                var dir = string.Join('/', imgPath[..^1]);
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                
-                if (File.Exists($"{path}/{dir}/{imgPath[^1]}")) continue;
-                File.Copy($"{path}/{data.Image}", $"{path}/{dir}/{imgPath[^1]}");
-            }
-            
-            foreach (var marker in data.Markers)
-            {
-                var size = marker.Size <= 0 ? data.LocationSize : marker.Size;
-                var x = marker.X - size / 2;
-                var y = marker.Y - size / 2;
+                var mapName = data.Name ?? "Untitled Map";
 
-                if (!mapNodes.TryGetValue(mapName, out var possibleNodes)) mapNodes[mapName] = possibleNodes = [];
-                var posHash = HashCode.Combine(marker.X, marker.Y);
-                if (!possibleNodes.TryGetValue(posHash, out var node))
+                if (data.Markers.Length > 0 && !maps.ContainsKey(mapName) && data.Image is not null)
                 {
-                    possibleNodes[posHash] = node = new MapNode(x, y, size, size);
+                    var imgPath = data.Image.Replace(@"\\", "/").Split('/');
+                    var imageName = Path.GetFileName(data.Image);
 
-                    if (!maps.ContainsKey(mapName))
-                    {
-                        GD.PrintErr($"Map [{mapName}] (pos: [{marker.X},{marker.Y}]) does not exist");
-                        continue;
-                    }
-                    maps[mapName].Nodes.Add(node);
+                    maps[mapName] = new Maps(mapName, imageName, parent);
+
+                    var dir = string.Join('/', imgPath[..^1]);
+                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
+                    if (File.Exists($"{path}/{dir}/{imgPath[^1]}")) continue;
+                    File.Copy($"{path}/{data.Image}", $"{path}/{dir}/{imgPath[^1]}");
                 }
 
-                node.Locations.AddRange(marker.Locations.Select(l => l.Trim()).Where(l => l is not ""));
-            }
+                foreach (var marker in data.Markers)
+                {
+                    var size = marker.Size <= 0 ? data.LocationSize : marker.Size;
+                    var x = marker.X - size / 2;
+                    var y = marker.Y - size / 2;
 
+                    if (!mapNodes.TryGetValue(mapName, out var possibleNodes)) mapNodes[mapName] = possibleNodes = [];
+                    var posHash = HashCode.Combine(marker.X, marker.Y);
+                    if (!possibleNodes.TryGetValue(posHash, out var node))
+                    {
+                        possibleNodes[posHash] = node = new MapNode(x, y, size, size);
+
+                        if (!maps.ContainsKey(mapName))
+                        {
+                            GD.PrintErr($"Map [{mapName}] (pos: [{marker.X},{marker.Y}]) does not exist");
+                            continue;
+                        }
+                        maps[mapName].Nodes.Add(node);
+                    }
+
+                    node.Locations.AddRange(marker.Locations.Select(l => l.Trim()).Where(l => l is not ""));
+                }
+            }
+            
+            if (data.Tabs is null) continue;
             foreach (var sub in data.Tabs)
             {
                 if (!tabs.ContainsKey(sub.Name))
