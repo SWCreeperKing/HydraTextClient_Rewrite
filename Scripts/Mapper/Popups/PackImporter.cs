@@ -147,7 +147,7 @@ public partial class PackImporter : WindowSetter
                     if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                     if (File.Exists($"{path}/{dir}/{imgPath[^1]}")) continue;
-                    File.Copy($"{path}/{data.Image}", $"{path}/{dir}/{imgPath[^1]}");
+                    File.Copy($"{path}/{data.Image}", $"{Directories.MapPacks}/{dir}/{imgPath[^1]}");
                 }
 
                 foreach (var marker in data.Markers)
@@ -187,9 +187,9 @@ public partial class PackImporter : WindowSetter
             }
         }
 
-        File.WriteAllText($"{path}/locationgroups.json", "[]");
-        File.WriteAllText($"{path}/atlas.json", JsonConvert.SerializeObject(maps.Values.ToArray()));
-        File.WriteAllText($"{path}/tabs.json", JsonConvert.SerializeObject(tabs[""]));
+        File.WriteAllText($"{Directories.MapPacks}/locationgroups.json", "[]");
+        File.WriteAllText($"{Directories.MapPacks}/atlas.json", JsonConvert.SerializeObject(maps.Values.ToArray()));
+        File.WriteAllText($"{Directories.MapPacks}/tabs.json", JsonConvert.SerializeObject(tabs[""]));
         CallDeferred("Close");
     }
 
