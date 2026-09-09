@@ -60,6 +60,7 @@ public partial class MapLocation : TextureRect
     {
         Map = map;
         SetOrderedLocations();
+        SetImage("");
     }
 
     public void AddLocations(params string[] locs)
@@ -114,7 +115,6 @@ public partial class MapLocation : TextureRect
 
     public void UpdateVisuals()
     {
-        SetImage("");
         if (Group is "" || !Loader.LocationGroupingMap.TryGetValue(Group, out var group)) return;
         if (group.MappedIcon is "") SetImage("");
         SetImage(group.MappedIcon);
