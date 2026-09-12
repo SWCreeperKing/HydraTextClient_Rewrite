@@ -14,7 +14,7 @@ public partial class TabManager : WindowSetter
     [Export] private OptionButton DestinationPicker;
     [Export] private Array<Control> VisibleTabs;
     private MapLoader Loader;
-    private System.Collections.Generic.Dictionary<string, TabContainer> MapTabs => Loader.MapTabs;
+    private System.Collections.Generic.Dictionary<string, TabStatusContainer> MapTabs => Loader.MapTabs;
     private ManageAction CurrentAction;
     private string[] TabContainers;
     private string[] MapNames;
@@ -98,7 +98,7 @@ public partial class TabManager : WindowSetter
 
         if (!MapTabs.ContainsKey(destination)) destination = "";
         var target = MapTabs[destination];
-        TabContainer tab;
+        TabStatusContainer tab;
         MapNavigator map;
         switch (CurrentAction)
         {
@@ -110,6 +110,7 @@ public partial class TabManager : WindowSetter
                 if ((map = Loader.FindMapByName(name)) is null) return;
                 map.GetParent().RemoveChild(map);
                 target.AddChild(map);
+                map.Parent = target;
                 break;
             case ManageAction.DeleteMap:
                 if ((map = Loader.FindMapByName(name)) is null) return;
@@ -119,7 +120,7 @@ public partial class TabManager : WindowSetter
                 break;
             case ManageAction.AddTab:
                 if (MapTabs.ContainsKey(name)) return;
-                tab = MapTabs[name] = new TabContainer();
+                tab = MapTabs[name] = new TabStatusContainer(Loader);
                 tab.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
                 tab.Name = name;
                 tab.DragToRearrangeEnabled = true;

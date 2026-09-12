@@ -156,6 +156,17 @@ modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="patreon" type="Label" parent="ScrollContainer/VBoxContainer" unique_id=1582609552]
+layout_mode = 2
+text = "An incredible \"Thank You\" to everyone subbed on patreon ❤️"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="_____3" type="HSeparator" parent="ScrollContainer/VBoxContainer" unique_id=1793630110]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="_____" type="HSeparator" parent="ScrollContainer/VBoxContainer" unique_id=1866625397]
 layout_mode = 2
 

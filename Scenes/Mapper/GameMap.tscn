@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://fkodvymae5ad" path="res://Scenes/Mapper/Popups/EditEntranceNodePopup.tscn" id="9_i61o8"]
 [ext_resource type="PackedScene" uid="uid://8ib67dxo0ieh" path="res://Scenes/Mapper/Popups/EntrnaceManagerPopup.tscn" id="9_yu0wl"]
 [ext_resource type="PackedScene" uid="uid://5yn5klpca2j3" path="res://Scenes/Mapper/Popups/AutoTrackingPopup.tscn" id="11_njn85"]
+[ext_resource type="PackedScene" uid="uid://clw03t1xrwfks" path="res://Scenes/Mapper/Popups/TabIndicators.tscn" id="12_is4op"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_njn85"]
 content_margin_left = 0.0
@@ -72,6 +73,7 @@ EditMapNodePopup = ExtResource("8_ov35l")
 EditEntranceNodePopup = ExtResource("9_i61o8")
 EntranceManagerPopup = ExtResource("9_yu0wl")
 AutoTrackingPopup = ExtResource("11_njn85")
+TabIndicatorPopup = ExtResource("12_is4op")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=520425136]
@@ -175,6 +177,11 @@ layout_mode = 2
 text = "Auto Tracking"
 script = ExtResource("4_1xhnn")
 
+[node name="Button9" type="Button" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=404242728]
+layout_mode = 2
+text = "Tab Indicators"
+script = ExtResource("4_1xhnn")
+
 [node name="CheckBox" type="CheckBox" parent="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer" unique_id=1042946624]
 layout_mode = 2
 button_pressed = true
@@ -274,7 +281,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 5.0
+offset_right = 4.0
 offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -291,6 +298,7 @@ autowrap_mode = 0
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button" to="." method="EditLocationIconOverrides"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button2" to="." method="ManageEntrances"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button3" to="." method="EditAutoTracking"]
+[connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HBoxContainer/HFlowContainer/Button9" to="." method="EditTabIndicators"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/HBoxContainer/HFlowContainer3/Button" to="." method="StopAndClose"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/Button3" to="." method="ResetSelectedNodes"]
 [connection signal="pressed" from="VBoxContainer/Popout/Control/UIContainer/VBoxContainer/Control/HSplitContainer/PanelContainer/VBoxContainer2/Button4" to="." method="CopyLocations"]

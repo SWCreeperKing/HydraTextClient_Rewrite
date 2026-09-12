@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Archipelago.MultiClient.Net.Enums;
 using HydraTextClient.Scripts.Hints;
@@ -8,6 +9,7 @@ using Color = Godot.Color;
 
 namespace HydraTextClient.Scripts.Utility;
 
+[Obsolete("Legacy, replaced with new save system")]
 public class LegacyUserData
 {
     public static Dictionary<string, ColorConstant> LegacyColorIdToNewIds = new()
@@ -94,4 +96,20 @@ public readonly struct LegacyColorSetting(string settingName, Color color)
     public readonly string Hex = color.ToHtml();
     public static implicit operator Color(LegacyColorSetting setting) => setting.Color;
     public static implicit operator string(LegacyColorSetting setting) => setting.Hex;
+}
+
+[Obsolete("Legacy, replaced with: LocationGrouping & LocationRule")]
+public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
+{
+    public string GroupName = name;
+    public string MappedIcon = mapIcon;
+    public string AvailableIcon = openIcon;
+    public string CollectedIcon = closeIcon;
+    public string SlotDataKey;
+    public long StoreType;
+    public string[] DataCompare = [];
+    public bool BoolCompare = true;
+    public double NumberCompare;
+    public long CompareType;
+    public bool MatchAny = true; // false means to match none
 }

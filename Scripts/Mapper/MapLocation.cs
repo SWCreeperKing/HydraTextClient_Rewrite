@@ -109,6 +109,7 @@ public partial class MapLocation : TextureRect
         if (Map is null) return;
         if (!QueueUpdate) return;
         QueueUpdate = false;
+        QueueRender = false;
         UpdateVisuals();
         LocationUpdate();
     }
@@ -166,9 +167,14 @@ public partial class MapLocation : TextureRect
                 }
             );
         }
-        catch (Exception e) { LocationValueDict = []; }
+        catch (Exception e)
+        {
+            LocationValueDict = [];
+            GD.PrintErr(e);
+        }
 
         var min = Math.Clamp(LocationValueDict.Count == 0 ? 4 : LocationValueDict.MinBy(kv => kv.Value).Value, 0, 4);
+
         NodeColor = min switch
         {
             0 => ColorIdConstants.ColorConstant.InLogicHinted.Color(),
@@ -178,6 +184,11 @@ public partial class MapLocation : TextureRect
             4 => ColorIdConstants.ColorConstant.LocationsChecked.Color(),
         };
         NodeDead = min is 4;
+        var lastLowest = Map.LowestLocationStatus;
+        if (Map.LowestLocationStatus is 0) return;
+        if (Map.LowestLocationStatus is -1) Map.LowestLocationStatus = min;
+        else Map.LowestLocationStatus = Math.Min(min, Map.LowestLocationStatus);
+        if (lastLowest != Map.LowestLocationStatus) Map.Parent.QueueUpdateStatus = true;
     }
 
     public void SetList(ItemList list)

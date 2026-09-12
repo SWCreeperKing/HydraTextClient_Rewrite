@@ -17,7 +17,9 @@ public partial class MapNavigator : ScrollContainer
     public string MapPath;
     public List<MapLocation> Locations = [];
     public List<EntranceLocation> Entrances = [];
+    public TabStatusContainer Parent;
     public string[] MapIds => [CoreMap.MapName, .. CoreMap.MapIds];
+    public int LowestLocationStatus = - 1;
 
     public Vector2 GetMapSize => Container.MapImage.Texture.GetSize();
     private bool ToUpdateNodes;
@@ -26,18 +28,18 @@ public partial class MapNavigator : ScrollContainer
 
     public override void _Process(double delta)
     {
+        if (ToUpdateNodes)
+        {
+            ToUpdateNodes = false;
+            LowestLocationStatus = -1;
+            foreach (var node in Locations) node.QueueUpdate = true;
+        }
+        
         if (!IsVisibleInTree()) return;
-
         if (ToReRenderNodes)
         {
             ToReRenderNodes = false;
             foreach (var node in Locations) node.QueueRender = true;
-        }
-        
-        if (ToUpdateNodes)
-        {
-            ToUpdateNodes = false;
-            foreach (var node in Locations) node.QueueUpdate = true;
         }
 
         if (ToUpdateEntrances)
@@ -51,8 +53,9 @@ public partial class MapNavigator : ScrollContainer
     public void ReRenderNodes() => ToReRenderNodes = true;
     public void UpdateEntranceColors() => ToUpdateEntrances = true;
 
-    public void SetupMap(MapLoader loader, Maps map, string packPath)
+    public void SetupMap(MapLoader loader, TabStatusContainer parent, Maps map, string packPath)
     {
+        Parent = parent;
         Loader = loader;
         CoreMap = map;
         MapPath = packPath;

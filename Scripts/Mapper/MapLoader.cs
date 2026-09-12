@@ -43,11 +43,13 @@ public partial class MapLoader : Control
     [Export] private PackedScene EditEntranceNodePopup;
     [Export] private PackedScene EntranceManagerPopup;
     [Export] private PackedScene AutoTrackingPopup;
+    [Export] private PackedScene TabIndicatorPopup;
 
     public MapItemImageLoader ItemImageLoader;
     public List<Maps> MapsList = [];
     public TabStructure Structure;
-    public Dictionary<string, TabContainer> MapTabs = [];
+    public Dictionary<string, TabStatusContainer> MapTabs = [];
+    public TabIndicators TabIndicatorData = new TabIndicators();
     public List<MapNavigator> MapNavigators = [];
     public List<LocationGrouping> LocationGroups = [];
     public Action<MapLoader> ExitEvent;
@@ -100,7 +102,6 @@ public partial class MapLoader : Control
             case true: IsEditorOpen = true; break;
         }
 
-
         ListContainer.Visible = false;
         MapPath = path;
         FunctionIdString = $"Map_Tracker_{(IsInEditMode ? "Editor" : Client?.PlayerName)}";
@@ -136,6 +137,11 @@ public partial class MapLoader : Control
                 );
                 HasAutoTrackingData = true;
             }
+
+            if (File.Exists($"{path}/tabindicators.json"))
+                TabIndicatorData = JsonConvert.DeserializeObject<TabIndicators>(
+                    File.ReadAllText($"{path}/tabindicators.json")
+                );
 
 #pragma warning disable CS0618 // Type or member is obsolete
             if (File.Exists($"{path}/locationgroups.json"))
@@ -230,11 +236,13 @@ public partial class MapLoader : Control
                                 ReRenderNodes();
                             }, scope
                         );
-                        Client?.GetFromStorageAsync<object>(rule.DataKey, obj =>
-                        {
-                            DataDictionary[key] = obj!;
-                            ReRenderNodes();
-                        }, scope);
+                        Client?.GetFromStorageAsync<object>(
+                            rule.DataKey, obj =>
+                            {
+                                DataDictionary[key] = obj!;
+                                ReRenderNodes();
+                            }, scope
+                        );
                         break;
                 }
             }
@@ -271,7 +279,7 @@ public partial class MapLoader : Control
             foreach (var child in tab.SubTabs) structures.Enqueue(child with { Parent = tab.Name });
             if (MapTabs.ContainsKey(tab.Name)) continue;
 
-            var container = MapTabs[tab.Name] = new TabContainer();
+            var container = MapTabs[tab.Name] = new TabStatusContainer(this);
             container.SizeFlagsVertical = SizeFlags.ExpandFill;
 
             if (IsInEditMode)
@@ -443,7 +451,7 @@ public partial class MapLoader : Control
         if (MapNavigators.Any(m => m.CoreMap == map)) return;
         var container = MapTabs.GetValueOrDefault(map.Tab ?? "", MapTabs[""]);
         var mapContainer = MapContainer.Instantiate<MapNavigator>();
-        mapContainer.SetupMap(this, map, $"{path}/maps/");
+        mapContainer.SetupMap(this, container, map,  $"{path}/maps/");
         container.AddChild(mapContainer);
         MapNavigators.Add(mapContainer);
     }
@@ -772,6 +780,8 @@ public partial class MapLoader : Control
 
     public void EditAutoTracking() => AutoTrackingPopup.OpenPopup<AutoTrackingInputPopup>(this, p => p.Setup(MapPath));
 
+    public void EditTabIndicators() => TabIndicatorPopup.OpenPopup<TabIndicator>(this, p => p.Setup(this));
+
     public void AddLocations()
     {
         if (SelectedMapLocation is null) return;
@@ -821,7 +831,7 @@ public partial class MapLoader : Control
             if (container.GetChildren().Count == 0) return null;
             switch (container.GetChild(container.CurrentTab))
             {
-                case TabContainer newContainer: container = newContainer; break;
+                case TabStatusContainer newContainer: container = newContainer; break;
                 case MapNavigator nav: return nav;
                 default: return null;
             }
@@ -879,6 +889,7 @@ public partial class MapLoader : Control
         File.WriteAllText($"{MapPath}/locationiconopen.json", JsonConvert.SerializeObject(LocationOpenedIconOverride));
         File.WriteAllText($"{MapPath}/locationiconclose.json", JsonConvert.SerializeObject(LocationClosedIconOverride));
         File.WriteAllText($"{MapPath}/entrance_rando_names.json", JsonConvert.SerializeObject(EntranceMap));
+        File.WriteAllText($"{MapPath}/tabindicators.json", JsonConvert.SerializeObject(TabIndicatorData));
         File.WriteAllText(
             $"{MapPath}/entrance_rando_display_names.json", JsonConvert.SerializeObject(EntranceNicknames)
         );

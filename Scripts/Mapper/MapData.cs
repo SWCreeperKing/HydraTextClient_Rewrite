@@ -6,7 +6,6 @@ using CreepyUtil.Archipelago.ApClient;
 using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace HydraTextClient.Scripts.Mapper;
 
@@ -133,22 +132,6 @@ public struct LocationRule()
     }
 }
 
-[Obsolete("Legacy, replaced with: LocationGrouping & LocationRule")]
-public class LocationGroup(string name, string mapIcon, string openIcon = "", string closeIcon = "")
-{
-    public string GroupName = name;
-    public string MappedIcon = mapIcon;
-    public string AvailableIcon = openIcon;
-    public string CollectedIcon = closeIcon;
-    public string SlotDataKey;
-    public long StoreType;
-    public string[] DataCompare = [];
-    public bool BoolCompare = true;
-    public double NumberCompare;
-    public long CompareType;
-    public bool MatchAny = true; // false means to match none
-}
-
 public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKey = "", string entranceMapKey = "",
     int scope = 0)
 {
@@ -163,6 +146,34 @@ public struct AutoTrackingData(string mapKey = "", string entranceRandoEnabledKe
     public int GetScope() => KeyScope switch
     {
         1 => (int)Scope.Game, 2 => (int)Scope.Team, 3 => (int)Scope.Global, 4 => -1, _ => (int)Scope.Slot,
+    };
+}
+
+public struct TabIndicators(string inLogicHinted = "", string inLogic = "", string notInLogicHinted = "",
+    string notInLogic = "", string allChecks = "")
+{
+    public string InLogicHinted = inLogicHinted;
+    public string InLogic = inLogic;
+    public string NotInLogicHinted = notInLogicHinted;
+    public string NotInLogic = notInLogic;
+    public string AllChecks = allChecks;
+
+    public Texture2D GetImage(int index, MapItemImageLoader loader)
+    {
+        switch (index)
+        {
+            case -1 or > 4: return null;
+            case 0 or 2 when GetRawImage(index) is "": index += 1; break;
+        }
+
+        if (loader.TryGet(GetRawImage(index), out var img)
+            || index is 0 or 2 && loader.TryGet(GetRawImage(index + 1), out img)) return img;
+        return null;
+    }
+
+    private string GetRawImage(int i) => i switch
+    {
+        0 => InLogicHinted, 1 => InLogic, 2 => NotInLogicHinted, 3 => NotInLogic, 4 => AllChecks,
     };
 }
 

@@ -28,7 +28,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=490710814]
 custom_minimum_size = Vector2(0.03, 0.035)
 layout_mode = 2
-text = "Make sure to set the ap dir in the settings, and to have the HydraUTBridge.apworld installed"
+text = "Make sure to set the ap dir in the settings."
 autowrap_mode = 3
 
 [node name="CheckBox" type="CheckBox" parent="MarginContainer/VBoxContainer" unique_id=638039399]
@@ -74,6 +74,7 @@ size_flags_vertical = 3
 [node name="Container" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=93159591]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Circle Tracker" type="TabContainer" parent="." unique_id=1192745647]
 layout_mode = 2
