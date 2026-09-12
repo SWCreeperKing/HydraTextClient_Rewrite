@@ -37,6 +37,7 @@ public partial class SlotView : MarginContainer
 
         SaveType<bool>.AddIndividualEvent(UseStrictSearch, _ => ReOrganizeSlots());
         SaveType<int>.AddIndividualEvent(SearchType, _ => ReOrganizeSlots());
+        SaveType<MultiworldData>.OnSaveEvent += (_, _) => ReOrganizeSlots();
         SlotSearch.TextChanged += _ => ReOrganizeSlots();
 
         var portraitData = SaveType<SlotGameData>.GetKeys();
@@ -134,45 +135,52 @@ public partial class SlotView : MarginContainer
 
         var searchText = SlotSearch.Text.Trim();
         var searchType = SaveType<int>.Load(SearchType, 0);
-        foreach (var rawSlot in Portraits.Keys.Order())
-        {
-            var slot = rawSlot;
-            var isSub = false;
-            var keepMain = false;
-
-            if (mw is not null)
+        var results = Portraits.Keys.Order().Select(rawSlot =>
             {
-                var names = leader is not null ? leader!.PlayerNames : [.. mw.CheckCounts.Keys];
-                if (names.Contains(slot) || names.Contains(mw!.GetSlotName(slot))) keepMain = true;
-                slot = mw!.GetSlotName(slot);
-            }
+                var slot = rawSlot;
+                var isSub = false;
+                var keepMain = false;
 
-            if (searchText is not "")
-            {
-                keepMain = false;
-                var slotNameMatches = IsMatch(searchText, slot);
-                var gameNameMatches = IsMatch(searchText, Portraits[rawSlot].GameName);
-
-                switch (searchType)
+                if (mw is not null)
                 {
-                    case 0:
-                        if (!slotNameMatches) isSub = true;
-                        break;
-                    case 1:
-                        if (!gameNameMatches) isSub = true;
-                        break;
-                    case 2:
-                        if (!slotNameMatches || !gameNameMatches) isSub = true;
-                        break;
-                    case 3:
-                        if (!slotNameMatches && !gameNameMatches) isSub = true;
-                        break;
+                    var names = leader is not null ? leader!.PlayerNames : [.. mw.CheckCounts.Keys];
+                    if (names.Contains(slot) || names.Contains(mw!.GetSlotName(slot))) keepMain = true;
+                    slot = mw!.GetSlotName(slot);
                 }
-            }
-            else isSub = true;
 
-            if (keepMain) isSub = false;
-            if (!isSub) MainSlotContainer.AddChild(Portraits[rawSlot]);
+                if (searchText is not "")
+                {
+                    keepMain = false;
+                    var slotNameMatches = IsMatch(searchText, slot);
+                    var gameNameMatches = IsMatch(searchText, Portraits[rawSlot].GameName);
+
+                    switch (searchType)
+                    {
+                        case 0:
+                            if (!slotNameMatches) isSub = true;
+                            break;
+                        case 1:
+                            if (!gameNameMatches) isSub = true;
+                            break;
+                        case 2:
+                            if (!slotNameMatches || !gameNameMatches) isSub = true;
+                            break;
+                        case 3:
+                            if (!slotNameMatches && !gameNameMatches) isSub = true;
+                            break;
+                    }
+                }
+                else isSub = true;
+
+                if (keepMain) isSub = false;
+                return (rawSlot, isSub);
+            }
+        ).ToArray();
+
+        var isNone = !results.Any(t => t.isSub);
+        foreach (var (rawSlot, isSub) in results)
+        {
+            if (!isSub || isNone) MainSlotContainer.AddChild(Portraits[rawSlot]);
             else SubSlotContainer.AddChild(Portraits[rawSlot]);
         }
     }
@@ -194,4 +202,5 @@ public partial class SlotView : MarginContainer
     public void CallAddNew() => EmitSignalAddNewPortrait();
     public static SlotPortrait Portrait(string name) => Singleton.Portraits[name];
     public static void SetPortraitStatus(string name, ConnectionStatus status) => Portrait(name).SetStatus(status);
+
 }
