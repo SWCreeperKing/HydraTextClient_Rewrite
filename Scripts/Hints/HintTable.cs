@@ -373,15 +373,15 @@ public partial class HintTable : TextTable
         }
         var leader = ConnectionController.LeaderClient!;
         var costPercent = leader.HintCostPercent;
+        var cost = leader.HintCost;
 
-        if (costPercent is 0)
+        if (costPercent is 0 || cost is 0)
         {
             HintInfo.Text = "Hint cost percent is 0, Unlimited Hints!";
             HintProgress.SetTarget(1);
             return;
         }
 
-        var cost = leader.HintCost;
         var locPoints = leader.LocationCheckPoints;
         var points = leader.HintPoints;
         var hintAmount = (int)Math.Floor((double)points / cost);

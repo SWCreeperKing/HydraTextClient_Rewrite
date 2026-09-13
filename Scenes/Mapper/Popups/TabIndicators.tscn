@@ -1,0 +1,143 @@
+[gd_scene format=3 uid="uid://clw03t1xrwfks"]
+
+[ext_resource type="Script" uid="uid://l2w0i7s2bj8i" path="res://Scripts/Mapper/Popups/TabIndicator.cs" id="1_4pt73"]
+[ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_8oqie"]
+[ext_resource type="PackedScene" uid="uid://ddi3pfkycocro" path="res://Scenes/UISaver.tscn" id="3_8tq8h"]
+
+[node name="Window" type="Window" unique_id=1137080991 node_paths=PackedStringArray("InLogicHinted", "InLogic", "NotInLogicHinted", "NotInLogic", "AllChecks")]
+oversampling_override = 1.0
+title = "Change Tab Indicators"
+size = Vector2i(450, 280)
+script = ExtResource("1_4pt73")
+InLogicHinted = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer/in logic hinted")
+InLogic = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer3/in logic")
+NotInLogicHinted = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer2/not in logic hinted")
+NotInLogic = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer4/not in logic")
+AllChecks = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer5/all checks")
+
+[node name="Panel" type="Panel" parent="." unique_id=1111119635]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=555378472]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer" unique_id=1831798285]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer" unique_id=1443751050]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=339587469]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "if a hinted variant isn't supplied, it will fall back onto the non hinted variant. "
+autowrap_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1026316981]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer" unique_id=1530998127]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer" unique_id=1577712882]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "In Logic (Hinted)"
+
+[node name="in logic hinted" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer" unique_id=1715064123]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer" unique_id=1023553901]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=1492008059]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "In Logic"
+
+[node name="in logic" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=1224647288]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer" unique_id=1901698347]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=400083954]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Not In Lofic (Hinted)"
+
+[node name="not in logic hinted" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1349686413]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer" unique_id=1840873061]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer4" unique_id=636429021]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Not In Logic"
+
+[node name="not in logic" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer4" unique_id=1744909327]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer" unique_id=490906710]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer5" unique_id=2071078330]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "All Checks Checked"
+
+[node name="all checks" type="OptionButton" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/VBoxContainer/HBoxContainer5" unique_id=1625314587]
+layout_mode = 2
+size_flags_horizontal = 3
+search_bar_enabled = true
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=720380306]
+layout_mode = 2
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1173513516]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer6" unique_id=182469860]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Confirm"
+script = ExtResource("2_8oqie")
+
+[node name="Button2" type="Button" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer6" unique_id=2013115256]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+script = ExtResource("2_8oqie")
+
+[node name="UISaver" parent="." unique_id=1084530359 node_paths=PackedStringArray("Controls") instance=ExtResource("3_8tq8h")]
+Prefix = "MapTracker/MapEditor/ManageTabs"
+Controls = {
+"manage_map_tabs": NodePath("..")
+}
+
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer6/Button" to="." method="Confirm"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer6/Button2" to="." method="Close"]
