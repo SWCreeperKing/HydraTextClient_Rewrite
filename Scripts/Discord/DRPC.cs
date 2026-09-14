@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CreepyUtil.DiscordRpc;
 using Godot;
 using HydraTextClient.Scripts.Controllers;
@@ -12,7 +13,7 @@ namespace HydraTextClient.Scripts.Discord;
 
 public static class DRPC
 {
-    private const string AppId = "1339447230909644851"; 
+    private const string AppId = "1339447230909644851";
     public static string? LastLocationChecked = null;
     public static bool RunDiscordRPC = SaveType<bool>.Load(GlobalThemeSettings.DiscordEnabled, true);
 
@@ -22,12 +23,17 @@ public static class DRPC
         ConnectionController.OnClientLeaderChanged += (_, _) => DiscordIntegration.UpdateActivity();
         ConnectionController.OnClientConnection += (_, client, _) =>
         {
+            if (client is null) return;
             client.OnItemLogPacketReceived += packet =>
             {
-                var player = packet.FindingPlayer;
-                if (client.PlayerSlot != player) return;
-                LastLocationChecked = client.LocationIdToLocationName(packet.Item.Location, player);
-                DiscordIntegration.UpdateActivity();
+                try
+                {
+                    var player = packet.FindingPlayer;
+                    if (client.PlayerSlot != player) return;
+                    LastLocationChecked = client.LocationIdToLocationName(packet.Item.Location, player);
+                    DiscordIntegration.UpdateActivity();
+                }
+                catch (Exception e) { }
             };
         };
         ConnectionController.OnFullDisconnection += () => LastLocationChecked = null;
@@ -66,7 +72,7 @@ public static class DRPC
 
         DiscordIntegration.SmallText = () => !ConnectionController.HasLeaderClient ? "Not connected"
             : $"{ConnectionController.LeaderClient!.PlayerNames.Length - 1} Player Multiworld";
-        
+
         DiscordIntegration.InitDiscord(AppId);
         CheckDiscord();
     }
