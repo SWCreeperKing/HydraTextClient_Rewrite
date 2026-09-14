@@ -44,7 +44,12 @@ public abstract class ImageLoader : IDisposable
         foreach (var subDir in Directory.GetDirectories(dir)) LoadDirectory(subDir);
     }
 
-    public bool TryGet(string name, out ImageTexture img) => Images.TryGetValue(NameModify(name), out img);
+    public bool TryGet(string name, out ImageTexture img)
+    {
+        if (name is not null) return Images.TryGetValue(NameModify(name), out img);
+        img = null;
+        return false;
+    }
 
     public Texture2D GetOrDef(string name, Texture2D def)
         => !Images.TryGetValue(NameModify(name), out var value) ? def : value;

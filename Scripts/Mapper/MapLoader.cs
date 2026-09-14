@@ -626,6 +626,10 @@ public partial class MapLoader : Control
                 menu.AddItem("Edit Node", 0);
                 menu.AddItem("Move Node", 1);
                 menu.AddItem("Copy Node", 2);
+                menu.AddItem("Create Node", 3);
+                menu.AddItem("Create Entrance", 6);
+                if (MoveTargetNode is not null) menu.AddItem("Move Node Here", 4);
+                if (CopyTargetNode is not null) menu.AddItem("Paste Node Here", 5);
             }
         );
     }
