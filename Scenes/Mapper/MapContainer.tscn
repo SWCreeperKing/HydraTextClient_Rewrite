@@ -30,4 +30,5 @@ ScrollContainer = NodePath("..")
 MapImage = NodePath("TextureRect")
 
 [node name="TextureRect" type="TextureRect" parent="Map Control" unique_id=546665489]
+texture_filter = 1
 layout_mode = 1
