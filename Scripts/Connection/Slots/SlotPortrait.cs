@@ -269,6 +269,7 @@ public partial class SlotPortrait : TextureRect
         var leader = ConnectionController.LeaderClient;
         if (!leader!.PlayerNames.Contains(slot)) return;
 
+        count = Math.Min(count, max);
         CheckCountPanel.Visible = true;
         CheckCountLabel.Text = $"{count:###,##0}/{max:###,##0}";
         CheckProgressBar.Value = (float)count / max;
