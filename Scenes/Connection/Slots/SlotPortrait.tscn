@@ -31,6 +31,7 @@ corner_radius_bottom_left = 3
 corner_detail = 10
 
 [node name="SlotPortrait" type="TextureRect" unique_id=118846534 node_paths=PackedStringArray("Portrait", "SlotNameLabel", "SlotNameBacker", "CheckCountBacker", "CheckCountPanel", "CheckCountLabel", "CheckProgressBar", "Tinter")]
+texture_filter = 1
 custom_minimum_size = Vector2(150, 225)
 clip_contents = true
 offset_right = 150.0

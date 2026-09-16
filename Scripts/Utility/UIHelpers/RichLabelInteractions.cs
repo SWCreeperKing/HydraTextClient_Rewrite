@@ -13,6 +13,7 @@ public abstract partial class RichLabelInteractions : RichTextLabel
         if (MetaAdded) return;
         MetaAdded = true;
         MouseFilter = MouseFilterEnum.Pass;
+        TextureFilter = TextureFilterEnum.Nearest;
         MetaClicked += meta =>
         {
             switch (meta.VariantType)
