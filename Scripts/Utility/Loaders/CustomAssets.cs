@@ -13,6 +13,7 @@ namespace HydraTextClient.Scripts.Utility.Loaders;
 public partial class CustomAssets : Control
 {
     [Export] private Texture2D Fallback;
+    private static ConcurrentDictionary<string, Task> CurrentDownloadingTasks = [];
     private static CustomAssets Singleton;
 
     public static ConcurrentDictionary<string, ImageTexture> ItemSprites = [];
@@ -33,9 +34,9 @@ public partial class CustomAssets : Control
 
     public static ImageTexture CreateSprite(string file) => ImageTexture.CreateFromImage(Image.LoadFromFile(file));
 
-    public static Texture2D ItemImage(string itemGameName, string itemName, string selfGame, Action<Texture2D> callback,
+    public static Texture2D ItemImage(string itemGameName, string itemName, Action<Texture2D> callback,
         out bool isFallback)
-        => ItemImage(new AssetItem(itemGameName, itemName), selfGame, callback, out isFallback);
+        => ItemImage(new AssetItem(itemGameName, itemName), itemGameName, callback, out isFallback);
 
     private static Texture2D ItemImage(AssetItem location, string selfGame, Action<Texture2D> callback,
         out bool isFallback)
@@ -54,27 +55,29 @@ public partial class CustomAssets : Control
             
             if (ItemSprites.TryGetValue(location.Uid, out var sprite)) return sprite;
             isFallback = true;
-            Task.Run(() =>
+            if (CurrentDownloadingTasks.ContainsKey(selfGame)) return Singleton.Fallback;
+            var task = Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        bool res;
-                        ItemSprite spriteData;
-                        lock (ItemSpritesManager)
-                            res = ItemSpritesManager.TryGetCustomAsset(
-                                location, selfGame, false, true,
-                                out spriteData
-                            );
+                    bool res;
+                    ItemSprite spriteData;
+                    lock (ItemSpritesManager)
+                        res = ItemSpritesManager.TryGetCustomAsset(
+                            location, selfGame, false, true,
+                            out spriteData, false
+                        );
 
-                        if (!res || spriteData is null) return Task.FromResult(Singleton.Fallback);
-                        var file = spriteData.FilePath;
-                        ItemSprites[location.Uid] = sprite = CreateSprite(file);
-                        callback(sprite);
-                    }
-                    catch (Exception e) { GD.PrintErr(e); }
-                    return Task.CompletedTask;
+                    if (!res || spriteData is null) return Task.FromResult(Singleton.Fallback);
+                    var file = spriteData.FilePath;
+                    ItemSprites[location.Uid] = sprite = CreateSprite(file);
+                    CurrentDownloadingTasks.TryRemove(selfGame, out _);
+                    callback(sprite);
                 }
-            );
+                catch (Exception e) { GD.PrintErr(e); }
+                return Task.CompletedTask;
+            });
+            CurrentDownloadingTasks.TryAdd(selfGame, task);
 
             return Singleton.Fallback;
         }

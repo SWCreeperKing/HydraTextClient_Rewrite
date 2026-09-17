@@ -82,7 +82,7 @@ public class ItemEffect : MessageParserEffect
                     ["img"] = (l, _) =>
                     {
                         var img = CustomAssets.ItemImage(
-                            args[0], args[1], args[0], _ => reloadFunction(), out var isFallback
+                            args[0], args[1], _ => reloadFunction(), out var isFallback
                         );
                         if (isFallback && SaveType<bool>.Load(FallbackSaveId, false)) return;
                         l.AddImage(img, 0, 20);

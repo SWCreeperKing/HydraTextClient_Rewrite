@@ -31,7 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
-    <PackageReference Include="KaitoKid.ArchipelagoUtilities.AssetDownloader" Version="3.1.13" />
+    <PackageReference Include="KaitoKid.ArchipelagoUtilities.AssetDownloader" Version="3.1.16" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\PlayerList\" />
