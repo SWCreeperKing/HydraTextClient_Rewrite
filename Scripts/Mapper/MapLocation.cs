@@ -142,6 +142,14 @@ public partial class MapLocation : TextureRect
     private void LocationUpdate()
     {
         if (!Loader.IsInEditMode && NodeDead || !Visible) return;
+
+        if (OrderedLocations.Length == 0)
+        {
+            NodeColor = Colors.White;
+            NodeDead = true;
+            return;
+        }
+        
         try
         {
             var page = Loader.Page;
