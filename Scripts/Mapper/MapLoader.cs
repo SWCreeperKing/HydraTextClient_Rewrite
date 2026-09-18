@@ -12,6 +12,7 @@ using HydraTextClient.Scripts.Clients.CircleTracker;
 using HydraTextClient.Scripts.Controllers;
 using HydraTextClient.Scripts.Mapper.Popups;
 using HydraTextClient.Scripts.Utility;
+using HydraTextClient.Scripts.Utility.Loaders;
 using HydraTextClient.Scripts.Utility.UIHelpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -703,7 +704,8 @@ public partial class MapLoader : Control
         void CreateNewNodAtMouse(bool isNew, Vector2? size = null, string group = "", params List<string> locs)
         {
             var map = GetCurrentMap();
-            size ??= new Vector2(32, 32);
+            const string baseId = "window_nodes/MapTracker/New/MapNode/";
+            size ??= new Vector2((float)SaveType<double>.Load($"{baseId}W", 32d), (float)SaveType<double>.Load($"{baseId}H", 32d));
             var node = map.CreateNewNode(map.ToLocalPos(PopupPos) - size!.Value / 2f, size!.Value, group, locs);
             SetSelectedLocation(node);
             if (OpenConfig.ButtonPressed && isNew) AddNode(node);
