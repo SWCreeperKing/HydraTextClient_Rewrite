@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.Models;
 using Godot;
 using HydraTextClient.Scripts.Clients.CircleTracker;
@@ -27,9 +28,12 @@ public partial class HintTable : TextTable
     [Export] private AnimatedProgressBar HintProgress;
 
     public const string SortOrderSaveId = "hint_table_sort";
-    public override string[] EffectGroups => ["default", "hinttable"];
     public const string GlobalCopyFormatProgressive = "Theme/HintTable/CopyFormat/Progressive";
     public const string GlobalCopyFormat = "Theme/HintTable/CopyFormat";
+
+    private const int _MiscPlayer = 1;
+    private const int _ContainsSlot = 2;
+    private const int _IsConnected = 3;
 
     public const string Hint = """
                                {{receiver}} - player that receives the item
@@ -40,6 +44,8 @@ public partial class HintTable : TextTable
                                {{copy_receiver}} - the copy alias of the receiver
                                {{copy_finder}} - the copy alias of the finder
                                """;
+
+    public override string[] EffectGroups => ["default", "hinttable"];
 
     public override string[] Columns
         => ["", "", "Receiving Player", "Item", "Finding Player", "Priority", "In Logic", "Location", "Entrance"];
@@ -161,8 +167,10 @@ public partial class HintTable : TextTable
             return;
         }
 
-        if (resort)
+        if (resort && ConnectionController.HasLeaderClient)
         {
+            var allPlayers = ConnectionController.LeaderClient!.AllPlayers;
+            PlayerInfo[] slotClients = [.. allPlayers.Where(info => GetOrderSlot(info.Slot) is not _MiscPlayer)];
             var orderedHints =
                 mw.Hints
                   .Where(kv => SaveType<int>.Load("hint_table/show_client", 0) switch
@@ -179,9 +187,12 @@ public partial class HintTable : TextTable
                                && mw!.HiddenHints.TryGetValue(hint.GetHash(), out var isVisible)
                                && isVisible) return false;
 
-                           // not obvious, remove hints where finder and receiver are not in hydra
-                           var order1 = GetOrderSlot(hint.FindingPlayer);
-                           return !(GetOrderSlot(hint.ReceivingPlayer) == order1 && order1 == 1);
+                           return GetOrderSlot(hint.FindingPlayer) is not _MiscPlayer
+                                  || GetOrderSlot(hint.ReceivingPlayer) is not _MiscPlayer
+                                  || slotClients.Any(info =>
+                                      info.IsRelatedTo(allPlayers[hint.FindingPlayer])
+                                      || info.IsRelatedTo(allPlayers[hint.ReceivingPlayer])
+                                  );
                        }
                    )
                   .Where(hint => hint.Status switch
@@ -280,10 +291,10 @@ public partial class HintTable : TextTable
 
     public int GetOrderSlot(int slot)
     {
-        if (!ConnectionController.HasLeaderClient) return 1;
+        if (!ConnectionController.HasLeaderClient) return _MiscPlayer;
         var player = ConnectionController.LeaderClient!.PlayerNames[slot];
-        if (ConnectionController.IsConnected(player)) return 3;
-        return SlotView.ContainsSlot(player) ? 2 : 1;
+        if (ConnectionController.IsConnected(player)) return _IsConnected;
+        return SlotView.ContainsSlot(player) ? _ContainsSlot : _MiscPlayer;
     }
 
     public int InLogic(Hint hint)

@@ -68,10 +68,10 @@ public partial class CustomAssets : Control
                             out spriteData, false
                         );
 
+                    CurrentDownloadingTasks.TryRemove(selfGame, out _);
                     if (!res || spriteData is null) return Task.FromResult(Singleton.Fallback);
                     var file = spriteData.FilePath;
                     ItemSprites[location.Uid] = sprite = CreateSprite(file);
-                    CurrentDownloadingTasks.TryRemove(selfGame, out _);
                     callback(sprite);
                 }
                 catch (Exception e) { GD.PrintErr(e); }
