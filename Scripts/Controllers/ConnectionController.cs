@@ -188,17 +188,24 @@ public partial class ConnectionController : Control
 
     public void ChangeLeader(string newLeaderName)
     {
-        var leader = LeaderClient;
-        var newLeader = NamedClients[newLeaderName];
+        try
+        {
+            var leader = LeaderClient;
+            var newLeader = NamedClients[newLeaderName];
 
-        _ = leader!.Tags + ArchipelagoTag.NoText;
-        _ = newLeader.Tags - ArchipelagoTag.NoText;
+            _ = leader!.Tags + ArchipelagoTag.NoText;
+            _ = newLeader.Tags - ArchipelagoTag.NoText;
 
-        Clients.Remove(newLeaderName);
-        Clients.Insert(0, newLeaderName);
+            Clients.Remove(newLeaderName);
+            Clients.Insert(0, newLeaderName);
 
-        OnClientLeaderChanged?.Invoke(leader, newLeader);
-        SetConnectionCooldown();
+            OnClientLeaderChanged?.Invoke(leader, newLeader);
+            SetConnectionCooldown();
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr(e);
+        }
     }
 
     private void SetConnectionCooldown()

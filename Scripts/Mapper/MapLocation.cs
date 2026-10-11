@@ -80,7 +80,7 @@ public partial class MapLocation : TextureRect
     {
         IEnumerable<string> locs = RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s);
         if (Client is not null && !Loader.IsInEditMode) locs = locs.Where(l => Client.Locations.Any(kv => kv.Key == l));
-        OrderedLocations = [.. locs];
+        OrderedLocations = [.. locs.Where(loc => loc is not null)];
     }
 
     public void SetImage(string image)
@@ -143,7 +143,7 @@ public partial class MapLocation : TextureRect
     {
         if (!Loader.IsInEditMode && NodeDead || !Visible) return;
 
-        if (OrderedLocations.Length == 0)
+        if ( OrderedLocations is null || OrderedLocations.Length == 0)
         {
             NodeColor = Colors.White;
             NodeDead = true;
