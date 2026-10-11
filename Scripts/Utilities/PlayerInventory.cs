@@ -98,10 +98,11 @@ public partial class PlayerInventory : TextTable
         var mw = ConnectionController.GetCurrentMultiworld;
 
         if (mw is null) return;
+        var unOpened = mw.ItemHistory.ContainsKey(Client.PlayerName);
         var starting = mw.ItemHistory.GetOrAdd(Client.PlayerName, 0);
         var newItems = items.Skip(starting).ToArray();
 
-        if (newItems.Length != 0 && OpenNewWindow && !HasOpenedNewWindow)
+        if (!unOpened && newItems.Length != 0 && OpenNewWindow && !HasOpenedNewWindow)
         {
             if (SaveType<bool>.Load(GlobalThemeSettings.DisplayNewItemsPopup, true))
             {
