@@ -160,11 +160,11 @@
   - If the message history is full the oldest hidden messages will be deleted first
     - If there are no hidden messages, the oldest message will then be deleted 
 - Game Portraits
-  - Images saved to the game portrait directory (in settings -> theme)
+  - Images saved to the game portrait directory (in settings)
   - Uses the name of the image as the portrait/game name
   - Need to click the reload button or reopen hydra for them to reload
 - Emotes/Emojis
-  - Images saved to the emote directory (in settings -> theme)
+  - Images saved to the emote directory (in settings)
   - Uses the name of the image as the emote name
   - IMPORTANT: it is recommended to simplify your emote names (so everyone's can match to a degree)
     - foxsmile -> smile
