@@ -105,6 +105,7 @@ public partial class MultiworldCreator : WindowSetter
     {
         var data = SaveType<MultiworldData>.Load(label.MultiWorldName, new MultiworldData());
         data.ClearCache();
+        SlotView.Singleton.ReOrganizeSlots();
     }
 
     public void DeleteWorld(MultiworldLabel label)

@@ -11,7 +11,7 @@ namespace HydraTextClient.Scripts.Connection.Slots;
 
 public partial class SlotView : MarginContainer
 {
-    private static SlotView Singleton;
+    public static SlotView Singleton;
     private const string UseStrictSearch = "Connection/SlotsMenu/useStrictSearch"; // bool
     private const string SearchType = "Connection/SlotsMenu/searchType"; // int
 
