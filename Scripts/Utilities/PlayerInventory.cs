@@ -36,7 +36,6 @@ public partial class PlayerInventory : TextTable
     private ApClient Client;
     public string[] RawItemNames;
     public bool OpenNewWindow;
-    public bool HasOpenedNewWindow = false;
     private Action<string, FilterType> OnFilterDataUpdated;
     private List<SortObject> SortOrder = [new("Item"), new("Count") { IsDescending = true }];
 
@@ -98,11 +97,10 @@ public partial class PlayerInventory : TextTable
         var mw = ConnectionController.GetCurrentMultiworld;
 
         if (mw is null) return;
-        var unOpened = mw.ItemHistory.ContainsKey(Client.PlayerName);
         var starting = mw.ItemHistory.GetOrAdd(Client.PlayerName, 0);
         var newItems = items.Skip(starting).ToArray();
 
-        if (!unOpened && newItems.Length != 0 && OpenNewWindow && !HasOpenedNewWindow)
+        if (newItems.Length != 0 && OpenNewWindow)
         {
             if (SaveType<bool>.Load(GlobalThemeSettings.DisplayNewItemsPopup, true))
             {
@@ -111,7 +109,6 @@ public partial class PlayerInventory : TextTable
                 AddChild(popup);
                 popup.Show();
             }
-            HasOpenedNewWindow = true;
         }
 
         mw.ItemHistory[Client.PlayerName] = Client.ItemHandler.ItemIndex;
