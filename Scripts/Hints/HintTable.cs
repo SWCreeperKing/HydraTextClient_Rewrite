@@ -227,13 +227,13 @@ public partial class HintTable : TextTable
             return option.Name switch
             {
                 "Receiving Player" => Order(
-                    current, hint => GetOrderSlot(hint.ReceivingPlayer),
-                    option.IsDescending, isFirst
+                    Order(current, hint => GetOrderSlot(hint.ReceivingPlayer), option.IsDescending, isFirst),
+                    hint => hint.ReceivingPlayer, option.IsDescending, isFirst
                 ),
                 "Item" => Order(current, hint => hint.SortNumber(), option.IsDescending, isFirst),
                 "Finding Player" => Order(
-                    current, hint => GetOrderSlot(hint.FindingPlayer), option.IsDescending,
-                    isFirst
+                    Order(current, hint => GetOrderSlot(hint.FindingPlayer), option.IsDescending, isFirst),
+                    hint => hint.FindingPlayer, option.IsDescending, isFirst
                 ),
                 "Priority" => Order(current, hint => HintStatusNumber[hint.Status], option.IsDescending, isFirst),
                 "In Logic" => Order(current, InLogic, option.IsDescending, isFirst),
