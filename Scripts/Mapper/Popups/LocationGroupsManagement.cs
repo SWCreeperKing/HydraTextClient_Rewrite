@@ -96,7 +96,7 @@ public partial class LocationGroupsManagement : SelectionEditWindow<LocationGrou
     public override void ReloadData()
     {
         GroupView.Clear();
-        Groups = [.. Loader.LocationGroups.OrderBy(g => g.GroupName)];
+        Groups = [.. Loader.LocationGroups.OrderBy(g => g.GroupName, StringComparer.Ordinal)];
         foreach (var group in Groups)
         {
             if (!Loader.ItemImageLoader.TryGet(group.MappedIcon, out var img)) img = null;

@@ -139,7 +139,7 @@ public partial class CircleTrackerLabel : VBoxContainer
 
             var orderedLocations = UniqueLocations
                                   .OrderByDescending(id => Priority.Contains((long)id))
-                                  .ThenBy(id => Client?.Locations[(long)id]).ToArray();
+                                  .ThenBy(id => Client?.Locations[(long)id], StringComparer.Ordinal).ToArray();
 
             var use2ndColumn = Hints.Keys.Any(id => orderedLocations.Contains((ulong)id));
             sb.Append("[table=").Append(use2ndColumn ? 2 : 1).Append("][cell bg=#00000069] ")

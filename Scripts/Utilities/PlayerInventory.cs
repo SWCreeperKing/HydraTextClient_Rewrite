@@ -89,7 +89,7 @@ public partial class PlayerInventory : TextTable
             ordered = SortingOrder(ordered, SortOrder[0], true);
             if (SortOrder.Count > 1) ordered = SortingOrder(ordered, SortOrder[1]);
         }
-        else ordered = ordered.ThenBy(item => item[0].ItemName);
+        else ordered = ordered.ThenBy(item => item[0].ItemName, StringComparer.Ordinal);
 
         Keys = [.. ordered.Select(item => item[0].UID)];
         RawItemNames = [.. Inventory.Values.Select(arr => arr[0].ItemName).Distinct()];

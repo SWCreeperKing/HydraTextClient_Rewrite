@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using HydraTextClient.Scripts.Utility.UIHelpers;
@@ -64,7 +65,7 @@ public partial class EntranceManagerPopup : SelectionEditWindow<string[]> // nam
 
     public override void ReloadData()
     {
-        EntranceList = [.. Loader.EntranceMap.Select(kv => (string[])[kv.Value, kv.Key, Loader.EntranceNicknames.GetValueOrDefault(kv.Key, "")]).OrderBy(t => t[0])];
+        EntranceList = [.. Loader.EntranceMap.Select(kv => (string[])[kv.Value, kv.Key, Loader.EntranceNicknames.GetValueOrDefault(kv.Key, "")]).OrderBy(t => t[0], StringComparer.Ordinal)];
         EntranceTable.Clear();
         foreach (var item in EntranceList)
         {

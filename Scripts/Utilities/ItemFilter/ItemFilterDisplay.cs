@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Archipelago.MultiClient.Net.Enums;
 using Godot;
@@ -28,7 +29,7 @@ public partial class ItemFilterDisplay : TextTable
 
     public override void RefreshUi(bool recompile)
     {
-        FilterTypes = [.. SaveType<FilterType>.GetValues().OrderBy(f => f.GameName).ThenBy(f => f.SortNumber())];
+        FilterTypes = [.. SaveType<FilterType>.GetValues().OrderBy(f => f.GameName, StringComparer.Ordinal).ThenBy(f => f.SortNumber())];
         UpdateData(recompile);
     }
 

@@ -78,7 +78,7 @@ public partial class MapLocation : TextureRect
 
     public void SetOrderedLocations()
     {
-        IEnumerable<string> locs = RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s);
+        IEnumerable<string> locs = RawNodeData.Locations.DistinctBy(s => s).OrderBy(s => s, StringComparer.Ordinal);
         if (Client is not null && !Loader.IsInEditMode) locs = locs.Where(l => Client.Locations.Any(kv => kv.Key == l));
         OrderedLocations = [.. locs.Where(loc => loc is not null)];
     }
