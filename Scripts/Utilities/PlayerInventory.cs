@@ -35,7 +35,7 @@ public partial class PlayerInventory : TextTable
     private string[] Keys;
     private ApClient Client;
     public string[] RawItemNames;
-    public bool OpenNewWindow;
+    public bool OpenNewWindow = true;
     private Action<string, FilterType> OnFilterDataUpdated;
     private List<SortObject> SortOrder = [new("Item"), new("Count") { IsDescending = true }];
 
@@ -49,7 +49,7 @@ public partial class PlayerInventory : TextTable
         Client = client;
         client.ItemHandler.OnNewItemsReceived += (_, starting) =>
         {
-            if (starting is 0) OpenNewWindow = true;
+            // if (starting is 0) OpenNewWindow = true;
             QueueUiRefresh(true);
         };
         Client?.UpdateItemHandler();
@@ -95,7 +95,6 @@ public partial class PlayerInventory : TextTable
         RawItemNames = [.. Inventory.Values.Select(arr => arr[0].ItemName).Distinct()];
 
         var mw = ConnectionController.GetCurrentMultiworld;
-
         if (mw is null) return;
         var starting = mw.ItemHistory.GetOrAdd(Client.PlayerName, 0);
         var newItems = items.Skip(starting).ToArray();
