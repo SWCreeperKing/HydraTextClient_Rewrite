@@ -55,7 +55,7 @@ public partial class CustomAssets : Control
             
             if (ItemSprites.TryGetValue(location.Uid, out var sprite)) return sprite;
             isFallback = true;
-            if (CurrentDownloadingTasks.ContainsKey(selfGame)) return Singleton.Fallback;
+            if (CurrentDownloadingTasks.ContainsKey(location.Uid)) return Singleton.Fallback;
             var task = Task.Run(() =>
             {
                 try
@@ -68,7 +68,7 @@ public partial class CustomAssets : Control
                             out spriteData, false
                         );
 
-                    CurrentDownloadingTasks.TryRemove(selfGame, out _);
+                    CurrentDownloadingTasks.TryRemove(location.Uid, out _);
                     if (!res || spriteData is null) return Task.FromResult(Singleton.Fallback);
                     var file = spriteData.FilePath;
                     ItemSprites[location.Uid] = sprite = CreateSprite(file);
@@ -77,7 +77,7 @@ public partial class CustomAssets : Control
                 catch (Exception e) { GD.PrintErr(e); }
                 return Task.CompletedTask;
             });
-            CurrentDownloadingTasks.TryAdd(selfGame, task);
+            CurrentDownloadingTasks.TryAdd(location.Uid, task);
 
             return Singleton.Fallback;
         }
