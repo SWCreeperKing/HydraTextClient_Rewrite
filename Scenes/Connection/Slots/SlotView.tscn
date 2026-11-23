@@ -147,6 +147,30 @@ allow_greater = true
 custom_arrow_step = 0.05
 custom_arrow_round = true
 
+[node name="VSeparator7" type="VSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1282745891]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=74371804]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer4" unique_id=1694662178]
+layout_mode = 2
+text = "Filter Out:"
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer4" unique_id=1976344486]
+layout_mode = 2
+theme = ExtResource("5_28ygy")
+selected = 3
+item_count = 4
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "All Checks"
+popup/item_1/id = 1
+popup/item_2/text = "Goaled"
+popup/item_2/id = 2
+popup/item_3/text = "All Checks & Goaled"
+popup/item_3/id = 3
+
 [node name="HSeparator2" type="HSeparator" parent="VBoxContainer/FoldableContainer/MarginContainer/VBoxContainer" unique_id=1650162209]
 layout_mode = 2
 
@@ -199,7 +223,7 @@ layout_mode = 2
 [node name="FoldableContainer" type="FoldableContainer" parent="VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1223318099]
 layout_mode = 2
 folded = true
-title = "Slots not in the Multiworld"
+title = "Slot Shelf"
 
 [node name="SlotContainer" type="HFlowContainer" parent="VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FoldableContainer" unique_id=1931599529]
 visible = false

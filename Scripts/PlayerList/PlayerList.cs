@@ -29,22 +29,25 @@ public partial class PlayerList : MarginContainer
             {
                 var mw = ConnectionController.GetCurrentMultiworld;
                 if (mw is null) return;
-
-                var msg = result.Data[0].Text.Replace("\r", "").Split('\n').Skip(1).Select(line =>
-                    {
-                        var start = line.LastIndexOf('(') + 1;
-                        var end = line.LastIndexOf(')');
-                        var counter = line[start..end].Split('/');
-                        return (count: int.Parse(counter[0]), max: int.Parse(counter[1]));
-                    }
-                ).ToArray();
-
-                for (var i = 0; i < msg.Length; i++)
+                try
                 {
-                    var player = client.PlayerNames[i + 1];
-                    var (count, max) = msg[i];
-                    ConnectionController.UpdateCheckCount(player, count, max);
+                    var msg = result.Data[0].Text.Replace("\r", "").Split('\n').Skip(1).Select(line =>
+                        {
+                            var start = line.LastIndexOf('(') + 1;
+                            var end = line.LastIndexOf(')');
+                            var counter = line[start..end].Split('/');
+                            return (count: int.Parse(counter[0]), max: int.Parse(counter[1]));
+                        }
+                    ).ToArray();
+
+                    for (var i = 0; i < msg.Length; i++)
+                    {
+                        var player = client.PlayerNames[i + 1];
+                        var (count, max) = msg[i];
+                        ConnectionController.UpdateCheckCount(player, count, max);
+                    }
                 }
+                catch (ArgumentOutOfRangeException) { }
             };
 
             client.OnItemLogPacketReceived += item =>
