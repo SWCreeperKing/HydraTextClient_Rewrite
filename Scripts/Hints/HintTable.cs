@@ -30,6 +30,11 @@ public partial class HintTable : TextTable
     public const string SortOrderSaveId = "hint_table_sort";
     public const string GlobalCopyFormatProgressive = "Theme/HintTable/CopyFormat/Progressive";
     public const string GlobalCopyFormat = "Theme/HintTable/CopyFormat";
+    public const string GlobalEntranceCopyFormat = "Theme/HintTable/EntranceCopyFormat";
+
+    public const string DefaultCopyFormat = "{{receiver}}'s __`{{item}}`__ is in {{finder}}'s world at **`{{loc}}`**";
+
+    public const string DefaultEntranceCopyFormat = "\\n-# `{{entrance}}`";
 
     private const int _MiscPlayer = 1;
     private const int _ContainsSlot = 2;
@@ -43,6 +48,7 @@ public partial class HintTable : TextTable
                                {{found}} - if the item was found or not
                                {{copy_receiver}} - the copy alias of the receiver
                                {{copy_finder}} - the copy alias of the finder
+                               {{entrance}} - entrance found at
                                """;
 
     public override string[] EffectGroups => ["default", "hinttable"];
@@ -94,13 +100,13 @@ public partial class HintTable : TextTable
                         "Copy Alias overrides ALL naming when copying text", PlayerEffect.CopyAliasOverrideInCopy, true
                     )
                    .AddLineEdit(
-                        "Copy Hint Text Format (Progression Items)", GlobalCopyFormatProgressive,
-                        "{{receiver}}'s __`{{item}}`__ is in {{finder}}'s world at **`{{loc}}`**\n-# `{{entrance}}`",
+                        "Copy Hint Text Format (Progression Items)", GlobalCopyFormatProgressive, DefaultCopyFormat,
                         Hint
-                    ).AddLineEdit(
-                        "Copy Hint Text Format", GlobalCopyFormat,
-                        "{{receiver}}'s __`{{item}}`__ is in {{finder}}'s world at **`{{loc}}`**\n-# `{{entrance}}`",
-                        Hint
+                    )
+                   .AddLineEdit("Copy Hint Text Format", GlobalCopyFormat, DefaultCopyFormat, Hint)
+                   .AddLineEdit(
+                        "Copy Hint Entrance Format", GlobalEntranceCopyFormat, DefaultEntranceCopyFormat,
+                        "{{entrance}} - entrance found at"
                     );
             }
         );
@@ -335,13 +341,14 @@ public partial class HintTable : TextTable
                 var hint = SortedHints[int.Parse(text[0])];
                 var rawCopy = SaveType<string>.Load(
                     hint.ItemFlags.HasFlag(Advancement) ? GlobalCopyFormatProgressive : GlobalCopyFormat,
-                    "{{receiver}}'s __`{{item}}`__ is in {{finder}}'s world at **`{{loc}}`**\n-# `{{entrance}}`"
+                    DefaultCopyFormat
                 );
+                var entranceCopy = SaveType<string>.Load(GlobalEntranceCopyFormat, DefaultEntranceCopyFormat);
 
                 var mw = ConnectionController.GetCurrentMultiworld;
                 if (mw is null) return;
 
-                DisplayServer.ClipboardSet(
+                var baseCopy =
                     rawCopy.CompileSimpleText(
                         new Dictionary<string, string>
                         {
@@ -351,8 +358,16 @@ public partial class HintTable : TextTable
                             ["copy_finder"] = mw.PlayerCopyAliases.GetValueOrDefault(hint.FindingPlayer, ""),
                             ["copy_receiver"] = mw.PlayerCopyAliases.GetValueOrDefault(hint.ReceivingPlayer, ""),
                         }
-                    ).Replace("\\n", "\n")
-                );
+                    );
+
+                if (!rawCopy.Contains("{{entrance}}", StringComparison.InvariantCultureIgnoreCase)
+                    && hint.Entrance is not "Vanilla")
+                {
+                    baseCopy
+                        = $"{baseCopy}{entranceCopy.CompileSimpleText(new Dictionary<string, string> { ["entrance"] = hint.EntranceName })}";
+                }
+
+                DisplayServer.ClipboardSet(baseCopy.Replace("\\n", "\n"));
                 break;
         }
     }
