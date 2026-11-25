@@ -4,11 +4,14 @@
 [ext_resource type="Script" uid="uid://bfwuiogy0vc3t" path="res://Scripts/Mapper/Popups/MapAddLocations.cs" id="1_ghy1g"]
 [ext_resource type="Script" uid="uid://ducjwr1np6x7w" path="res://Scripts/Utility/UIHelpers/ButtonAnimation.cs" id="2_353mw"]
 
-[node name="MapAddLocations" type="Window" unique_id=1328446524 node_paths=PackedStringArray("LastLocations", "NewLocations", "ItemListContainer")]
+[node name="MapAddLocations" type="Window" unique_id=1328446524 node_paths=PackedStringArray("AllLocationsContainer", "SearchBar", "AllLocations", "LastLocations", "NewLocations", "ItemListContainer")]
 oversampling_override = 1.0
 title = "Add Locations"
 size = Vector2i(620, 400)
 script = ExtResource("1_ghy1g")
+AllLocationsContainer = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer2")
+SearchBar = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer2/LineEdit")
+AllLocations = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer2/All Locations")
 LastLocations = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/ItemList")
 NewLocations = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/TextEdit")
 ItemListContainer = NodePath("Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer")
@@ -39,6 +42,22 @@ size_flags_vertical = 3
 [node name="HSplitContainer" type="HSplitContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer" unique_id=442670656]
 layout_mode = 2
 size_flags_vertical = 3
+split_offsets = PackedInt32Array(0, 0)
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer" unique_id=2146986445]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer2" unique_id=261250516]
+layout_mode = 2
+placeholder_text = "Search"
+alignment = 1
+
+[node name="All Locations" type="ItemList" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer2" unique_id=170276641]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer" unique_id=304063385]
 layout_mode = 2
@@ -106,6 +125,7 @@ Controls = {
 "window_nodes/MapAddLocations": NodePath("..")
 }
 
+[connection signal="text_changed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer2/LineEdit" to="." method="ReloadAllLocations"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button" to="." method="ClearSelectedLocations"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/Button2" to="." method="ClearAllLocations"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/VBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/CheckBox3" to="." method="ReloadItemList"]

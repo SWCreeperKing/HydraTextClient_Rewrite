@@ -452,7 +452,7 @@ public partial class MapLoader : Control
         if (MapNavigators.Any(m => m.CoreMap == map)) return;
         var container = MapTabs.GetValueOrDefault(map.Tab ?? "", MapTabs[""]);
         var mapContainer = MapContainer.Instantiate<MapNavigator>();
-        mapContainer.SetupMap(this, container, map,  $"{path}/maps/");
+        mapContainer.SetupMap(this, container, map, $"{path}/maps/");
         container.AddChild(mapContainer);
         MapNavigators.Add(mapContainer);
     }
@@ -705,7 +705,9 @@ public partial class MapLoader : Control
         {
             var map = GetCurrentMap();
             const string baseId = "MapTracker/New/MapNode/";
-            size ??= new Vector2((float)SaveType<double>.Load($"{baseId}W", 32d), (float)SaveType<double>.Load($"{baseId}H", 32d));
+            size ??= new Vector2(
+                (float)SaveType<double>.Load($"{baseId}W", 32d), (float)SaveType<double>.Load($"{baseId}H", 32d)
+            );
             var node = map.CreateNewNode(map.ToLocalPos(PopupPos) - size!.Value / 2f, size!.Value, group, locs);
             SetSelectedLocation(node);
             if (OpenConfig.ButtonPressed && isNew) AddNode(node);
@@ -765,7 +767,7 @@ public partial class MapLoader : Control
     public void CopyLocations()
     {
         if (SelectedMapLocation is null) return;
-        var locationNamesToCopy = (string[])[.. List.GetSelectedItems().Select(List.GetItemText)];
+        var locationNamesToCopy = List.GetSelectedItemNames();
         DisplayServer.ClipboardSet(string.Join('\n', locationNamesToCopy));
     }
 

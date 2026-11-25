@@ -184,6 +184,11 @@ public static class Extensions // sorted alphabetically for the memes
         }
     }
 
+    extension(ItemList list)
+    {
+        public string[] GetSelectedItemNames() => [.. list.GetSelectedItems().Select(list.GetItemText)];
+    }
+    
     extension(ItemPrintJsonPacket packet)
     {
         public int FindingPlayer => packet.Item.Player;
