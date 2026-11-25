@@ -31,7 +31,9 @@ public partial class PlayerList : MarginContainer
                 if (mw is null) return;
                 try
                 {
-                    var msg = result.Data[0].Text.Replace("\r", "").Split('\n').Skip(1).Select(line =>
+                    var text = result.Data[0].Text.Replace("\r", "");
+                    if (!text.StartsWith("Player Status on team")) return;
+                    var msg = text.Split('\n').Skip(1).Select(line =>
                         {
                             var start = line.LastIndexOf('(') + 1;
                             var end = line.LastIndexOf(')');
