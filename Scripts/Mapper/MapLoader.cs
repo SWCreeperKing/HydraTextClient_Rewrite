@@ -213,6 +213,7 @@ public partial class MapLoader : Control
             {
                 var key = rule.GetKeyHash();
                 if (!alreadyRecordedRules.Add(key)) continue;
+                if (rule.DataKey is "") continue;
                 switch (rule.Scope)
                 {
                     case LocationRule.DataScope.SlotData:
