@@ -361,7 +361,7 @@ public partial class HintTable : TextTable
                     );
 
                 if (!rawCopy.Contains("{{entrance}}", StringComparison.InvariantCultureIgnoreCase)
-                    && hint.Entrance is not "Vanilla")
+                    && hint.EntranceName is not ("Vanilla" or ""))
                 {
                     baseCopy
                         = $"{baseCopy}{entranceCopy.CompileSimpleText(new Dictionary<string, string> { ["entrance"] = hint.EntranceName })}";
